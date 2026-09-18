@@ -155,3 +155,77 @@ export function validateShape(q) {
 
   return messages;
 }
+
+/**
+ * Flatten the two-level `topics.json` map (D-05) into a lookup keyed by
+ * topic slug. Top-level keys starting with `_` are metadata, not subjects,
+ * and are skipped. When a topic slug appears under more than one subject
+ * the first subject wins the index entry and every repeat is recorded in
+ * `duplicates` — the subject is derived from the slug alone, so a slug
+ * under two subjects means a question can never be placed unambiguously.
+ */
+export function indexTopics(topics) {
+  const index = {};
+  const duplicates = [];
+
+  for (const subjectSlug of Object.keys(topics)) {
+    if (subjectSlug.startsWith('_')) continue;
+    const subject = topics[subjectSlug];
+    for (const [topicSlug, label] of Object.entries(subject.topics)) {
+      if (topicSlug in index) {
+        duplicates.push({ slug: topicSlug, subjects: [index[topicSlug].subject, subjectSlug] });
+        continue;
+      }
+      index[topicSlug] = { subject: subjectSlug, subjectLabel: subject.label, label };
+    }
+  }
+
+  return { index, duplicates };
+}
+
+/**
+ * Look up a topic slug in an `indexTopics` result. Returns the entry
+ * (`{ subject, subjectLabel, label }`) or `null` for an unknown slug.
+ * Never mutates the index.
+ */
+export function resolveTopic(slug, index) {
+  return index[slug] ?? null;
+}
+
+/**
+ * Plain Levenshtein edit distance between two strings (two-row loop, no
+ * dependency).
+ */
+function levenshteinDistance(a, b) {
+  let prevRow = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const currRow = [i];
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      currRow[j] = Math.min(prevRow[j] + 1, currRow[j - 1] + 1, prevRow[j - 1] + cost);
+    }
+    prevRow = currRow;
+  }
+  return prevRow[b.length];
+}
+
+/**
+ * Nearest known slug to an unknown one by edit distance, for the "did you
+ * mean" suggestion on an invented topic slug (D-07). Ties are broken by
+ * sorted order so the suggestion is identical run to run. An empty
+ * known-slug list returns `null` instead of throwing.
+ */
+export function suggestSlug(unknown, knownSlugs) {
+  if (!knownSlugs || knownSlugs.length === 0) return null;
+
+  let best = null;
+  let bestDistance = Infinity;
+  for (const slug of [...knownSlugs].sort()) {
+    const distance = levenshteinDistance(unknown, slug);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = slug;
+    }
+  }
+  return best;
+}
