@@ -2,17 +2,31 @@
 // The only file in the checker that touches the filesystem, argv, or stdout.
 // All validation logic lives in schema.json; all pure rules live in lib/rules.mjs.
 
-import { readdirSync, readFileSync, writeFileSync, renameSync, statSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { readdirSync, readFileSync, writeFileSync, renameSync, statSync, existsSync } from 'node:fs';
+import { join, dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { assignIds, normalizeAnswer, needsMsqConfirm, validateShape } from './lib/rules.mjs';
+import {
+  assignIds,
+  normalizeAnswer,
+  needsMsqConfirm,
+  validateShape,
+  indexTopics,
+  resolveTopic,
+  suggestSlug,
+} from './lib/rules.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const schema = JSON.parse(readFileSync(join(__dirname, '..', 'schema.json'), 'utf8'));
 
 const ajv = new Ajv2020({ allErrors: true });
 const validate = ajv.compile(schema);
+
+// Loaded once per run, resolved relative to this script so the result does
+// not depend on the caller's working directory (D-05).
+const topics = JSON.parse(readFileSync(join(__dirname, '..', 'topics.json'), 'utf8'));
+const { index: topicIndex, duplicates: topicDuplicates } = indexTopics(topics);
+const knownTopicSlugs = Object.keys(topicIndex);
 
 // Discover every `sources/<EXAM>/<YEAR>.json` paper under a bank root.
 // No registry file (D-01) — the exam directory name IS the display label.
@@ -80,6 +94,14 @@ function main() {
   let totalErrors = 0;
   let totalWarnings = 0;
 
+  // Ambiguous slugs are a property of topics.json itself, not of any one
+  // paper — subject derivation is broken until they're fixed, so this
+  // exits 1 regardless of which papers were checked.
+  for (const dup of topicDuplicates) {
+    console.log(`topics.json: topic slug "${dup.slug}" appears under both "${dup.subjects[0]}" and "${dup.subjects[1]}"`);
+    totalErrors += 1;
+  }
+
   for (const path of paperPaths) {
     let paper;
     try {
@@ -92,6 +114,7 @@ function main() {
 
     let errors = 0;
     let warnings = 0;
+    let unsortedCount = 0;
     const valid = validate(paper);
     if (!valid) {
       for (const err of validate.errors) {
@@ -101,6 +124,10 @@ function main() {
     } else {
       let changed = false;
       const msqPositions = [];
+      const unknownTopics = new Map(); // slug -> positions that used it
+      const examDir = dirname(path);
+      const assetsDir = join(examDir, 'assets', String(paper.year));
+      const resolvedAssetsDir = resolve(assetsDir);
 
       paper.questions.forEach((q, i) => {
         const n = i + 1;
@@ -108,6 +135,33 @@ function main() {
         for (const message of validateShape(q)) {
           console.log(`${path} q${n}: ${message}`);
           errors += 1;
+        }
+
+        // Subject is derived from the topic slug alone (D-05) — an unknown
+        // slug never fails the run (D-07, AUTH-03), it's grouped below and
+        // the question counts as unsorted until the author fixes the slug.
+        if (!resolveTopic(q.topic, topicIndex)) {
+          unsortedCount += 1;
+          const positions = unknownTopics.get(q.topic) ?? [];
+          positions.push(n);
+          unknownTopics.set(q.topic, positions);
+        }
+
+        // BANK-06: a referenced image absent from disk is a warning, never
+        // an error. The schema already restricts `image` to a bare
+        // filename (T-01-09); this re-asserts the resolved path is still
+        // inside the assets directory before any filesystem call.
+        if (q.image) {
+          const resolvedImagePath = resolve(join(assetsDir, q.image));
+          const insideAssets =
+            resolvedImagePath === resolvedAssetsDir || resolvedImagePath.startsWith(resolvedAssetsDir + sep);
+          if (!insideAssets) {
+            console.log(`${path} q${n}: image "${q.image}" resolves outside assets/${paper.year}/ — refusing to check`);
+            errors += 1;
+          } else if (!existsSync(resolvedImagePath)) {
+            console.log(`${path} q${n}: image "${q.image}" not found in assets/${paper.year}/`);
+            warnings += 1;
+          }
         }
 
         // Only touch the `answer` key when it's already present (AUTH-02) —
@@ -133,6 +187,17 @@ function main() {
         warnings += 1;
       }
 
+      // Grouped by slug (D-07): one invented slug typically lands on a
+      // dozen questions at once, and one line naming all of them beats a
+      // dozen identical lines.
+      for (const [slug, positions] of unknownTopics) {
+        const list = positions.map((n) => `q${n}`).join(', ');
+        const suggestion = suggestSlug(slug, knownTopicSlugs);
+        const suffix = suggestion ? ` — did you mean "${suggestion}"?` : '';
+        console.log(`${path}: unknown topic slug "${slug}" (${list})${suffix} counted as unsorted`);
+        warnings += 1;
+      }
+
       const assigned = assignIds(paper);
       if (assigned > 0) changed = true;
 
@@ -145,7 +210,9 @@ function main() {
     }
 
     const questionCount = Array.isArray(paper.questions) ? paper.questions.length : 0;
-    console.log(`${path}: ${questionCount} questions, ${errors} error(s), ${warnings} warning(s)`);
+    console.log(
+      `${path}: ${questionCount} questions, ${errors} error(s), ${warnings} warning(s), ${unsortedCount} unsorted`
+    );
     totalErrors += errors;
     totalWarnings += warnings;
   }
