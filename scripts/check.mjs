@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, writeFileSync, renameSync, statSync } from '
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
-import { assignIds } from './lib/rules.mjs';
+import { assignIds, normalizeAnswer, needsMsqConfirm, validateShape } from './lib/rules.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const schema = JSON.parse(readFileSync(join(__dirname, '..', 'schema.json'), 'utf8'));
@@ -63,6 +63,15 @@ function formatError(path, err) {
   return `${path}: ${err.message}`;
 }
 
+// True when `original` (whatever shape the author wrote) is already the
+// `{min, max}` (or null) that normalizeAnswer would produce, so a re-run
+// over an already-normalized paper does not rewrite the file.
+function answerAlreadyNormalized(original, normalized) {
+  if (normalized === null) return original === null || original === undefined;
+  if (original === null || typeof original !== 'object') return false;
+  return original.min === normalized.min && original.max === normalized.max;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const targets = args.length > 0 ? args : ['sources'];
@@ -82,7 +91,7 @@ function main() {
     }
 
     let errors = 0;
-    const warnings = 0;
+    let warnings = 0;
     const valid = validate(paper);
     if (!valid) {
       for (const err of validate.errors) {
@@ -90,8 +99,44 @@ function main() {
         errors += 1;
       }
     } else {
+      let changed = false;
+      const msqPositions = [];
+
+      paper.questions.forEach((q, i) => {
+        const n = i + 1;
+
+        for (const message of validateShape(q)) {
+          console.log(`${path} q${n}: ${message}`);
+          errors += 1;
+        }
+
+        // Only touch the `answer` key when it's already present (AUTH-02) —
+        // a question with no answer key keeps having no answer key.
+        if ('answer' in q) {
+          const normalized = normalizeAnswer(q.answer);
+          if (!answerAlreadyNormalized(q.answer, normalized)) {
+            q.answer = normalized;
+            changed = true;
+          }
+        }
+
+        if (needsMsqConfirm(q)) {
+          msqPositions.push(n);
+        }
+      });
+
+      if (msqPositions.length > 0) {
+        const list = msqPositions.map((n) => `q${n}`).join(', ');
+        console.log(
+          `${path}: ${msqPositions.length} single-correct question(s) with options — confirm not MSQ: ${list}`
+        );
+        warnings += 1;
+      }
+
       const assigned = assignIds(paper);
-      if (assigned > 0) {
+      if (assigned > 0) changed = true;
+
+      if (changed) {
         const serialized = `${JSON.stringify(paper, null, 2)}\n`;
         const tmpPath = `${path}.tmp`;
         writeFileSync(tmpPath, serialized);
