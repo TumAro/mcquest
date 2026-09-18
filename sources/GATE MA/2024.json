@@ -1,0 +1,95 @@
+{
+  "exam": "GATE MA",
+  "year": 2024,
+  "questions": [
+    {
+      "marks": 1,
+      "topic": "eigen",
+      "question": "Let $A = \\begin{pmatrix} 2 & 1 \\\\ 0 & 2 \\end{pmatrix}$. The eigenvalues of $A$ are",
+      "options": [
+        "$2, 2$",
+        "$1, 2$",
+        "$-2, -2$",
+        "$0, 2$"
+      ],
+      "correct": [
+        0
+      ],
+      "answer": null,
+      "note": "$A$ is upper triangular, so its eigenvalues are its diagonal entries: $\\lambda = 2$ and $\\lambda = 2$ (repeated).",
+      "id": "gate-ma-2024-1"
+    },
+    {
+      "marks": 2,
+      "topic": "limit",
+      "question": "The value of $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(3x)}{x}$ is",
+      "options": [
+        "$0$",
+        "$1$",
+        "$3$",
+        "$\\infty$"
+      ],
+      "correct": [
+        2
+      ],
+      "answer": null,
+      "note": "Using $\\lim_{x\\to 0} \\dfrac{\\sin(kx)}{x} = k$ with $k = 3$, the limit equals $3$.",
+      "id": "gate-ma-2024-2"
+    },
+    {
+      "marks": 2,
+      "topic": "rank",
+      "question": "Let $A = \\begin{pmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 1 & 1 & 1 \\end{pmatrix}$. Which of the following statements are TRUE?",
+      "options": [
+        "$\\text{rank}(A) = 2$",
+        "$\\text{rank}(A) = 3$",
+        "$\\text{nullity}(A) = 1$",
+        "$\\text{nullity}(A) = 0$"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "answer": null,
+      "note": "Row 2 is twice row 1, so the rows are dependent; rows 1 and 3 are not proportional, so $\\text{rank}(A) = 2$. By the rank-nullity theorem, $\\text{nullity}(A) = 3 - 2 = 1$.",
+      "id": "gate-ma-2024-3"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "continuity",
+      "question": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be defined by $f(x) = |x|$. Which of the following statements are TRUE?",
+      "options": [
+        "$f$ is continuous at $x = 0$",
+        "$f$ is differentiable at $x = 0$",
+        "$f$ is a bijection on $\\mathbb{R}$",
+        "$f$ is bounded on $\\mathbb{R}$"
+      ],
+      "correct": [
+        0
+      ],
+      "answer": null,
+      "note": "$f$ is continuous everywhere, including at $0$, but has a corner there so it is not differentiable at $x=0$. It is neither injective ($f(-1) = f(1)$) nor surjective onto $\\mathbb{R}$ (its range is $[0,\\infty)$), so it is not a bijection, and $f(x) \\to \\infty$ as $|x| \\to \\infty$, so it is unbounded. Only the first statement is true.",
+      "id": "gate-ma-2024-4"
+    },
+    {
+      "marks": 1,
+      "topic": "series",
+      "question": "The sum of the infinite geometric series $\\displaystyle\\sum_{n=1}^{\\infty} \\dfrac{1}{2^n}$ equals _____ (round to two decimal places).",
+      "answer": 1,
+      "note": "This is a geometric series with first term $a = 1/2$ and common ratio $r = 1/2$. The sum is $\\dfrac{a}{1-r} = \\dfrac{1/2}{1/2} = 1$.",
+      "id": "gate-ma-2024-5"
+    },
+    {
+      "marks": 2,
+      "topic": "multivariable",
+      "question": "Minimize $f(x,y) = x^2 + y^2$ subject to the constraint $x + y = 4$. The minimum value of $f$ is _____.",
+      "answer": {
+        "min": 7.99,
+        "max": 8.01
+      },
+      "note": "By Lagrange multipliers, $\\nabla f = \\lambda \\nabla g$ gives $2x = \\lambda = 2y$, so $x = y$. Combined with $x + y = 4$ this gives $x = y = 2$, so the minimum value is $f(2,2) = 4 + 4 = 8$.",
+      "id": "gate-ma-2024-6"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "_note": "PLACEHOLDER — replace with the real subject/topic slug list",
+  "linear-algebra": {
+    "label": "Linear Algebra",
+    "topics": {
+      "eigen": "Eigenvalues & Eigenvectors",
+      "rank": "Rank & Nullity",
+      "linear-transform": "Linear Transformations"
+    }
+  },
+  "calculus": {
+    "label": "Calculus",
+    "topics": {
+      "limit": "Limits",
+      "series": "Sequences & Series",
+      "multivariable": "Multivariable Calculus"
+    }
+  },
+  "real-analysis": {
+    "label": "Real Analysis",
+    "topics": {
+      "metric-space": "Metric Spaces",
+      "continuity": "Continuity"
+    }
+  },
+  "probability": {
+    "label": "Probability",
+    "topics": {
+      "distributions": "Distributions"
+    }
+  },
+  "algebra": {
+    "label": "Algebra",
+    "topics": {
+      "groups": "Groups",
+      "rings": "Rings"
+    }
+  }
+}

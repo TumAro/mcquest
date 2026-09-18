@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcquest.local/schema/paper.json",
+  "title": "McQuest paper",
+  "type": "object",
+  "required": ["exam", "year", "questions"],
+  "additionalProperties": false,
+  "properties": {
+    "exam": { "type": "string", "minLength": 1 },
+    "year": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+    "maxAnswered": { "type": "integer", "minimum": 1 },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/question" }
+    }
+  },
+  "$defs": {
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marks", "topic", "question"],
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "enum": ["single", "multi", "numeric"] },
+        "marks": { "type": "number", "exclusiveMinimum": 0 },
+        "topic": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "question": { "type": "string", "minLength": 1 },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string" }
+        },
+        "correct": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "note": { "type": "string" },
+        "image": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._-]+\\.(png|jpg|jpeg|svg|webp)$"
+            }
+          ]
+        },
+        "answer": {
+          "oneOf": [
+            { "type": "number" },
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["value", "tolerance"],
+              "properties": {
+                "value": { "type": "number" },
+                "tolerance": { "type": "number" }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": { "type": "number" },
+                "max": { "type": "number" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
