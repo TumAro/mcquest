@@ -60,11 +60,15 @@ export function findRule(config, exam, type, marks) {
 }
 
 /**
- * All-or-nothing single-correct: the set of selected indices must equal the
- * set of correct indices exactly. Built on Sets so a duplicated index in the
- * response can never masquerade as a longer, differently-shaped selection.
+ * All-or-nothing option-based correctness, shared by `single` and `multi`:
+ * the set of selected indices must equal the set of correct indices exactly.
+ * Built on Sets so a duplicated index in the response can never masquerade
+ * as a longer, differently-shaped selection, and selection order never
+ * matters. This is precisely what all-or-nothing means, so `single` and
+ * `multi` differ only in their deduction, never in how correctness is
+ * decided.
  */
-function isCorrectSingle(question, response) {
+function isCorrectOptionSet(question, response) {
   const responseSet = new Set(response);
   const correctSet = new Set(question.correct);
   if (responseSet.size !== correctSet.size) return false;
@@ -75,14 +79,47 @@ function isCorrectSingle(question, response) {
 }
 
 /**
+ * Numeric correctness: the response is correct when it falls inside the
+ * normalized `{min, max}` bounds, inclusive at both ends. Throws, naming the
+ * question id, when the response is not a finite number — a text value
+ * arriving here is the most dangerous input in the project, since coerced,
+ * an empty box becomes a zero that sits inside the accepted range of any
+ * question whose answer is near zero. Throws, naming the question id, when
+ * `answer` is not an object carrying two finite bounds — an unnormalized
+ * bank question would otherwise compare against an undefined bound and mark
+ * every response wrong while deducting nothing, invisibly.
+ */
+function isCorrectNumeric(question, response) {
+  if (typeof response !== 'number' || !Number.isFinite(response)) {
+    throw new Error(
+      `question ${question.id}: expected a finite number response, got ${JSON.stringify(response)}`
+    );
+  }
+  const answer = question.answer;
+  if (
+    !answer ||
+    typeof answer !== 'object' ||
+    Array.isArray(answer) ||
+    !Number.isFinite(answer.min) ||
+    !Number.isFinite(answer.max)
+  ) {
+    throw new Error(
+      `question ${question.id}: numeric answer must be a normalized {min, max} object with finite bounds, got ${JSON.stringify(answer)}`
+    );
+  }
+  return response >= answer.min && response <= answer.max;
+}
+
+/**
  * Score one question against one response. Returns `{ status, score }` where
  * `status` is one of `correct`, `wrong`, `unattempted`. A `response` of
  * `null`, `undefined`, or an empty array is unattempted and scores zero,
  * deducting nothing. For an option-based question (single or multi) the
  * response must be an array of option indices; anything else throws, naming
- * the question, rather than being silently reinterpreted. Only the `single`
- * correctness predicate is implemented here — `multi` and `numeric` slot in
- * later without changing anything above them.
+ * the question, rather than being silently reinterpreted. For a numeric
+ * question the response must be a finite number and the question's `answer`
+ * must already be normalized to `{min, max}`; either violation throws,
+ * naming the question — see `isCorrectNumeric`.
  */
 export function scoreQuestion(config, question, response) {
   const type = inferType(question);
@@ -102,10 +139,12 @@ export function scoreQuestion(config, question, response) {
   }
 
   let correct;
-  if (type === 'single') {
-    correct = isCorrectSingle(question, response);
+  if (optionBased) {
+    correct = isCorrectOptionSet(question, response);
+  } else if (type === 'numeric') {
+    correct = isCorrectNumeric(question, response);
   } else {
-    throw new Error(`question ${question.id}: scoring for type "${type}" is not implemented yet`);
+    throw new Error(`question ${question.id}: unknown question type "${type}"`);
   }
 
   if (correct) {
