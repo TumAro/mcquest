@@ -3,7 +3,7 @@
 // All validation logic lives in schema.json; all pure rules live in lib/rules.mjs.
 
 import { readdirSync, readFileSync, writeFileSync, renameSync, statSync, existsSync } from 'node:fs';
-import { join, dirname, resolve, sep } from 'node:path';
+import { join, dirname, basename, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import {
@@ -14,8 +14,10 @@ import {
   indexTopics,
   resolveTopic,
   suggestSlug,
+  inferType,
+  slugify,
 } from './lib/rules.mjs';
-import { validateExamRules } from './lib/marking.mjs';
+import { validateExamRules, findRule } from './lib/marking.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const schema = JSON.parse(readFileSync(join(__dirname, '..', 'schema.json'), 'utf8'));
@@ -31,16 +33,32 @@ const knownTopicSlugs = Object.keys(topicIndex);
 
 // exams.json is loaded lazily (not at module scope) so a missing or
 // unparseable file is reported through the checker's own error count
-// instead of crashing the process before main() gets to run.
-function loadExamRulesMessages() {
+// instead of crashing the process before main() gets to run. Returns the
+// parsed config alongside the validateExamRules messages so main() reads
+// the file exactly once and reuses the same config for the per-question
+// rule audit below.
+function loadExamConfig() {
   const examsPath = join(__dirname, '..', 'exams.json');
   let config;
   try {
     config = JSON.parse(readFileSync(examsPath, 'utf8'));
   } catch (err) {
-    return [`exams.json: could not read or parse — ${err.message}`];
+    return { config: null, messages: [`exams.json: could not read or parse — ${err.message}`] };
   }
-  return validateExamRules(config).map((message) => `exams.json: ${message}`);
+  return { config, messages: validateExamRules(config).map((message) => `exams.json: ${message}`) };
+}
+
+// The same slug-matching findRule uses to decide whether an exam has an
+// entry of its own, so the "is this exam configured" question is answered
+// identically in both places. Returns the matching config key, or `null`
+// when the exam falls through to `default`.
+function findConfiguredExamKey(config, examLabel) {
+  const targetSlug = slugify(examLabel);
+  for (const key of Object.keys(config)) {
+    if (key.startsWith('_') || key === 'default') continue;
+    if (slugify(key) === targetSlug) return key;
+  }
+  return null;
 }
 
 // Discover every `sources/<EXAM>/<YEAR>.json` paper under a bank root.
@@ -121,7 +139,8 @@ function main() {
   // read, and the author runs this constantly — the gate belongs here, not
   // in the build step. A property of the config itself, so it's reported
   // once per run regardless of which papers were checked.
-  for (const message of loadExamRulesMessages()) {
+  const { config: examConfig, messages: examConfigMessages } = loadExamConfig();
+  for (const message of examConfigMessages) {
     console.log(message);
     totalErrors += 1;
   }
@@ -139,6 +158,23 @@ function main() {
     let errors = 0;
     let warnings = 0;
     let unsortedCount = 0;
+
+    // The exam directory name is the display label (D-01) — the same name
+    // build-data.mjs stamps onto every question and scoreQuestion later
+    // reads, so this is what must be checked against exams.json, not the
+    // paper's own `exam` field. Decided once per paper, independent of
+    // whether the paper's contents pass schema validation below.
+    const examLabel = basename(dirname(path));
+    const examKey = examConfig ? findConfiguredExamKey(examConfig, examLabel) : null;
+    if (examConfig && !examKey) {
+      const configuredExams = Object.keys(examConfig).filter((k) => !k.startsWith('_') && k !== 'default');
+      console.log(
+        `${path}: exam "${examLabel}" has no entry in exams.json — scored with the default rules (no ` +
+          `deduction for a wrong answer). Configured exams: ${configuredExams.join(', ') || '(none)'}`
+      );
+      warnings += 1;
+    }
+
     const valid = validate(paper);
     if (!valid) {
       for (const err of validate.errors) {
@@ -159,6 +195,24 @@ function main() {
         for (const message of validateShape(q)) {
           console.log(`${path} q${n}: ${message}`);
           errors += 1;
+        }
+
+        // MARK-01: a configured exam is a promise that every marks value it
+        // actually uses can be scored. A gap found here is a typo the
+        // author fixes in seconds; the same gap found by scoreQuestion at
+        // submit time is a crash in the middle of a mock. Only checked for
+        // an exam that has an entry of its own — an unconfigured exam
+        // already got its one warning above and falls through to `default`.
+        if (examConfig && examKey) {
+          const type = inferType(q);
+          const marks = q.marks;
+          if (findRule(examConfig, examLabel, type, marks) === null) {
+            console.log(
+              `${path} q${n}: exam "${examLabel}" is configured but has no wrong-answer rule for type ` +
+                `"${type}" marks ${marks} — add "${examKey}"."${type}".wrong["${marks}"] to exams.json`
+            );
+            errors += 1;
+          }
         }
 
         // Subject is derived from the topic slug alone (D-05) — an unknown
