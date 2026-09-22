@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:data": "node scripts/build-data.mjs",
     "check": "node scripts/check.mjs",
     "test": "node --test"
   },

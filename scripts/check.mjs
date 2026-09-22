@@ -4,7 +4,7 @@
 
 import { readdirSync, readFileSync, writeFileSync, renameSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import {
   assignIds,
@@ -30,7 +30,7 @@ const knownTopicSlugs = Object.keys(topicIndex);
 
 // Discover every `sources/<EXAM>/<YEAR>.json` paper under a bank root.
 // No registry file (D-01) — the exam directory name IS the display label.
-function discoverPapers(root) {
+export function discoverPapers(root) {
   const papers = [];
   const examEntries = readdirSync(root, { withFileTypes: true });
   for (const examEntry of examEntries) {
@@ -51,7 +51,7 @@ function discoverPapers(root) {
 // argv are paths, defaulting to ["sources"]. A directory is scanned as a
 // bank root; a .json path is checked directly. This is what lets tests and
 // later plans point the checker at a temp directory.
-function collectPaperPaths(targets) {
+export function collectPaperPaths(targets) {
   const paths = [];
   for (const target of targets) {
     const st = statSync(target, { throwIfNoEntry: false });
@@ -221,4 +221,9 @@ function main() {
   process.exit(totalErrors > 0 ? 1 : 0);
 }
 
-main();
+// Only run when invoked directly (`node scripts/check.mjs`), not when
+// imported — `build-data.mjs` imports `discoverPapers` from this module and
+// must not trigger a full check run as a side effect.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

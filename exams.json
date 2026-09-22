@@ -1,0 +1,23 @@
+{
+  "_note": "A correct answer always scores +marks — only the wrong-answer deduction is configured here. An exam with no entry below is scored under \"default\". A deduction may be written as a fraction string such as \"-1/3\" to stay exact.",
+  "default": {
+    "single": { "wrong": 0 },
+    "multi": { "wrong": 0 },
+    "numeric": { "wrong": 0 }
+  },
+  "GATE MA": {
+    "single": { "wrong": { "1": "-1/3", "2": "-2/3" } },
+    "multi": { "wrong": 0 },
+    "numeric": { "wrong": 0 }
+  },
+  "IIT JAM": {
+    "single": { "wrong": { "1": "-1/3", "2": "-2/3" } },
+    "multi": { "wrong": 0 },
+    "numeric": { "wrong": 0 }
+  },
+  "CSIR NET": {
+    "single": { "wrong": { "3": -0.75 } },
+    "multi": { "wrong": 0 },
+    "numeric": { "wrong": 0 }
+  }
+}
