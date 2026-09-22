@@ -120,3 +120,11 @@ export function scoreQuestion(config, question, response) {
   }
   return { status: 'wrong', score: deduction };
 }
+
+/**
+ * Validate a loaded `exams.json`. Returns an array of message strings, empty
+ * when the config is sound. TODO(02-01 Task 2 GREEN): not implemented yet.
+ */
+export function validateExamRules() {
+  throw new Error('validateExamRules is not implemented yet');
+}
