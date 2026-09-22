@@ -160,11 +160,35 @@ export function scoreQuestion(config, question, response) {
   return { status: 'wrong', score: deduction };
 }
 
-// Stub for the RED phase of Task 2 — exported so the test file loads and
-// every scoreAttempt test fails on its own assertion, not on a missing
-// export. Replaced with the real fold in the GREEN commit.
-export function scoreAttempt() {
-  throw new Error('scoreAttempt is not implemented yet');
+/**
+ * Score a full attempt: `responses` is a plain object keyed by question id
+ * (the shape that survives a round trip through browser storage with no
+ * conversion step). Calls `scoreQuestion` once per question, in order, and
+ * folds the results — no rounding, since rounding for display is the
+ * results screen's decision and a value rounded twice is a value rounded
+ * wrongly. `max` sums every question's `marks`, including the unattempted
+ * ones. `results` mirrors the question order so the review screen can walk
+ * it against the questions without re-scoring.
+ */
+export function scoreAttempt(config, questions, responses) {
+  let score = 0;
+  let max = 0;
+  let correct = 0;
+  let wrong = 0;
+  let unattempted = 0;
+  const results = [];
+
+  for (const question of questions) {
+    max += question.marks;
+    const result = scoreQuestion(config, question, responses[question.id]);
+    score += result.score;
+    if (result.status === 'correct') correct += 1;
+    else if (result.status === 'wrong') wrong += 1;
+    else unattempted += 1;
+    results.push({ id: question.id, status: result.status, score: result.score });
+  }
+
+  return { score, max, correct, wrong, unattempted, results };
 }
 
 const QUESTION_TYPES = ['single', 'multi', 'numeric'];

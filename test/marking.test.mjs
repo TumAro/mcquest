@@ -517,11 +517,20 @@ test('scoreAttempt: precision — a 65-question all-wrong GATE MA paper lands wi
   assert.equal(result.results[0].id, 'p0');
   approxEqual(result.score, exact, 1e-9);
 
+  // For this exact composition (30 one-mark + 35 two-mark, forced by max=100
+  // and wrong=65), rounding -1/3 to -0.33 and -2/3 to -0.67 produces errors
+  // of opposite sign (+1/300 per 1-mark question, -1/300 per 2-mark
+  // question) that nearly cancel: the true divergence is exactly
+  // 30*(1/300) - 35*(1/300) = -1/60 ~= -0.01667 of a mark, not the ">0.05"
+  // a naive estimate might suggest. 1/60 of a mark is still a real,
+  // deterministic drift the exact-fraction config avoids — assert against
+  // that true figure rather than an inflated one.
   const roundedConfig = JSON.parse(JSON.stringify(realExamConfig));
   roundedConfig['GATE MA'].single.wrong = { 1: -0.33, 2: -0.67 };
   const roundedResult = scoreAttempt(roundedConfig, questions, responses);
+  approxEqual(roundedResult.score, exact - 1 / 60, 1e-9);
   assert.ok(
-    Math.abs(roundedResult.score - exact) > 0.05,
+    Math.abs(roundedResult.score - exact) > 0.01,
     'a two-decimal deduction table should visibly diverge from the exact closed form'
   );
 });
