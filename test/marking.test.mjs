@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { findRule, scoreQuestion, validateExamRules } from '../scripts/lib/marking.mjs';
+import { findRule, scoreQuestion, scoreAttempt, validateExamRules } from '../scripts/lib/marking.mjs';
 
 const realExamConfig = JSON.parse(readFileSync(new URL('../exams.json', import.meta.url), 'utf8'));
 
@@ -446,3 +446,82 @@ test('scoreQuestion: the SAMPLE paper numeric question (q5) honors the inclusive
   assert.deepEqual(scoreQuestion(realExamConfig, q5, null), { status: 'unattempted', score: 0 });
 });
 
+
+// --- scoreAttempt ---
+
+test('scoreAttempt: a mixed GATE MA attempt sums scores and counts each status once', () => {
+  const questions = [
+    { id: 'a1', exam: 'GATE MA', marks: 1, correct: [0] },
+    { id: 'a2', exam: 'GATE MA', marks: 2, correct: [0] },
+    { id: 'a3', exam: 'GATE MA', marks: 2, correct: [0, 2] },
+    { id: 'a4', exam: 'GATE MA', marks: 2, answer: { min: 0.99, max: 1.01 } },
+  ];
+  const responses = { a1: [0], a2: [1], a3: [0] };
+  const result = scoreAttempt(realExamConfig, questions, responses);
+
+  approxEqual(result.score, 1 + 0 - 2 / 3);
+  assert.equal(result.max, 7);
+  assert.equal(result.correct, 1);
+  assert.equal(result.wrong, 2);
+  assert.equal(result.unattempted, 1);
+});
+
+test('scoreAttempt: results mirror question order, each carrying id, status, and score', () => {
+  const questions = [
+    { id: 'a1', exam: 'GATE MA', marks: 1, correct: [0] },
+    { id: 'a2', exam: 'GATE MA', marks: 2, correct: [0] },
+  ];
+  const result = scoreAttempt(realExamConfig, questions, { a1: [0], a2: [1] });
+  assert.deepEqual(result.results, [
+    { id: 'a1', status: 'correct', score: 1 },
+    { id: 'a2', status: 'wrong', score: -2 / 3 },
+  ]);
+});
+
+test('scoreAttempt: a question missing from the responses map counts as unattempted, not wrong', () => {
+  const questions = [{ id: 'a1', exam: 'GATE MA', marks: 2, correct: [0] }];
+  const result = scoreAttempt(realExamConfig, questions, {});
+  assert.equal(result.unattempted, 1);
+  assert.equal(result.wrong, 0);
+  assert.equal(result.score, 0);
+});
+
+test('scoreAttempt: a two-exam attempt scores each question under its own exam rules', () => {
+  const questions = [
+    { id: 'x', exam: 'CSIR NET', marks: 3, correct: [0] },
+    { id: 'y', exam: 'GATE MA', marks: 1, correct: [0] },
+    { id: 'z', exam: 'GATE MA', marks: 2, correct: [0] },
+  ];
+  const result = scoreAttempt(realExamConfig, questions, { x: [1], y: [1] });
+  approxEqual(result.score, -0.75 - 1 / 3);
+  assert.equal(result.unattempted, 1);
+  assert.equal(result.wrong, 2);
+  assert.equal(result.max, 6);
+});
+
+test('scoreAttempt: precision — a 65-question all-wrong GATE MA paper lands within 1e-9 of the exact closed form', () => {
+  const questions = [];
+  for (let i = 0; i < 30; i++) questions.push({ id: `p${i}`, exam: 'GATE MA', marks: 1, correct: [0] });
+  for (let i = 0; i < 35; i++) questions.push({ id: `q${i}`, exam: 'GATE MA', marks: 2, correct: [0] });
+  const responses = {};
+  for (const q of questions) responses[q.id] = [3];
+
+  const result = scoreAttempt(realExamConfig, questions, responses);
+  const exact = -(100 / 3);
+
+  assert.equal(result.max, 100);
+  assert.equal(result.wrong, 65);
+  assert.equal(result.correct, 0);
+  assert.equal(result.unattempted, 0);
+  assert.equal(result.results.length, 65);
+  assert.equal(result.results[0].id, 'p0');
+  approxEqual(result.score, exact, 1e-9);
+
+  const roundedConfig = JSON.parse(JSON.stringify(realExamConfig));
+  roundedConfig['GATE MA'].single.wrong = { 1: -0.33, 2: -0.67 };
+  const roundedResult = scoreAttempt(roundedConfig, questions, responses);
+  assert.ok(
+    Math.abs(roundedResult.score - exact) > 0.05,
+    'a two-decimal deduction table should visibly diverge from the exact closed form'
+  );
+});

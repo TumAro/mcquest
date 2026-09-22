@@ -160,6 +160,13 @@ export function scoreQuestion(config, question, response) {
   return { status: 'wrong', score: deduction };
 }
 
+// Stub for the RED phase of Task 2 — exported so the test file loads and
+// every scoreAttempt test fails on its own assertion, not on a missing
+// export. Replaced with the real fold in the GREEN commit.
+export function scoreAttempt() {
+  throw new Error('scoreAttempt is not implemented yet');
+}
+
 const QUESTION_TYPES = ['single', 'multi', 'numeric'];
 
 /**
