@@ -15,6 +15,7 @@ import {
   resolveTopic,
   suggestSlug,
 } from './lib/rules.mjs';
+import { validateExamRules } from './lib/marking.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const schema = JSON.parse(readFileSync(join(__dirname, '..', 'schema.json'), 'utf8'));
@@ -27,6 +28,20 @@ const validate = ajv.compile(schema);
 const topics = JSON.parse(readFileSync(join(__dirname, '..', 'topics.json'), 'utf8'));
 const { index: topicIndex, duplicates: topicDuplicates } = indexTopics(topics);
 const knownTopicSlugs = Object.keys(topicIndex);
+
+// exams.json is loaded lazily (not at module scope) so a missing or
+// unparseable file is reported through the checker's own error count
+// instead of crashing the process before main() gets to run.
+function loadExamRulesMessages() {
+  const examsPath = join(__dirname, '..', 'exams.json');
+  let config;
+  try {
+    config = JSON.parse(readFileSync(examsPath, 'utf8'));
+  } catch (err) {
+    return [`exams.json: could not read or parse — ${err.message}`];
+  }
+  return validateExamRules(config).map((message) => `exams.json: ${message}`);
+}
 
 // Discover every `sources/<EXAM>/<YEAR>.json` paper under a bank root.
 // No registry file (D-01) — the exam directory name IS the display label.
@@ -99,6 +114,15 @@ function main() {
   // exits 1 regardless of which papers were checked.
   for (const dup of topicDuplicates) {
     console.log(`topics.json: topic slug "${dup.slug}" appears under both "${dup.subjects[0]}" and "${dup.subjects[1]}"`);
+    totalErrors += 1;
+  }
+
+  // A typo in exams.json silently corrupts every score the author will ever
+  // read, and the author runs this constantly — the gate belongs here, not
+  // in the build step. A property of the config itself, so it's reported
+  // once per run regardless of which papers were checked.
+  for (const message of loadExamRulesMessages()) {
+    console.log(message);
     totalErrors += 1;
   }
 

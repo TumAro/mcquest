@@ -121,10 +121,83 @@ export function scoreQuestion(config, question, response) {
   return { status: 'wrong', score: deduction };
 }
 
+const QUESTION_TYPES = ['single', 'multi', 'numeric'];
+
 /**
  * Validate a loaded `exams.json`. Returns an array of message strings, empty
- * when the config is sound. TODO(02-01 Task 2 GREEN): not implemented yet.
+ * when the config is sound — the same contract `validateShape` uses in
+ * `rules.mjs`. Each message is written to read as the tail of the sentence
+ * `exams.json: <message>`; the caller supplies the prefix. Underscore-
+ * prefixed keys (top-level notes, or a stray metadata key inside an entry)
+ * are skipped, matching `indexTopics`.
  */
-export function validateExamRules() {
-  throw new Error('validateExamRules is not implemented yet');
+export function validateExamRules(config) {
+  const messages = [];
+
+  if (!('default' in config)) {
+    messages.push('missing a "default" entry');
+  }
+
+  for (const [examKey, entry] of Object.entries(config)) {
+    if (examKey.startsWith('_')) continue;
+
+    if (entry === null || typeof entry !== 'object' || Array.isArray(entry)) {
+      messages.push(`"${examKey}" entry is not an object`);
+      continue;
+    }
+
+    for (const type of QUESTION_TYPES) {
+      if (!(type in entry)) {
+        messages.push(`"${examKey}" is missing a "${type}" entry`);
+      }
+    }
+    for (const typeKey of Object.keys(entry)) {
+      if (typeKey.startsWith('_')) continue;
+      if (!QUESTION_TYPES.includes(typeKey)) {
+        messages.push(`"${examKey}" has an unrecognised question type "${typeKey}"`);
+      }
+    }
+
+    for (const type of QUESTION_TYPES) {
+      if (!(type in entry)) continue;
+      const typeEntry = entry[type];
+      if (typeEntry === null || typeof typeEntry !== 'object' || Array.isArray(typeEntry)) {
+        messages.push(`"${examKey}" "${type}" entry is not an object`);
+        continue;
+      }
+      if (!('wrong' in typeEntry)) {
+        messages.push(`"${examKey}" "${type}" has no "wrong" key`);
+        continue;
+      }
+
+      const wrong = typeEntry.wrong;
+      if (wrong && typeof wrong === 'object' && !Array.isArray(wrong)) {
+        for (const [marksKey, deduction] of Object.entries(wrong)) {
+          const parsed = parseDeduction(deduction);
+          if (parsed === null) {
+            messages.push(
+              `"${examKey}" "${type}" wrong["${marksKey}"] (${JSON.stringify(deduction)}) is not a number or an "a/b" fraction string`
+            );
+          } else if (parsed > 0) {
+            messages.push(
+              `"${examKey}" "${type}" wrong["${marksKey}"] (${JSON.stringify(deduction)}) is positive — a wrong answer must never add marks`
+            );
+          }
+        }
+      } else {
+        const parsed = parseDeduction(wrong);
+        if (parsed === null) {
+          messages.push(
+            `"${examKey}" "${type}" wrong (${JSON.stringify(wrong)}) is not a number or an "a/b" fraction string`
+          );
+        } else if (parsed > 0) {
+          messages.push(
+            `"${examKey}" "${type}" wrong (${JSON.stringify(wrong)}) is positive — a wrong answer must never add marks`
+          );
+        }
+      }
+    }
+  }
+
+  return messages;
 }
