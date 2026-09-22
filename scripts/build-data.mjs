@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname, basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { inferType, slugify } from './lib/rules.mjs';
+import { inferType, slugify, indexTopics, resolveTopic } from './lib/rules.mjs';
 import { discoverPapers } from './check.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -19,6 +19,9 @@ function main() {
 
   const topicsRaw = JSON.parse(readFileSync(join(__dirname, '..', 'topics.json'), 'utf8'));
   const topics = Object.fromEntries(Object.entries(topicsRaw).filter(([key]) => !key.startsWith('_')));
+  // Same lookup the checker builds from the same file, so a slug the checker
+  // warns about is exactly the slug the index buckets as unsorted.
+  const { index: topicIndex } = indexTopics(topicsRaw);
 
   // Group papers by their exam folder name (the display label, per the
   // "folder name is the display label" rule) — same walk the checker uses,
@@ -37,6 +40,7 @@ function main() {
 
   const exams = [];
   let paperCount = 0;
+  let unsortedTotal = 0;
 
   for (const label of labels) {
     const slug = slugify(label);
@@ -56,22 +60,37 @@ function main() {
       const paperPath = join(paperDir, `${year}.json`);
       writeFileSync(paperPath, `${JSON.stringify(stampedPaper, null, 2)}\n`);
       paperCount += 1;
-      console.log(`${paperPath}: ${stampedPaper.questions.length} questions`);
 
-      yearsIndex.push({
-        year,
-        count: stampedPaper.questions.length,
-        questions: stampedPaper.questions.map((q) => ({ id: q.id, topic: q.topic, type: inferType(q) })),
+      // A slug the checker already warned about as unknown buckets here as
+      // "unsorted" rather than vanishing — the checker's warning and the
+      // builder's bucketing must never disagree.
+      let paperUnsorted = 0;
+      const questions = stampedPaper.questions.map((q) => {
+        const known = resolveTopic(q.topic, topicIndex);
+        const topic = known ? q.topic : 'unsorted';
+        if (!known) paperUnsorted += 1;
+        return { id: q.id, topic, type: inferType(q) };
       });
+      unsortedTotal += paperUnsorted;
+
+      console.log(`${paperPath}: ${stampedPaper.questions.length} questions, ${paperUnsorted} unsorted`);
+
+      yearsIndex.push({ year, count: stampedPaper.questions.length, questions });
     }
 
     exams.push({ label, slug, years: yearsIndex });
   }
 
+  // Only added when a question actually landed there — an empty group on
+  // the subject-wise selection screen would be noise.
+  if (unsortedTotal > 0) {
+    topics.unsorted = { label: 'Unsorted', topics: { unsorted: 'Unsorted' } };
+  }
+
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, 'index.json'), `${JSON.stringify({ topics, exams }, null, 2)}\n`);
 
-  console.log(`build:data: ${paperCount} paper(s), ${exams.length} exam(s) -> ${outDir}`);
+  console.log(`build:data: ${paperCount} paper(s), ${exams.length} exam(s), ${unsortedTotal} unsorted -> ${outDir}`);
 }
 
 main();
