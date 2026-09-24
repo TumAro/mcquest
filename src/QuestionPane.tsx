@@ -1,6 +1,8 @@
 import type { Question, Response } from './data'
 import { inferType } from '../scripts/lib/rules.mjs'
+import { parseNumeric } from './numeric'
 import Math from './Math'
+import './question-pane.css'
 
 export interface QuestionPaneProps {
   question: Question
@@ -18,43 +20,46 @@ export default function QuestionPane({
   onDraft,
 }: QuestionPaneProps) {
   const type = inferType(question)
+  const draftString =
+    type === 'numeric' && typeof draft === 'number'
+      ? String(draft)
+      : type === 'numeric'
+        ? ''
+        : undefined
+
+  const handleNumericChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.currentTarget.value
+    const parsed = parseNumeric(raw)
+    onDraft(parsed)
+  }
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-          marginBottom: '1rem',
-          borderBottom: '1px solid #ccc',
-          paddingBottom: '0.5rem',
-        }}
-      >
+    <div className="question-pane">
+      <div className="question-pane-header">
         <h2>Question {number}</h2>
-        <div style={{ fontSize: '0.9rem', color: '#666' }}>
+        <div className="question-pane-meta">
           {question.marks} marks | {question.topic}
         </div>
       </div>
 
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div className="question-pane-text">
         <Math text={question.question} />
       </div>
 
       {question.image && (
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div className="question-pane-image">
           <img
-            src={assetBase + question.image}
-            alt="question image"
-            style={{ maxWidth: '100%', maxHeight: '300px' }}
+            src={assetBase + encodeURIComponent(question.image)}
+            alt={`Figure for Question ${number}`}
           />
         </div>
       )}
 
       {type === 'single' && question.options && (
-        <div>
+        <fieldset className="question-pane-options">
+          <legend className="visually-hidden">Question {number}, select one</legend>
           {question.options.map((option, idx) => (
-            <label key={idx} style={{ display: 'block', marginBottom: '0.5rem' }}>
+            <label key={idx} className="question-pane-option">
               <input
                 type="radio"
                 name={question.id}
@@ -62,16 +67,57 @@ export default function QuestionPane({
                 checked={Array.isArray(draft) && draft[0] === idx}
                 onChange={() => onDraft([idx])}
               />
-              <span style={{ marginLeft: '0.5rem' }}>
+              <span className="option-text">
                 <Math text={option} />
               </span>
             </label>
           ))}
-        </div>
+        </fieldset>
       )}
 
-      {type !== 'single' && (
-        <div style={{ color: '#999' }}>Unsupported type: {type}</div>
+      {type === 'multi' && question.options && (
+        <fieldset className="question-pane-options">
+          <legend className="visually-hidden">Question {number}, select all that apply</legend>
+          <div className="multi-note">All correct options must be selected; there is no partial credit.</div>
+          {question.options.map((option, idx) => (
+            <label key={idx} className="question-pane-option">
+              <input
+                type="checkbox"
+                checked={Array.isArray(draft) && draft.includes(idx)}
+                onChange={(e) => {
+                  const newDraft = Array.isArray(draft) ? [...draft] : []
+                  if (e.currentTarget.checked) {
+                    newDraft.push(idx)
+                  } else {
+                    newDraft.splice(newDraft.indexOf(idx), 1)
+                  }
+                  // Sort ascending so the saved shape is stable
+                  newDraft.sort((a, b) => a - b)
+                  onDraft(newDraft.length > 0 ? newDraft : [])
+                }}
+              />
+              <span className="option-text">
+                <Math text={option} />
+              </span>
+            </label>
+          ))}
+        </fieldset>
+      )}
+
+      {type === 'numeric' && (
+        <div className="numeric-field-wrapper">
+          <label htmlFor={question.id} className="numeric-label">
+            Enter your answer:
+          </label>
+          <input
+            id={question.id}
+            type="number"
+            inputMode="decimal"
+            value={draftString ?? ''}
+            onChange={handleNumericChange}
+            className="numeric-input"
+          />
+        </div>
       )}
     </div>
   )
