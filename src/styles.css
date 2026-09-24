@@ -44,7 +44,7 @@ a:hover {
 
 button {
   font-size: 16px;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   border: 1px solid #999;
   background: #fff;
   color: #000;
@@ -55,6 +55,16 @@ button {
 
 button:hover {
   background: #f0f0f0;
+}
+
+button:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+a:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
 }
 
 code {
@@ -78,6 +88,72 @@ li {
 /* Player layout: two-column grid above 900px */
 @media (min-width: 901px) {
   /* Grid is set inline on the player div */
+}
+
+/* Control row styling */
+div[style*="borderTop"][style*="display: flex"] {
+  flex-wrap: wrap;
+}
+
+/* Score line styling */
+div[style*="backgroundColor: #f0f0f0"] {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+/* Browse screens: exam list and year cards */
+.exam-list,
+.year-list {
+  list-style: none;
+  padding: 1rem;
+}
+
+.exam-item,
+.year-item {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.exam-item:hover,
+.year-item:hover {
+  background: #f9f9f9;
+}
+
+.exam-item a,
+.year-item a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.exam-item a:visited,
+.year-item a:visited {
+  color: #666;
+}
+
+/* Loading, empty, and not-found states */
+.empty-state,
+.loading-state,
+.not-found-state {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #666;
+}
+
+.empty-state h2,
+.loading-state h2,
+.not-found-state h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Math line-height adjustment for inline content */
+.math-inline {
+  line-height: 1.2;
 }
 
 /* Single column below 900px */
