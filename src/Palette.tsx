@@ -9,6 +9,7 @@ export interface PaletteProps {
   responses: Record<string, Response>
   marked: Record<string, boolean>
   visited: Record<string, boolean>
+  correctness?: Record<string, 'correct' | 'wrong' | null>
   onJump: (index: number) => void
 }
 
@@ -26,6 +27,7 @@ export default function Palette({
   responses,
   marked,
   visited,
+  correctness,
   onJump,
 }: PaletteProps) {
   const [open, setOpen] = useState(false)
@@ -89,16 +91,36 @@ export default function Palette({
           {questions.map((q, idx) => {
             const state = states[idx]
             const label = stateLabels[state as keyof typeof stateLabels]
+            const c = correctness?.[q.id]
+            const glyph = c === 'correct' ? '✓' : c === 'wrong' ? '✗' : ''
+            const ariaLabel = glyph
+              ? `Question ${idx + 1}, ${label}, ${c}`
+              : `Question ${idx + 1}, ${label}`
 
             return (
               <button
                 key={q.id}
                 className={`palette-bubble palette-${state}`}
                 onClick={() => handleJump(idx)}
-                aria-label={`Question ${idx + 1}, ${label}`}
+                aria-label={ariaLabel}
                 aria-current={idx === current ? 'page' : undefined}
+                style={{ position: 'relative' }}
               >
                 {idx + 1}
+                {glyph && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '-2px',
+                      right: '-2px',
+                      fontSize: '0.6em',
+                      fontWeight: 'bold',
+                      color: c === 'correct' ? '#0a0' : '#a00',
+                    }}
+                  >
+                    {glyph}
+                  </div>
+                )}
               </button>
             )
           })}

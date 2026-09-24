@@ -4,6 +4,7 @@ import { HashRouter, Routes, Route } from 'react-router'
 import './styles.css'
 import { BrowseExams, BrowseYears } from './routes/Browse'
 import Player from './routes/Player'
+import Subject from './routes/Subject'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<BrowseExams />} />
         <Route path="/exam/:slug" element={<BrowseYears />} />
         <Route path="/exam/:slug/:year" element={<Player />} />
+        <Route path="/test/subject" element={<Subject />} />
+        <Route path="/test/play" element={<Player />} />
       </Routes>
     </HashRouter>
   </StrictMode>,
