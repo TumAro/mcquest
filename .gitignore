@@ -2,3 +2,5 @@
 node_modules/
 .claude/
 public/data/
+dist/
+*.local
