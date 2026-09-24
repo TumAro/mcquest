@@ -67,7 +67,7 @@ export function BrowseYears() {
         {exam.years.map((year) => (
           <li key={year.year} style={{ marginBottom: '1rem' }}>
             <Link
-              to={`/exam/${slug}/${year.year}`}
+              to={`/exam/${slug}/${year.year}/config`}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               {year.year} ({year.count} question{year.count !== 1 ? 's' : ''})

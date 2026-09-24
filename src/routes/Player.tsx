@@ -15,7 +15,7 @@ interface SubjectConfig {
   topics: string[]
   count: number
   timedMinutes: number | null
-  revealMode: 'immediate'
+  revealMode: 'immediate' | 'onSubmit'
   questions: { id: string; topic: string; type?: string }[]
   warnings: string[]
 }
