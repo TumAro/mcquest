@@ -5,6 +5,7 @@ import './styles.css'
 import { BrowseExams, BrowseYears } from './routes/Browse'
 import Player from './routes/Player'
 import Subject from './routes/Subject'
+import Random from './routes/Random'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/exam/:slug" element={<BrowseYears />} />
         <Route path="/exam/:slug/:year" element={<Player />} />
         <Route path="/test/subject" element={<Subject />} />
+        <Route path="/test/random" element={<Random />} />
         <Route path="/test/play" element={<Player />} />
       </Routes>
     </HashRouter>
