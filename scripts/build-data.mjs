@@ -4,7 +4,7 @@
 // against the schema; `npm run check` owns that, and a second validator
 // would be a second thing to keep in step.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname, basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inferType, slugify, indexTopics, resolveTopic } from './lib/rules.mjs';
@@ -26,13 +26,15 @@ function main() {
   // Group papers by their exam folder name (the display label, per the
   // "folder name is the display label" rule) — same walk the checker uses,
   // so a file the checker validates can never be a file the builder skips.
+  // Carry the source directory through so assets can be copied later.
   const byLabel = new Map();
   for (const path of discoverPapers(bankRoot)) {
     const label = basename(dirname(path));
     const year = parseInt(basename(path, '.json'), 10);
     const paper = JSON.parse(readFileSync(path, 'utf8'));
+    const sourceDir = dirname(path);
     const years = byLabel.get(label) ?? [];
-    years.push({ year, paper });
+    years.push({ year, paper, sourceDir });
     byLabel.set(label, years);
   }
 
@@ -47,7 +49,7 @@ function main() {
     const years = [...byLabel.get(label)].sort((a, b) => a.year - b.year);
     const yearsIndex = [];
 
-    for (const { year, paper } of years) {
+    for (const { year, paper, sourceDir } of years) {
       // Stamp every question with the exam's display label so a mixed-exam
       // random test can score each question under its own rules.
       const stampedPaper = {
@@ -61,6 +63,25 @@ function main() {
       writeFileSync(paperPath, `${JSON.stringify(stampedPaper, null, 2)}\n`);
       paperCount += 1;
 
+      // Copy assets if present. Count files to report in output.
+      let assetFileCount = 0;
+      const sourceAssetsDir = join(sourceDir, 'assets', String(year));
+      if (existsSync(sourceAssetsDir)) {
+        const targetAssetsDir = join(paperDir, 'assets', String(year));
+        cpSync(sourceAssetsDir, targetAssetsDir, { recursive: true });
+        // Count files recursively by walking the copied directory
+        function countFiles(dir) {
+          let count = 0;
+          const entries = readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            if (entry.isFile()) count += 1;
+            else if (entry.isDirectory()) count += countFiles(join(dir, entry.name));
+          }
+          return count;
+        }
+        assetFileCount = countFiles(targetAssetsDir);
+      }
+
       // A slug the checker already warned about as unknown buckets here as
       // "unsorted" rather than vanishing — the checker's warning and the
       // builder's bucketing must never disagree.
@@ -73,7 +94,8 @@ function main() {
       });
       unsortedTotal += paperUnsorted;
 
-      console.log(`${paperPath}: ${stampedPaper.questions.length} questions, ${paperUnsorted} unsorted`);
+      const assetNote = assetFileCount > 0 ? `, ${assetFileCount} asset file(s)` : '';
+      console.log(`${paperPath}: ${stampedPaper.questions.length} questions, ${paperUnsorted} unsorted${assetNote}`);
 
       yearsIndex.push({ year, count: stampedPaper.questions.length, questions });
     }
