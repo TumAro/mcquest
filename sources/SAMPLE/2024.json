@@ -59,6 +59,7 @@
       "marks": 2,
       "topic": "continuity",
       "question": "Let $f : \\mathbb{R} \\to \\mathbb{R}$ be defined by $f(x) = |x|$. Which of the following statements are TRUE?",
+      "image": "fig-4.svg",
       "options": [
         "$f$ is continuous at $x = 0$",
         "$f$ is differentiable at $x = 0$",

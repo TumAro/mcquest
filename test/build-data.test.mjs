@@ -4,7 +4,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -170,4 +170,138 @@ test('two runs over an unchanged bank produce byte-identical index.json', () => 
   const rerunRaw = readFileSync(join(rerunOut, 'index.json'), 'utf8');
   const firstRaw = readFileSync(join(outDir, 'index.json'), 'utf8');
   assert.equal(rerunRaw, firstRaw);
+});
+
+test('asset files from an exam are copied to the output tree', () => {
+  const assetBank = mkdtempSync(join(tmpdir(), 'build-data-asset-bank-'));
+  const assetDir = join(assetBank, 'Asset Exam', 'assets', '2024');
+  mkdirSync(assetDir, { recursive: true });
+  writeFileSync(join(assetDir, 'fig-1.svg'), '<svg>test</svg>');
+  writePaper(assetBank, 'Asset Exam', 2024, [
+    {
+      id: 'asset-2024-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      image: 'fig-1.svg',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  const assetOut = mkdtempSync(join(tmpdir(), 'build-data-asset-out-'));
+  runBuild(assetBank, assetOut);
+  const emittedFig = join(assetOut, 'asset-exam', 'assets', '2024', 'fig-1.svg');
+  assert.ok(existsSync(emittedFig));
+  const content = readFileSync(emittedFig, 'utf8');
+  assert.equal(content, '<svg>test</svg>');
+});
+
+test('nested directories inside assets are copied', () => {
+  const nestedBank = mkdtempSync(join(tmpdir(), 'build-data-nested-bank-'));
+  const nestedDir = join(nestedBank, 'Nested Exam', 'assets', '2024', 'subfolder');
+  mkdirSync(nestedDir, { recursive: true });
+  writeFileSync(join(nestedDir, 'nested.svg'), '<nested>');
+  writePaper(nestedBank, 'Nested Exam', 2024, [
+    {
+      id: 'nested-2024-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  const nestedOut = mkdtempSync(join(tmpdir(), 'build-data-nested-out-'));
+  runBuild(nestedBank, nestedOut);
+  const emittedNested = join(nestedOut, 'nested-exam', 'assets', '2024', 'subfolder', 'nested.svg');
+  assert.ok(existsSync(emittedNested));
+  const content = readFileSync(emittedNested, 'utf8');
+  assert.equal(content, '<nested>');
+});
+
+test('an exam with no assets directory builds without error', () => {
+  const noAssetBank = mkdtempSync(join(tmpdir(), 'build-data-no-asset-bank-'));
+  writePaper(noAssetBank, 'No Asset Exam', 2024, [
+    {
+      id: 'noasset-2024-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  const noAssetOut = mkdtempSync(join(tmpdir(), 'build-data-no-asset-out-'));
+  runBuild(noAssetBank, noAssetOut);
+  const assetDir = join(noAssetOut, 'no-asset-exam', 'assets');
+  assert.ok(!existsSync(assetDir));
+});
+
+test('an exam with assets but no directory for a paper year builds without error', () => {
+  const wrongYearBank = mkdtempSync(join(tmpdir(), 'build-data-wrong-year-bank-'));
+  const assetDir = join(wrongYearBank, 'Wrong Year Exam', 'assets', '2023');
+  mkdirSync(assetDir, { recursive: true });
+  writeFileSync(join(assetDir, 'fig.svg'), '<svg>2023</svg>');
+  writePaper(wrongYearBank, 'Wrong Year Exam', 2024, [
+    {
+      id: 'wrongyear-2024-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  const wrongYearOut = mkdtempSync(join(tmpdir(), 'build-data-wrong-year-out-'));
+  runBuild(wrongYearBank, wrongYearOut);
+  const emittedAssetDir = join(wrongYearOut, 'wrong-year-exam', 'assets', '2024');
+  assert.ok(!existsSync(emittedAssetDir));
+});
+
+test('files for different years are kept separate', () => {
+  const multiYearBank = mkdtempSync(join(tmpdir(), 'build-data-multi-year-bank-'));
+  const assetDir2023 = join(multiYearBank, 'Multi Year', 'assets', '2023');
+  const assetDir2024 = join(multiYearBank, 'Multi Year', 'assets', '2024');
+  mkdirSync(assetDir2023, { recursive: true });
+  mkdirSync(assetDir2024, { recursive: true });
+  writeFileSync(join(assetDir2023, 'fig.svg'), '<svg>2023</svg>');
+  writeFileSync(join(assetDir2024, 'fig.svg'), '<svg>2024</svg>');
+  writePaper(multiYearBank, 'Multi Year', 2023, [
+    {
+      id: 'multi-2023-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  writePaper(multiYearBank, 'Multi Year', 2024, [
+    {
+      id: 'multi-2024-1',
+      marks: 1,
+      topic: 'eigen',
+      question: 'Q',
+      options: ['a', 'b'],
+      correct: [0],
+      answer: null,
+      note: 'n',
+    },
+  ]);
+  const multiYearOut = mkdtempSync(join(tmpdir(), 'build-data-multi-year-out-'));
+  runBuild(multiYearBank, multiYearOut);
+  const emitted2023 = readFileSync(join(multiYearOut, 'multi-year', 'assets', '2023', 'fig.svg'), 'utf8');
+  const emitted2024 = readFileSync(join(multiYearOut, 'multi-year', 'assets', '2024', 'fig.svg'), 'utf8');
+  assert.equal(emitted2023, '<svg>2023</svg>');
+  assert.equal(emitted2024, '<svg>2024</svg>');
 });

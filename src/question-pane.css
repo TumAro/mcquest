@@ -1,0 +1,143 @@
+.question-pane {
+  padding: 1rem;
+}
+
+.question-pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.question-pane-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.question-pane-meta {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.question-pane-text {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.question-pane-image {
+  margin-bottom: 1.5rem;
+}
+
+.question-pane-image img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+.question-pane-options {
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1.5rem;
+}
+
+.question-pane-option {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.question-pane-option:hover {
+  background-color: #f5f5f5;
+}
+
+.question-pane-option input {
+  margin-top: 0.25rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: #000;
+}
+
+.question-pane-option input:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.option-text {
+  flex: 1;
+  line-height: 1.6;
+}
+
+/* Visually hidden legend for assistive technology */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Multi-select note */
+.multi-note {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-left: 3px solid #666;
+  background-color: #f9f9f9;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Numeric field */
+.numeric-field-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.numeric-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.numeric-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.numeric-input:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+  border-color: #000;
+}
+
+/* Remove default number input spinner arrows in Chromium browsers */
+.numeric-input::-webkit-outer-spin-button,
+.numeric-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove default number input spinner arrows in Firefox */
+.numeric-input[type='number'] {
+  -moz-appearance: textfield;
+}
