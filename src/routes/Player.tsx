@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation } from 'react-router'
 import { loadIndex, loadPaper, assetBase, useJson } from '../data'
 import type { Response, Question } from '../data'
@@ -45,6 +45,12 @@ export default function Player() {
   const [remaining, setRemaining] = useState<number>(Infinity)
   const [questions, setQuestions] = useState<Question[]>([])
   const [questionsLoading, setQuestionsLoading] = useState(isSubjectWise)
+  const autoSubmitted = useRef(false)
+
+  // Determine questions and loading state early so they can be used in useEffects
+  const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
+  const isLoading = isSubjectWise ? questionsLoading : !index || !paper
+  const revealMode: RevealMode = config?.revealMode ?? 'onSubmit'
 
   // Load questions for subject-wise tests
   useEffect(() => {
@@ -80,6 +86,7 @@ export default function Player() {
 
         setQuestions(loaded)
         setQuestionsLoading(false)
+        autoSubmitted.current = false
 
         // Set up deadline if timed
         if (config.timedMinutes !== null) {
@@ -108,29 +115,40 @@ export default function Player() {
     return () => clearInterval(interval)
   }, [deadline])
 
-  // Determine questions and loading state
-  const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
-  const isLoading = isSubjectWise ? questionsLoading : !index || !paper
-  const revealMode: RevealMode = config?.revealMode ?? 'onSubmit'
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (result || autoSubmitted.current || remaining > 0) return
+    autoSubmitted.current = true
+    // Delay slightly to avoid state update conflicts
+    const timeoutId = setTimeout(() => {
+      const unanswered = finalQuestions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
+      const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
+      if (confirmed) {
+        const score = scoreAttempt(examsConfig, finalQuestions, responses)
+        setResult(score)
+      }
+    }, 0)
+    return () => clearTimeout(timeoutId)
+  }, [remaining, result, finalQuestions, responses])
 
   // Keyboard handler
   useEffect(() => {
     if (finalQuestions.length === 0) return
 
     const handleKeydown = (e: KeyboardEvent) => {
-      // Don't fire if focus is in a numeric input
+      // Don't fire number keys if focus is in a numeric input
       const active = document.activeElement
-      if (active instanceof HTMLInputElement && active.type === 'number') {
-        return
-      }
+      const isNumericFocused = active instanceof HTMLInputElement && active.type === 'number'
 
-      const key = e.key
-      if (key === '1' || key === '2' || key === '3' || key === '4') {
-        const idx = parseInt(key, 10) - 1
-        const q = finalQuestions[current]
-        if (q && q.type === 'single' && q.options && idx < q.options.length) {
-          handleDraft([idx])
-        } else if (q && q.type === 'multi' && q.options && idx < q.options.length) {
+      const q = finalQuestions[current]
+      if (!q) return
+
+      // Number keys (1-4): select options, but not if numeric input is focused
+      if (!isNumericFocused && (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4')) {
+        const idx = parseInt(e.key, 10) - 1
+        if (q.type === 'single' && q.options && idx < q.options.length) {
+          setResponses({ ...responses, [q.id]: [idx] })
+        } else if (q.type === 'multi' && q.options && idx < q.options.length) {
           const curr = responses[q.id]
           const selected = Array.isArray(curr) ? [...curr] : []
           const pos = selected.indexOf(idx)
@@ -139,14 +157,85 @@ export default function Player() {
           } else {
             selected.push(idx)
           }
-          handleDraft(selected)
+          setResponses({ ...responses, [q.id]: selected })
+        }
+      }
+
+      // Enter: Save and Next (always works, even if numeric focused)
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        // Save current response if answered
+        const draft = responses[q.id] ?? null
+        const newResponses = { ...responses }
+        if (isAnswered(draft)) {
+          newResponses[q.id] = draft
+        }
+        setResponses(newResponses)
+
+        // Compute correctness in practice mode
+        if (revealMode === 'immediate' && isAnswered(draft)) {
+          const result = scoreQuestion(examsConfig, q, draft)
+          const c = result.status === 'correct' ? 'correct' : result.status === 'wrong' ? 'wrong' : null
+          setCorrectness({ ...correctness, [q.id]: c })
+        }
+
+        // Clear the review flag when saving
+        const newMarked = { ...marked }
+        delete newMarked[q.id]
+        setMarked(newMarked)
+
+        if (current < finalQuestions.length - 1) {
+          const nextIdx = current + 1
+          setCurrent(nextIdx)
+          const nextQ = finalQuestions[nextIdx]
+          setVisited({ ...visited, [nextQ.id]: true })
+        }
+      }
+
+      // M or m: Mark for Review and Next (not if numeric focused)
+      if (!isNumericFocused && (e.key === 'm' || e.key === 'M')) {
+        e.preventDefault()
+        const draft = responses[q.id] ?? null
+        const newResponses = { ...responses }
+        if (isAnswered(draft)) {
+          newResponses[q.id] = draft
+        } else {
+          delete newResponses[q.id]
+        }
+        setResponses(newResponses)
+        setMarked({ ...marked, [q.id]: true })
+
+        if (current < finalQuestions.length - 1) {
+          const nextIdx = current + 1
+          setCurrent(nextIdx)
+          const nextQ = finalQuestions[nextIdx]
+          setVisited({ ...visited, [nextQ.id]: true })
+        }
+      }
+
+      // Arrow keys: Navigate between questions (not if numeric focused)
+      if (!isNumericFocused) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault()
+          if (current > 0) {
+            setCurrent(current - 1)
+            const prevQ = finalQuestions[current - 1]
+            setVisited({ ...visited, [prevQ.id]: true })
+          }
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault()
+          if (current < finalQuestions.length - 1) {
+            setCurrent(current + 1)
+            const nextQ = finalQuestions[current + 1]
+            setVisited({ ...visited, [nextQ.id]: true })
+          }
         }
       }
     }
 
-    window.addEventListener('keydown', handleKeydown)
-    return () => window.removeEventListener('keydown', handleKeydown)
-  }, [responses, finalQuestions, current])
+    document.addEventListener('keydown', handleKeydown)
+    return () => document.removeEventListener('keydown', handleKeydown)
+  }, [responses, finalQuestions, current, marked, visited, revealMode, correctness])
 
   if (isLoading) {
     return <div style={{ padding: '1rem' }}>Loading...</div>
