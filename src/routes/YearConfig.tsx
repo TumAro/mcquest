@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { loadIndex, loadPaper, useJson } from '../data'
+import TestOptions, { type RevealMode } from './TestOptions'
 
 export default function YearConfig() {
   const navigate = useNavigate()
@@ -16,7 +17,7 @@ export default function YearConfig() {
   // UI state
   const [timed, setTimed] = useState(true)
   const [minutes, setMinutes] = useState(120)
-  const [revealMode, setRevealMode] = useState<'onSubmit' | 'immediate'>('onSubmit')
+  const [revealMode, setRevealMode] = useState<RevealMode>('onSubmit')
 
   const handleStart = () => {
     if (!paper) return
@@ -63,37 +64,14 @@ export default function YearConfig() {
         {exam.label} — {year}
       </h1>
 
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Timer</h2>
-        <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-          <input type="checkbox" checked={timed} onChange={(e) => setTimed(e.currentTarget.checked)} />
-          <span>Timed mode</span>
-        </label>
-        {timed && (
-          <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <span>Minutes:</span>
-            <input
-              type="number"
-              min="1"
-              value={minutes}
-              onChange={(e) => setMinutes(parseInt(e.currentTarget.value, 10) || 120)}
-              style={{ width: '80px' }}
-            />
-          </label>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Reveal Mode</h2>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          <input type="radio" checked={revealMode === 'onSubmit'} onChange={() => setRevealMode('onSubmit')} />
-          <span style={{ marginLeft: '0.5rem' }}>Exam mode (no feedback until submit)</span>
-        </label>
-        <label style={{ display: 'block' }}>
-          <input type="radio" checked={revealMode === 'immediate'} onChange={() => setRevealMode('immediate')} />
-          <span style={{ marginLeft: '0.5rem' }}>Practice mode (immediate feedback)</span>
-        </label>
-      </div>
+      <TestOptions
+        timed={timed}
+        setTimed={setTimed}
+        minutes={minutes}
+        setMinutes={setMinutes}
+        revealMode={revealMode}
+        setRevealMode={setRevealMode}
+      />
 
       <button
         onClick={handleStart}

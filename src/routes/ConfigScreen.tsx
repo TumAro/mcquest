@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { selectQuestions } from '../QuestionSelection'
+import TestOptions, { type RevealMode } from './TestOptions'
 import type { DataIndex, IndexQuestion } from '../data'
 
 interface ConfigScreenProps {
@@ -7,6 +8,7 @@ interface ConfigScreenProps {
   title: string
   showTopics?: boolean
   initialTopics?: Set<string>
+  initialRevealMode?: RevealMode
   onStart: (config: TestConfig) => void
 }
 
@@ -14,7 +16,7 @@ export interface TestConfig {
   topics: string[]
   count: number
   timedMinutes: number | null
-  revealMode: 'immediate'
+  revealMode: RevealMode
   questions: IndexQuestion[]
   warnings: string[]
 }
@@ -24,12 +26,14 @@ export default function ConfigScreen({
   title,
   showTopics = true,
   initialTopics = new Set(),
+  initialRevealMode = 'immediate',
   onStart,
 }: ConfigScreenProps) {
   const [selectedTopics, setSelectedTopics] = useState<Set<string>>(initialTopics)
   const [count, setCount] = useState(5)
   const [timed, setTimed] = useState(true)
   const [minutes, setMinutes] = useState(120)
+  const [revealMode, setRevealMode] = useState<RevealMode>(initialRevealMode)
   const [error, setError] = useState('')
   const [poolWarning, setPoolWarning] = useState<{ message: string; actualCount: number } | null>(null)
 
@@ -85,7 +89,7 @@ export default function ConfigScreen({
       topics: Array.from(topicsToUse),
       count,
       timedMinutes: timed ? minutes : null,
-      revealMode: 'immediate',
+      revealMode,
       questions: selection.questions,
       warnings: selection.warnings,
     }
@@ -152,25 +156,14 @@ export default function ConfigScreen({
         </div>
       </div>
 
-      <div style={{ marginBottom: '2rem' }}>
-        <h2>Timer</h2>
-        <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-          <input type="checkbox" checked={timed} onChange={(e) => setTimed(e.currentTarget.checked)} />
-          <span>Timed mode</span>
-        </label>
-        {timed && (
-          <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <span>Minutes:</span>
-            <input
-              type="number"
-              min="1"
-              value={minutes}
-              onChange={(e) => setMinutes(parseInt(e.currentTarget.value, 10) || 1)}
-              style={{ width: '80px' }}
-            />
-          </label>
-        )}
-      </div>
+      <TestOptions
+        timed={timed}
+        setTimed={setTimed}
+        minutes={minutes}
+        setMinutes={setMinutes}
+        revealMode={revealMode}
+        setRevealMode={setRevealMode}
+      />
 
       {error && (
         <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: '#ffe0e0', border: '1px solid #dd0000' }}>
