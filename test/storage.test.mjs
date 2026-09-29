@@ -27,6 +27,12 @@ test('Test 1: serialize and deserialize in-progress attempt — all fields survi
     remaining: 45000,
     revealMode: 'immediate',
     questionIds: ['q1', 'q2', 'q3'],
+    exam: 'sample',
+    year: 2024,
+    mode: 'year-wise',
+    timedMinutes: 120,
+    startedAt: 1696022400000,
+    timePerQuestion: { 'q1': 5000, 'q2': 10000 },
   }
 
   // Serialize should return the same shape
@@ -45,9 +51,29 @@ test('Test 1: serialize and deserialize in-progress attempt — all fields survi
   assert.equal(typeof deserialized.remaining, 'number')
   assert.equal(typeof deserialized.revealMode, 'string')
   assert.ok(Array.isArray(deserialized.questionIds))
+  assert.equal(typeof deserialized.exam, 'string')
+  assert.equal(typeof deserialized.year, 'number')
+  assert.equal(typeof deserialized.mode, 'string')
+  assert.equal(typeof deserialized.startedAt, 'number')
+  assert.equal(typeof deserialized.timePerQuestion, 'object')
 })
 
 test('Test 2: deserialize rejects malformed input — returns null for each invalid case', () => {
+  const baseValid = {
+    current: 0,
+    responses: {},
+    marked: {},
+    visited: {},
+    remaining: 1000,
+    revealMode: 'immediate',
+    questionIds: [],
+    exam: 'sample',
+    mode: 'year-wise',
+    timedMinutes: null,
+    startedAt: 1696022400000,
+    timePerQuestion: {},
+  }
+
   // Missing current
   let malformed = {
     responses: {},
@@ -56,45 +82,22 @@ test('Test 2: deserialize rejects malformed input — returns null for each inva
     remaining: 1000,
     revealMode: 'immediate',
     questionIds: [],
+    exam: 'sample',
+    mode: 'year-wise',
+    timedMinutes: null,
+    startedAt: 1696022400000,
+    timePerQuestion: {},
   }
   assert.equal(deserializeInProgressAttempt(malformed), null)
 
   // current is not a number
   malformed = {
+    ...baseValid,
     current: 'not a number',
-    responses: {},
-    marked: {},
-    visited: {},
-    remaining: 1000,
-    revealMode: 'immediate',
-    questionIds: [],
   }
   assert.equal(deserializeInProgressAttempt(malformed), null)
 
-  // Missing responses object
-  malformed = {
-    current: 0,
-    marked: {},
-    visited: {},
-    remaining: 1000,
-    revealMode: 'immediate',
-    questionIds: [],
-  }
-  assert.equal(deserializeInProgressAttempt(malformed), null)
-
-  // Invalid revealMode
-  malformed = {
-    current: 0,
-    responses: {},
-    marked: {},
-    visited: {},
-    remaining: 1000,
-    revealMode: 'invalid-mode',
-    questionIds: [],
-  }
-  assert.equal(deserializeInProgressAttempt(malformed), null)
-
-  // questionIds is not an array
+  // Missing exam
   malformed = {
     current: 0,
     responses: {},
@@ -102,7 +105,34 @@ test('Test 2: deserialize rejects malformed input — returns null for each inva
     visited: {},
     remaining: 1000,
     revealMode: 'immediate',
-    questionIds: 'not-an-array',
+    questionIds: [],
+    mode: 'year-wise',
+    timedMinutes: null,
+    startedAt: 1696022400000,
+    timePerQuestion: {},
+  }
+  assert.equal(deserializeInProgressAttempt(malformed), null)
+
+  // Invalid mode
+  malformed = {
+    ...baseValid,
+    mode: 'invalid-mode',
+  }
+  assert.equal(deserializeInProgressAttempt(malformed), null)
+
+  // Missing timePerQuestion
+  malformed = {
+    current: 0,
+    responses: {},
+    marked: {},
+    visited: {},
+    remaining: 1000,
+    revealMode: 'immediate',
+    questionIds: [],
+    exam: 'sample',
+    mode: 'year-wise',
+    timedMinutes: null,
+    startedAt: 1696022400000,
   }
   assert.equal(deserializeInProgressAttempt(malformed), null)
 

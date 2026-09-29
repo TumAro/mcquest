@@ -10,6 +10,12 @@ export interface InProgressAttempt {
   remaining: number
   revealMode: 'immediate' | 'onSubmit'
   questionIds: string[]
+  exam: string
+  year?: number
+  mode: 'year-wise' | 'subject-wise' | 'random'
+  timedMinutes: number | null
+  startedAt: number
+  timePerQuestion: Record<string, number>
 }
 
 export interface QuestionAttempt {
@@ -59,6 +65,24 @@ export function serializeInProgressAttempt(attempt: InProgressAttempt): InProgre
   if (!Array.isArray(attempt.questionIds)) {
     throw new Error('Invalid in-progress attempt: questionIds must be an array')
   }
+  if (!attempt.exam || typeof attempt.exam !== 'string') {
+    throw new Error('Invalid in-progress attempt: exam must be a non-empty string')
+  }
+  if (attempt.year !== undefined && typeof attempt.year !== 'number') {
+    throw new Error('Invalid in-progress attempt: year must be a number or undefined')
+  }
+  if (!['year-wise', 'subject-wise', 'random'].includes(attempt.mode)) {
+    throw new Error('Invalid in-progress attempt: mode must be "year-wise", "subject-wise", or "random"')
+  }
+  if (attempt.timedMinutes !== null && typeof attempt.timedMinutes !== 'number') {
+    throw new Error('Invalid in-progress attempt: timedMinutes must be a number or null')
+  }
+  if (typeof attempt.startedAt !== 'number') {
+    throw new Error('Invalid in-progress attempt: startedAt must be a number')
+  }
+  if (!attempt.timePerQuestion || typeof attempt.timePerQuestion !== 'object') {
+    throw new Error('Invalid in-progress attempt: timePerQuestion must be an object')
+  }
 
   return attempt
 }
@@ -82,6 +106,12 @@ export function deserializeInProgressAttempt(stored: unknown): InProgressAttempt
   if (typeof obj.remaining !== 'number') return null
   if (!['immediate', 'onSubmit'].includes(obj.revealMode as string)) return null
   if (!Array.isArray(obj.questionIds)) return null
+  if (typeof obj.exam !== 'string' || !obj.exam) return null
+  if (obj.year !== undefined && typeof obj.year !== 'number') return null
+  if (!['year-wise', 'subject-wise', 'random'].includes(obj.mode as string)) return null
+  if (obj.timedMinutes !== null && typeof obj.timedMinutes !== 'number') return null
+  if (typeof obj.startedAt !== 'number') return null
+  if (!obj.timePerQuestion || typeof obj.timePerQuestion !== 'object') return null
 
   return {
     current: obj.current,
@@ -91,6 +121,12 @@ export function deserializeInProgressAttempt(stored: unknown): InProgressAttempt
     remaining: obj.remaining,
     revealMode: obj.revealMode as 'immediate' | 'onSubmit',
     questionIds: obj.questionIds as string[],
+    exam: obj.exam as string,
+    year: obj.year as number | undefined,
+    mode: obj.mode as 'year-wise' | 'subject-wise' | 'random',
+    timedMinutes: obj.timedMinutes as number | null,
+    startedAt: obj.startedAt as number,
+    timePerQuestion: obj.timePerQuestion as Record<string, number>,
   }
 }
 

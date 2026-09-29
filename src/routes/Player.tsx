@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation } from 'react-router'
 import { loadIndex, loadPaper, assetBase, useJson } from '../data'
 import type { Response, Question } from '../data'
+import { saveInProgressAttempt, clearInProgressAttempt, type InProgressAttempt } from '../storage'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
 import { formatTime } from '../timer'
@@ -26,8 +27,9 @@ export default function Player() {
   const location = useLocation()
 
   // Entry point detection
-  const isSubjectWise = location.state?.config
+  const isSubjectWise = location.state?.config || location.state?.resumedAttempt
   const config = location.state?.config as SubjectConfig | undefined
+  const resumedAttempt = location.state?.resumedAttempt as InProgressAttempt | undefined
 
   const { data: index } = useJson(() => loadIndex(), [])
   const { data: paper } = useJson(
@@ -45,16 +47,48 @@ export default function Player() {
   const [remaining, setRemaining] = useState<number>(Infinity)
   const [questions, setQuestions] = useState<Question[]>([])
   const [questionsLoading, setQuestionsLoading] = useState(isSubjectWise)
+  const [currentQuestionStartedAt, setCurrentQuestionStartedAt] = useState<number | null>(null)
+  const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
+  const [startedAt, setStartedAt] = useState<number | null>(null)
   const autoSubmitted = useRef(false)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Determine questions and loading state early so they can be used in useEffects
   const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
   const isLoading = isSubjectWise ? questionsLoading : !index || !paper
   const revealMode: RevealMode = config?.revealMode ?? 'onSubmit'
 
+  // Restore from resumed attempt if present
+  useEffect(() => {
+    if (!resumedAttempt) return
+
+    setCurrent(resumedAttempt.current)
+    setResponses(resumedAttempt.responses)
+    setMarked(resumedAttempt.marked)
+    setVisited(resumedAttempt.visited)
+    setTimePerQuestion(resumedAttempt.timePerQuestion)
+    setStartedAt(resumedAttempt.startedAt)
+    setCurrentQuestionStartedAt(Date.now())
+
+    // Recompute deadline from remainingMs
+    if (resumedAttempt.timedMinutes !== null && resumedAttempt.remaining > 0) {
+      const newDeadline = Date.now() + resumedAttempt.remaining
+      setDeadline(newDeadline)
+      setRemaining(resumedAttempt.remaining / 1000)
+    }
+  }, []) // Run once on mount
+
+  // Initialize startedAt on first load (if not resuming)
+  useEffect(() => {
+    if (finalQuestions.length === 0 || startedAt !== null) return
+    if (resumedAttempt) return // Don't reinitialize if resuming
+    setStartedAt(Date.now())
+    setCurrentQuestionStartedAt(Date.now())
+  }, [finalQuestions.length, startedAt, resumedAttempt])
+
   // Load questions for subject-wise tests
   useEffect(() => {
-    if (!isSubjectWise || !config || !index) return
+    if (!isSubjectWise || !config || !index || resumedAttempt) return
 
     const loadSubjectQuestions = async () => {
       try {
@@ -100,7 +134,24 @@ export default function Player() {
     }
 
     loadSubjectQuestions()
-  }, [isSubjectWise, config, index])
+  }, [isSubjectWise, config, index, resumedAttempt])
+
+  // Track time per question when current changes
+  useEffect(() => {
+    if (finalQuestions.length === 0 || currentQuestionStartedAt === null) return
+
+    const prevIndex = current > 0 ? current - 1 : -1
+    if (prevIndex >= 0) {
+      const prevQ = finalQuestions[prevIndex]
+      const elapsed = Date.now() - currentQuestionStartedAt
+      setTimePerQuestion((prev) => ({
+        ...prev,
+        [prevQ.id]: (prev[prevQ.id] ?? 0) + elapsed,
+      }))
+    }
+
+    setCurrentQuestionStartedAt(Date.now())
+  }, [current, finalQuestions])
 
   // Timer interval
   useEffect(() => {
@@ -130,6 +181,52 @@ export default function Player() {
     }, 0)
     return () => clearTimeout(timeoutId)
   }, [remaining, result, finalQuestions, responses])
+
+  // Debounced save of in-progress attempt
+  useEffect(() => {
+    if (!finalQuestions.length || !startedAt || questionsLoading) return
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+
+    // Set new timeout to save after 1 second of inactivity
+    saveTimeoutRef.current = setTimeout(() => {
+      const timedMinutes =
+        deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000)
+
+      const attempt: InProgressAttempt = {
+        exam: slug || 'subject',
+        year: year || undefined,
+        mode: isSubjectWise ? (config?.topics?.length ?? 0 > 0 ? 'subject-wise' : 'random') : 'year-wise',
+        timedMinutes,
+        revealMode,
+        questionIds: finalQuestions.map((q) => q.id),
+        responses,
+        marked,
+        visited,
+        current,
+        remaining: remaining * 1000, // Convert seconds to ms
+        startedAt,
+        timePerQuestion,
+      }
+
+      saveInProgressAttempt(attempt)
+    }, 1000)
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [responses, marked, visited, current, remaining, finalQuestions, config, timePerQuestion, startedAt, slug, year, isSubjectWise, revealMode, deadline, questionsLoading])
+
+  // Clear in-progress attempt when result is submitted
+  useEffect(() => {
+    if (!result) return
+    clearInProgressAttempt()
+  }, [result])
 
   // Keyboard handler
   useEffect(() => {
