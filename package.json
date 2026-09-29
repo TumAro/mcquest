@@ -8,7 +8,8 @@
     "preview": "vite preview",
     "build:data": "node scripts/build-data.mjs",
     "check": "node scripts/check.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "test:e2e": "bash scripts/test-e2e.sh"
   },
   "dependencies": {
     "ajv": "^8.20.0",
@@ -19,6 +20,7 @@
     "react-router": "^8.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
