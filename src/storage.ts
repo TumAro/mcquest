@@ -28,13 +28,18 @@ export interface QuestionAttempt {
 
 export interface SubmittedAttempt {
   id: string
-  questionAttempts: QuestionAttempt[]
+  timestamp: number
+  exam: string
+  year?: number
+  mode: 'year-wise' | 'subject-wise' | 'random'
+  timedMinutes: number | null
+  revealMode: 'immediate' | 'onSubmit'
   score: number
   max: number
   correct: number
   wrong: number
   unattempted: number
-  timestamp: number
+  questions: QuestionAttempt[]
 }
 
 /**
@@ -139,8 +144,23 @@ export function serializeSubmittedAttempt(attempt: SubmittedAttempt): SubmittedA
   if (!attempt.id || typeof attempt.id !== 'string') {
     throw new Error('Invalid submitted attempt: id must be a non-empty string')
   }
-  if (!Array.isArray(attempt.questionAttempts)) {
-    throw new Error('Invalid submitted attempt: questionAttempts must be an array')
+  if (typeof attempt.timestamp !== 'number') {
+    throw new Error('Invalid submitted attempt: timestamp must be a number')
+  }
+  if (!attempt.exam || typeof attempt.exam !== 'string') {
+    throw new Error('Invalid submitted attempt: exam must be a non-empty string')
+  }
+  if (attempt.year !== undefined && typeof attempt.year !== 'number') {
+    throw new Error('Invalid submitted attempt: year must be a number or undefined')
+  }
+  if (!['year-wise', 'subject-wise', 'random'].includes(attempt.mode)) {
+    throw new Error('Invalid submitted attempt: mode must be "year-wise", "subject-wise", or "random"')
+  }
+  if (attempt.timedMinutes !== null && typeof attempt.timedMinutes !== 'number') {
+    throw new Error('Invalid submitted attempt: timedMinutes must be a number or null')
+  }
+  if (!['immediate', 'onSubmit'].includes(attempt.revealMode)) {
+    throw new Error('Invalid submitted attempt: revealMode must be "immediate" or "onSubmit"')
   }
   if (typeof attempt.score !== 'number') {
     throw new Error('Invalid submitted attempt: score must be a number')
@@ -157,12 +177,12 @@ export function serializeSubmittedAttempt(attempt: SubmittedAttempt): SubmittedA
   if (typeof attempt.unattempted !== 'number') {
     throw new Error('Invalid submitted attempt: unattempted must be a number')
   }
-  if (typeof attempt.timestamp !== 'number') {
-    throw new Error('Invalid submitted attempt: timestamp must be a number')
+  if (!Array.isArray(attempt.questions)) {
+    throw new Error('Invalid submitted attempt: questions must be an array')
   }
 
   // Validate each question attempt
-  for (const qa of attempt.questionAttempts) {
+  for (const qa of attempt.questions) {
     if (!qa.id || typeof qa.id !== 'string') {
       throw new Error('Invalid question attempt: id must be a non-empty string')
     }
@@ -193,17 +213,22 @@ export function deserializeSubmittedAttempt(stored: unknown): SubmittedAttempt |
   const obj = stored as Record<string, unknown>
 
   if (typeof obj.id !== 'string' || !obj.id) return null
-  if (!Array.isArray(obj.questionAttempts)) return null
+  if (typeof obj.timestamp !== 'number') return null
+  if (typeof obj.exam !== 'string' || !obj.exam) return null
+  if (obj.year !== undefined && typeof obj.year !== 'number') return null
+  if (!['year-wise', 'subject-wise', 'random'].includes(obj.mode as string)) return null
+  if (obj.timedMinutes !== null && typeof obj.timedMinutes !== 'number') return null
+  if (!['immediate', 'onSubmit'].includes(obj.revealMode as string)) return null
   if (typeof obj.score !== 'number') return null
   if (typeof obj.max !== 'number') return null
   if (typeof obj.correct !== 'number') return null
   if (typeof obj.wrong !== 'number') return null
   if (typeof obj.unattempted !== 'number') return null
-  if (typeof obj.timestamp !== 'number') return null
+  if (!Array.isArray(obj.questions)) return null
 
   // Validate each question attempt
-  const questionAttempts: QuestionAttempt[] = []
-  for (const qa of obj.questionAttempts as unknown[]) {
+  const questions: QuestionAttempt[] = []
+  for (const qa of obj.questions as unknown[]) {
     if (!qa || typeof qa !== 'object') return null
     const qaObj = qa as Record<string, unknown>
     if (typeof qaObj.id !== 'string' || !qaObj.id) return null
@@ -211,7 +236,7 @@ export function deserializeSubmittedAttempt(stored: unknown): SubmittedAttempt |
     if (typeof qaObj.timeSpent !== 'number' || qaObj.timeSpent < 0) return null
     if (qaObj.correctness !== null && !['correct', 'wrong'].includes(qaObj.correctness as string)) return null
 
-    questionAttempts.push({
+    questions.push({
       id: qaObj.id,
       response: qaObj.response as Response,
       correctness: qaObj.correctness as 'correct' | 'wrong' | null,
@@ -222,13 +247,18 @@ export function deserializeSubmittedAttempt(stored: unknown): SubmittedAttempt |
 
   return {
     id: obj.id,
-    questionAttempts,
-    score: obj.score,
-    max: obj.max,
-    correct: obj.correct,
-    wrong: obj.wrong,
-    unattempted: obj.unattempted,
-    timestamp: obj.timestamp,
+    timestamp: obj.timestamp as number,
+    exam: obj.exam as string,
+    year: obj.year as number | undefined,
+    mode: obj.mode as 'year-wise' | 'subject-wise' | 'random',
+    timedMinutes: obj.timedMinutes as number | null,
+    revealMode: obj.revealMode as 'immediate' | 'onSubmit',
+    score: obj.score as number,
+    max: obj.max as number,
+    correct: obj.correct as number,
+    wrong: obj.wrong as number,
+    unattempted: obj.unattempted as number,
+    questions,
   }
 }
 

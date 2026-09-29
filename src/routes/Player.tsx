@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation } from 'react-router'
 import { loadIndex, loadPaper, assetBase, useJson } from '../data'
 import type { Response, Question } from '../data'
-import { saveInProgressAttempt, clearInProgressAttempt, type InProgressAttempt } from '../storage'
+import { saveInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
 import { formatTime } from '../timer'
@@ -440,6 +440,47 @@ export default function Player() {
     const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
     if (confirmed) {
       const score = scoreAttempt(examsConfig, finalQuestions, responses)
+
+      // Record submitted attempt with per-question detail
+      const timeOnCurrentQ = currentQuestionStartedAt ? Date.now() - currentQuestionStartedAt : 0
+      const attemptRecord: SubmittedAttempt = {
+        id: crypto.randomUUID(),
+        timestamp: Date.now(),
+        exam: slug || 'subject',
+        year: year || undefined,
+        mode: isSubjectWise ? (config?.topics?.length ?? 0 > 0 ? 'subject-wise' : 'random') : 'year-wise',
+        timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
+        revealMode,
+        score: score.score,
+        max: score.max,
+        correct: score.correct,
+        wrong: score.wrong,
+        unattempted: score.unattempted,
+        questions: finalQuestions.map(q => {
+          const qResult = score.results.find((r: any) => r.id === q.id)
+          // Add elapsed time for the current question if still on it
+          let timeOnQ = timePerQuestion[q.id] ?? 0
+          if (q.id === finalQuestions[current].id) {
+            timeOnQ += timeOnCurrentQ
+          }
+          const status = qResult?.status ?? 'unattempted'
+          const correctness: 'correct' | 'wrong' | null =
+            status === 'correct' ? 'correct' : status === 'wrong' ? 'wrong' : null
+          return {
+            id: q.id,
+            response: responses[q.id] ?? null,
+            correctness,
+            marks: qResult?.score ?? 0,
+            timeSpent: Math.floor(timeOnQ / 1000), // Convert ms to seconds
+          }
+        })
+      }
+
+      // Save submitted attempt (fire and forget)
+      saveSubmittedAttempt(attemptRecord).catch(err => {
+        console.error('Failed to save submitted attempt:', err)
+      })
+
       setResult(score)
     }
   }

@@ -149,20 +149,26 @@ test('Test 2: deserialize rejects malformed input — returns null for each inva
 test('Test 3: serialize and deserialize submitted attempt — all per-question fields present and correct', () => {
   const original = {
     id: 'attempt-123',
-    questionAttempts: [
+    timestamp: 1696022400000,
+    exam: 'sample',
+    year: 2024,
+    mode: 'year-wise',
+    timedMinutes: 60,
+    revealMode: 'onSubmit',
+    questions: [
       {
         id: 'q1',
         response: [0],
         correctness: 'correct',
         marks: 1,
-        timeSpent: 23.5,
+        timeSpent: 23,
       },
       {
         id: 'q2',
-        response: 7.5,
+        response: 1,
         correctness: 'wrong',
         marks: 0,
-        timeSpent: 45.0,
+        timeSpent: 45,
       },
       {
         id: 'q3',
@@ -177,7 +183,6 @@ test('Test 3: serialize and deserialize submitted attempt — all per-question f
     correct: 1,
     wrong: 1,
     unattempted: 1,
-    timestamp: 1696022400000,
   }
 
   // Serialize should return the same shape
@@ -190,20 +195,29 @@ test('Test 3: serialize and deserialize submitted attempt — all per-question f
 
   // Verify structure and types
   assert.equal(deserialized.id, 'attempt-123')
-  assert.equal(deserialized.questionAttempts.length, 3)
-  assert.equal(deserialized.questionAttempts[0].id, 'q1')
-  assert.equal(deserialized.questionAttempts[0].marks, 1)
-  assert.equal(deserialized.questionAttempts[0].timeSpent, 23.5)
-  assert.equal(deserialized.questionAttempts[0].correctness, 'correct')
-  assert.equal(deserialized.questionAttempts[1].timeSpent, 45.0)
-  assert.equal(deserialized.questionAttempts[2].timeSpent, 0)
+  assert.equal(deserialized.exam, 'sample')
+  assert.equal(deserialized.year, 2024)
+  assert.equal(deserialized.mode, 'year-wise')
+  assert.equal(deserialized.questions.length, 3)
+  assert.equal(deserialized.questions[0].id, 'q1')
+  assert.equal(deserialized.questions[0].marks, 1)
+  assert.equal(deserialized.questions[0].timeSpent, 23)
+  assert.equal(deserialized.questions[0].correctness, 'correct')
+  assert.equal(deserialized.questions[1].timeSpent, 45)
+  assert.equal(deserialized.questions[2].timeSpent, 0)
 })
 
 test('Test 4: serialize submitted attempt rejects invalid timeSpent or non-number timeSpent', () => {
   // timeSpent is negative
   let invalid = {
     id: 'attempt-456',
-    questionAttempts: [
+    timestamp: Date.now(),
+    exam: 'sample',
+    year: 2024,
+    mode: 'year-wise',
+    timedMinutes: 60,
+    revealMode: 'onSubmit',
+    questions: [
       {
         id: 'q1',
         response: [0],
@@ -217,14 +231,19 @@ test('Test 4: serialize submitted attempt rejects invalid timeSpent or non-numbe
     correct: 1,
     wrong: 0,
     unattempted: 0,
-    timestamp: Date.now(),
   }
   assert.throws(() => serializeSubmittedAttempt(invalid), /timeSpent must be a non-negative number/)
 
   // timeSpent is not a number
   invalid = {
     id: 'attempt-456',
-    questionAttempts: [
+    timestamp: Date.now(),
+    exam: 'sample',
+    year: 2024,
+    mode: 'year-wise',
+    timedMinutes: 60,
+    revealMode: 'onSubmit',
+    questions: [
       {
         id: 'q1',
         response: [0],
@@ -238,14 +257,19 @@ test('Test 4: serialize submitted attempt rejects invalid timeSpent or non-numbe
     correct: 1,
     wrong: 0,
     unattempted: 0,
-    timestamp: Date.now(),
   }
   assert.throws(() => serializeSubmittedAttempt(invalid), /timeSpent must be a non-negative number/)
 
   // null timeSpent
   invalid = {
     id: 'attempt-456',
-    questionAttempts: [
+    timestamp: Date.now(),
+    exam: 'sample',
+    year: 2024,
+    mode: 'year-wise',
+    timedMinutes: 60,
+    revealMode: 'onSubmit',
+    questions: [
       {
         id: 'q1',
         response: [0],
@@ -259,7 +283,6 @@ test('Test 4: serialize submitted attempt rejects invalid timeSpent or non-numbe
     correct: 1,
     wrong: 0,
     unattempted: 0,
-    timestamp: Date.now(),
   }
   assert.throws(() => serializeSubmittedAttempt(invalid), /timeSpent must be a non-negative number/)
 })
