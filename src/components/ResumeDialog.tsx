@@ -54,11 +54,22 @@ export default function ResumeDialog({ children }: ResumeDialogProps) {
         : `/test/play`,
       { state }
     )
+
+    // Dismiss the dialog. Without this the dialog stays mounted and keeps
+    // covering its children, so Resume appears to do nothing — navigating to
+    // the URL the user is already on does not remount this component.
+    setAttempt(null)
   }
 
   const handleStartFresh = async () => {
     await clearInProgressAttempt()
     setAttempt(null)
+
+    // Return to the front page, replacing the entry. The browser restores
+    // history.state across a reload, so staying on /test/play would hand the
+    // player its old config and it would immediately recreate the attempt the
+    // user just discarded.
+    navigate('/', { replace: true, state: null })
   }
 
   return (
@@ -125,8 +136,12 @@ export default function ResumeDialog({ children }: ResumeDialogProps) {
         </div>
       </div>
 
-      {/* Children rendered behind the dialog, not interactive */}
-      <div style={{ pointerEvents: 'none' }}>{children}</div>
+      {/*
+        Children are deliberately NOT rendered while the decision is pending.
+        Rendering the app behind the dialog mounts the player, which restores the
+        attempt and starts its clock — so every second spent deciding was burned
+        off the paper, which is the exact behaviour this dialog exists to prevent.
+      */}
     </>
   )
 }

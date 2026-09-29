@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation } from 'react-router'
 import { loadIndex, loadPaper, assetBase, useJson } from '../data'
 import type { Response, Question } from '../data'
-import { saveInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
+import { saveInProgressAttempt, loadInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
 import { formatTime } from '../timer'
@@ -26,10 +26,37 @@ export default function Player() {
   const year = yearStr ? parseInt(yearStr, 10) : 0
   const location = useLocation()
 
-  // Entry point detection
-  const isSubjectWise = location.state?.config || location.state?.resumedAttempt
   const config = location.state?.config as SubjectConfig | undefined
-  const resumedAttempt = location.state?.resumedAttempt as InProgressAttempt | undefined
+
+  // A resumed attempt is read straight from storage rather than passed through
+  // router state. Storage is already the source of truth, and navigating to the
+  // URL the user is already on does not reliably deliver fresh location state —
+  // which silently produced a player with none of the saved answers restored.
+  const [resumedAttempt, setResumedAttempt] = useState<InProgressAttempt | undefined>(undefined)
+  const [resumeChecked, setResumeChecked] = useState(false)
+
+  useEffect(() => {
+    if (config) {
+      setResumeChecked(true)
+      return
+    }
+    let cancelled = false
+    loadInProgressAttempt()
+      .then((a) => {
+        if (cancelled) return
+        setResumedAttempt(a ?? undefined)
+        setResumeChecked(true)
+      })
+      .catch(() => {
+        if (!cancelled) setResumeChecked(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [config])
+
+  // Entry point detection
+  const isSubjectWise = Boolean(config) || Boolean(resumedAttempt) || (!slug && resumeChecked)
 
   const { data: index } = useJson(() => loadIndex(), [])
   const { data: paper } = useJson(
@@ -51,7 +78,6 @@ export default function Player() {
   const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const autoSubmitted = useRef(false)
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Determine questions and loading state early so they can be used in useEffects
   const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
@@ -76,7 +102,7 @@ export default function Player() {
       setDeadline(newDeadline)
       setRemaining(resumedAttempt.remaining / 1000)
     }
-  }, []) // Run once on mount
+  }, [resumedAttempt])
 
   // Initialize startedAt on first load (if not resuming)
   useEffect(() => {
@@ -136,6 +162,54 @@ export default function Player() {
     loadSubjectQuestions()
   }, [isSubjectWise, config, index, resumedAttempt])
 
+  // Rehydrate a resumed subject-wise/random attempt.
+  //
+  // The stored record holds question IDs, never question copies — that is what
+  // lets attempt history survive the bank being edited. So on resume the
+  // questions have to be fetched back from the index, in the order they were
+  // stored. Without this the player resumes with an empty paper.
+  useEffect(() => {
+    if (!isSubjectWise || !resumedAttempt || !index) return
+
+    let cancelled = false
+
+    const rehydrate = async () => {
+      try {
+        const byId = new Map<string, Question>()
+
+        for (const exam of index.exams) {
+          for (const y of exam.years) {
+            const wanted = y.questions.filter((q) => resumedAttempt.questionIds.includes(q.id))
+            if (!wanted.length) continue
+            const paper = await loadPaper(exam.slug, y.year)
+            for (const q of paper.questions) {
+              if (resumedAttempt.questionIds.includes(q.id)) byId.set(q.id, q)
+            }
+          }
+        }
+
+        if (cancelled) return
+
+        // Preserve the stored order; drop any ID the bank no longer contains.
+        const ordered = resumedAttempt.questionIds
+          .map((id) => byId.get(id))
+          .filter((q): q is Question => Boolean(q))
+
+        setQuestions(ordered)
+        setQuestionsLoading(false)
+        autoSubmitted.current = false
+      } catch (err) {
+        console.error('Failed to rehydrate resumed attempt:', err)
+        if (!cancelled) setQuestionsLoading(false)
+      }
+    }
+
+    rehydrate()
+    return () => {
+      cancelled = true
+    }
+  }, [isSubjectWise, resumedAttempt, index])
+
   // Track time per question when current changes
   useEffect(() => {
     if (finalQuestions.length === 0 || currentQuestionStartedAt === null) return
@@ -183,44 +257,62 @@ export default function Player() {
   }, [remaining, result, finalQuestions, responses])
 
   // Debounced save of in-progress attempt
-  useEffect(() => {
-    if (!finalQuestions.length || !startedAt || questionsLoading) return
+  // Keep the latest attempt snapshot in a ref, rewritten on every render.
+  //
+  // The save cadence MUST NOT be driven by an effect that depends on `remaining`:
+  // the timer updates it every 100ms, so a debounce timeout created in such an
+  // effect is cleared by the cleanup ten times a second and never fires. That is
+  // exactly why nothing was persisted on a timed test.
+  const latestAttempt = useRef<InProgressAttempt | null>(null)
+  latestAttempt.current =
+    finalQuestions.length && startedAt && !questionsLoading
+      ? {
+          exam: slug || 'subject',
+          year: year || undefined,
+          mode: isSubjectWise ? ((config?.topics?.length ?? 0) > 0 ? 'subject-wise' : 'random') : 'year-wise',
+          timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
+          revealMode,
+          questionIds: finalQuestions.map((q) => q.id),
+          responses,
+          marked,
+          visited,
+          current,
+          remaining: remaining * 1000, // seconds to ms; the clock pauses while closed
+          startedAt,
+          timePerQuestion,
+        }
+      : null
 
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
+  // Write on a fixed cadence, independent of render frequency, plus once on the
+  // way out so the final state is never lost.
+  useEffect(() => {
+    if (result) return
+
+    const write = () => {
+      const attempt = latestAttempt.current
+      if (attempt) {
+        saveInProgressAttempt(attempt).catch((err) => {
+          console.error('Failed to save in-progress attempt:', err)
+        })
+      }
     }
 
-    // Set new timeout to save after 1 second of inactivity
-    saveTimeoutRef.current = setTimeout(() => {
-      const timedMinutes =
-        deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000)
+    const id = setInterval(write, 1000)
 
-      const attempt: InProgressAttempt = {
-        exam: slug || 'subject',
-        year: year || undefined,
-        mode: isSubjectWise ? (config?.topics?.length ?? 0 > 0 ? 'subject-wise' : 'random') : 'year-wise',
-        timedMinutes,
-        revealMode,
-        questionIds: finalQuestions.map((q) => q.id),
-        responses,
-        marked,
-        visited,
-        current,
-        remaining: remaining * 1000, // Convert seconds to ms
-        startedAt,
-        timePerQuestion,
-      }
-
-      saveInProgressAttempt(attempt)
-    }, 1000)
+    // A reload or a closed tab does not run React cleanup reliably, so without
+    // this the last up-to-1s of progress is lost — including the clock reading,
+    // which is what makes a reload appear to consume time.
+    const onLeave = () => write()
+    window.addEventListener('pagehide', onLeave)
+    document.addEventListener('visibilitychange', onLeave)
 
     return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-      }
+      clearInterval(id)
+      window.removeEventListener('pagehide', onLeave)
+      document.removeEventListener('visibilitychange', onLeave)
+      write()
     }
-  }, [responses, marked, visited, current, remaining, finalQuestions, config, timePerQuestion, startedAt, slug, year, isSubjectWise, revealMode, deadline, questionsLoading])
+  }, [result])
 
   // Clear in-progress attempt when result is submitted
   useEffect(() => {

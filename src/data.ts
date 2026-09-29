@@ -48,9 +48,18 @@ export interface DataIndex {
   exams: IndexExam[]
 }
 
+/**
+ * Root of the built data tree, e.g. `/data/`. `npm run build:data` writes
+ * `index.json`, `<exam>/<year>.json` and `<exam>/assets/<year>/...` under it.
+ *
+ * Built by string concatenation rather than `new URL(rel, BASE_URL)`: BASE_URL
+ * is a path like `/`, not an absolute URL, so it is not a usable base.
+ */
+const DATA_BASE = `${import.meta.env.BASE_URL}data/`.replace(/\/{2,}/g, '/')
+
 export async function loadIndex(): Promise<DataIndex> {
-  const url = new URL('index.json', import.meta.env.BASE_URL)
-  const res = await fetch(url.toString())
+  const url = `${DATA_BASE}index.json`
+  const res = await fetch(url)
   if (!res.ok) {
     throw new Error(`Failed to load index from ${url}: ${res.status}`)
   }
@@ -58,17 +67,17 @@ export async function loadIndex(): Promise<DataIndex> {
 }
 
 export async function loadPaper(slug: string, year: number): Promise<Paper> {
-  const url = new URL(`${slug}/${year}.json`, import.meta.env.BASE_URL + 'data/')
-  const res = await fetch(url.toString())
+  const url = `${DATA_BASE}${slug}/${year}.json`
+  const res = await fetch(url)
   if (!res.ok) {
     throw new Error(`Failed to load paper ${slug}/${year} from ${url}: ${res.status}`)
   }
   return res.json()
 }
 
+/** Matches build-data.mjs, which emits assets to `<exam>/assets/<year>/`. */
 export function assetBase(slug: string, year: number): string {
-  const base = import.meta.env.BASE_URL + 'data/'
-  return new URL(`${slug}/${year}/`, base).toString()
+  return `${DATA_BASE}${slug}/assets/${year}/`
 }
 
 export function useJson<T>(
