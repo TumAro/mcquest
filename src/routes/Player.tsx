@@ -81,6 +81,7 @@ export default function Player() {
   const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const autoSubmitted = useRef(false)
+  const clockIndexRef = useRef(0)
   // Set the instant a submit begins. Blocks a double submit and, crucially, the
   // save effect's unmount write, which would otherwise re-create the in-progress
   // attempt that submit just cleared and bring the resume dialog back.
@@ -114,6 +115,7 @@ export default function Player() {
     if (!resumedAttempt) return
 
     setCurrent(resumedAttempt.current)
+    clockIndexRef.current = resumedAttempt.current
     setResponses(resumedAttempt.responses)
     setMarked(resumedAttempt.marked)
     setVisited(resumedAttempt.visited)
@@ -235,20 +237,23 @@ export default function Player() {
     }
   }, [isSubjectWise, resumedAttempt, index])
 
-  // Track time per question when current changes
+  // Track time per question when current changes. The ref holds the index whose
+  // clock is running, so the time is credited to the question that was left
+  // however it was left (Save & Next, palette jump either way, arrow key).
   useEffect(() => {
     if (finalQuestions.length === 0 || currentQuestionStartedAt === null) return
+    if (clockIndexRef.current === current) return
 
-    const prevIndex = current > 0 ? current - 1 : -1
-    if (prevIndex >= 0) {
-      const prevQ = finalQuestions[prevIndex]
+    const leftQ = finalQuestions[clockIndexRef.current]
+    if (leftQ) {
       const elapsed = Date.now() - currentQuestionStartedAt
       setTimePerQuestion((prev) => ({
         ...prev,
-        [prevQ.id]: (prev[prevQ.id] ?? 0) + elapsed,
+        [leftQ.id]: (prev[leftQ.id] ?? 0) + elapsed,
       }))
     }
 
+    clockIndexRef.current = current
     setCurrentQuestionStartedAt(Date.now())
   }, [current, finalQuestions])
 
