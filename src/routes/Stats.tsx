@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { loadIndex, useJson } from '../data'
 import { loadSubmittedAttempts } from '../storage'
-import { statsFromHistory } from '../stats'
+import { statsFromHistory, MIN_ATTEMPTS } from '../stats'
 import { formatAccuracy } from '../results'
 import './results.css'
 
@@ -21,37 +21,80 @@ export default function Stats() {
   }
   if (!data) return <div className="loading-state">Loading...</div>
 
-  const rows = statsFromHistory(data.attempts, data.index)
+  const { ranked, insufficient, skipped } = statsFromHistory(data.attempts, data.index)
 
   return (
     <div className="page">
       <h1>Weak topics</h1>
-      {rows.length === 0 ? (
+      {ranked.length === 0 && insufficient.length === 0 ? (
         <p>No answered questions yet.</p>
       ) : (
-        <table className="results-table">
-          <caption>Accuracy by topic, all submitted tests</caption>
-          <thead>
-            <tr>
-              <th scope="col">Topic</th>
-              <th scope="col">Accuracy</th>
-              <th scope="col">Attempts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.topic} data-topic={r.topic}>
-                <th scope="row">{r.label}</th>
-                <td className="mono-num" data-testid="stat-accuracy">
-                  {formatAccuracy(r.accuracy)}
-                </td>
-                <td className="mono-num" data-testid="stat-attempts">
-                  {r.attempts}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          {ranked.length > 0 && (
+            <>
+              <h2>Weakest first</h2>
+              <p className="field-hint">
+                An attempt is one answered question. Questions you left unattempted do not count.
+              </p>
+              <table className="results-table" data-testid="ranked-table">
+                <caption>Accuracy by topic, all submitted tests</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Accuracy</th>
+                    <th scope="col">Attempts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ranked.map((r) => (
+                    <tr key={r.topic} data-topic={r.topic}>
+                      <th scope="row">{r.label}</th>
+                      <td className="mono-num" data-testid="stat-accuracy">
+                        {formatAccuracy(r.accuracy)}
+                      </td>
+                      <td className="mono-num" data-testid="stat-attempts">
+                        {r.attempts}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+          {insufficient.length > 0 && (
+            <>
+              <h2>Not enough data yet</h2>
+              <p className="field-hint">
+                These topics have fewer than {MIN_ATTEMPTS} attempts, so they are not ranked.
+              </p>
+              <table className="results-table" data-testid="insufficient-table">
+                <caption>Topics with too few attempts to rank</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Topic</th>
+                    <th scope="col">Attempts</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {insufficient.map((r) => (
+                    <tr key={r.topic} data-topic={r.topic}>
+                      <th scope="row">{r.label}</th>
+                      <td className="mono-num" data-testid="stat-attempts">
+                        {r.attempts}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+          {skipped > 0 && (
+            <p className="field-hint" data-testid="stats-skipped">
+              {skipped} answered question{skipped !== 1 ? 's' : ''} left the bank and {skipped !== 1 ? 'are' : 'is'} not
+              counted.
+            </p>
+          )}
+        </>
       )}
     </div>
   )

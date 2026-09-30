@@ -78,5 +78,106 @@ test('a submitted test appears on the stats page, joined to its topic', async ({
   await expect(rows).toHaveCount(1)
   await expect(rows.first()).toHaveAttribute('data-topic', q.topic)
   await expect(rows.first().getByTestId('stat-attempts')).toHaveText('1')
-  await expect(rows.first().getByTestId('stat-accuracy')).toHaveText('0%')
+  // One attempt is under the threshold, so the row sits in the unranked table, which has no accuracy column.
+  await expect(page.getByTestId('insufficient-table').locator('tr[data-topic]')).toHaveCount(1)
+})
+
+interface SeedIndex {
+  exams: { slug: string; years: { questions: { id: string; topic: string }[] }[] }[]
+}
+
+/** Topic slug -> its first question id, for topics that have at least one question, sorted by slug. */
+function topicsWithQuestions(index: SeedIndex): [string, string][] {
+  const first = new Map<string, string>()
+  for (const exam of index.exams)
+    for (const y of exam.years) for (const q of y.questions) if (!first.has(q.topic)) first.set(q.topic, q.id)
+  return [...first.entries()].sort(([a], [b]) => a.localeCompare(b))
+}
+
+/**
+ * Write submitted attempts straight into idb-keyval's default store. Attempt j
+ * holds, for every topic with a j-th outcome, that topic's first question answered
+ * with that outcome. The store only exists once the app has opened it, so load the
+ * front page first.
+ */
+async function seedHistory(
+  page: Page,
+  index: SeedIndex,
+  outcomes: Record<string, ('correct' | 'wrong')[]>,
+) {
+  const firstId = new Map(topicsWithQuestions(index))
+  const exam = index.exams[0].slug
+  const rounds = Math.max(...Object.values(outcomes).map((o) => o.length))
+  const attempts = []
+  for (let j = 0; j < rounds; j++) {
+    const questions = Object.entries(outcomes)
+      .filter(([, o]) => o[j] !== undefined)
+      .map(([topic, o]) => ({
+        id: firstId.get(topic)!,
+        response: null,
+        correctness: o[j],
+        marks: o[j] === 'correct' ? 1 : 0,
+        timeSpent: 1,
+      }))
+    const correct = questions.filter((q) => q.correctness === 'correct').length
+    attempts.push({
+      id: `seed-${j}`,
+      timestamp: 1_000_000 + j,
+      exam,
+      mode: 'random',
+      timedMinutes: null,
+      revealMode: 'immediate',
+      score: correct,
+      max: questions.length,
+      correct,
+      wrong: questions.length - correct,
+      unattempted: 0,
+      questions,
+    })
+  }
+  await page.goto('/#/')
+  await expect(page.locator('.mode-list')).toBeVisible()
+  await page.evaluate(
+    (records) =>
+      new Promise<void>((resolve, reject) => {
+        const open = indexedDB.open('keyval-store')
+        open.onerror = () => reject(open.error)
+        open.onsuccess = () => {
+          const tx = open.result.transaction('keyval', 'readwrite')
+          for (const r of records) tx.objectStore('keyval').put(r, `attempt:${r.id}`)
+          tx.oncomplete = () => resolve()
+          tx.onerror = () => reject(tx.error)
+        }
+      }),
+    attempts,
+  )
+}
+
+test('topics are ranked worst first and a topic under the threshold is listed separately', async ({ page, request }) => {
+  const index: SeedIndex = await (await request.get('/data/index.json')).json()
+  const slugs = topicsWithQuestions(index).map(([slug]) => slug)
+  if (slugs.length < 4) throw new Error('Need at least 4 topics with questions in public/data to test ranking.')
+  const m = slugs.length - 1
+  const outcomes: Record<string, ('correct' | 'wrong')[]> = {}
+  for (let i = 0; i < m; i++) {
+    outcomes[slugs[i]] = Array.from({ length: m }, (_, k) => (k < i ? 'correct' : 'wrong'))
+  }
+  const thin = slugs[m]
+  // Two attempts: under the locked threshold of 3 (D-02), a literal on purpose.
+  outcomes[thin] = ['wrong', 'wrong']
+
+  await seedHistory(page, index, outcomes)
+  await page.goto('/#/stats')
+
+  const ranked = page.getByTestId('ranked-table').locator('tr[data-topic]')
+  await expect(ranked).toHaveCount(m)
+  expect(await ranked.evaluateAll((rs) => rs.map((r) => r.getAttribute('data-topic')))).toEqual(slugs.slice(0, m))
+  await expect(ranked.first().getByTestId('stat-accuracy')).toHaveText('0%')
+  for (const attempts of await ranked.getByTestId('stat-attempts').allTextContents()) expect(attempts).toBe(String(m))
+
+  const insufficient = page.getByTestId('insufficient-table').locator('tr[data-topic]')
+  await expect(insufficient).toHaveCount(1)
+  await expect(insufficient.first()).toHaveAttribute('data-topic', thin)
+  await expect(insufficient.first().getByTestId('stat-attempts')).toHaveText('2')
+  await expect(page.getByTestId('ranked-table').locator(`tr[data-topic="${thin}"]`)).toHaveCount(0)
 })
