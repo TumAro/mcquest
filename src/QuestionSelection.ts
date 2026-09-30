@@ -5,6 +5,25 @@ export interface SelectQuestionsResult {
   warnings: string[]
 }
 
+export interface IndexEntry {
+  question: IndexQuestion
+  slug: string
+  year: number
+}
+
+/** Question id -> where it lives. First occurrence wins on a duplicated id. */
+export function buildIndexLookup(index: DataIndex): Map<string, IndexEntry> {
+  const lookup = new Map<string, IndexEntry>()
+  for (const exam of index.exams) {
+    for (const y of exam.years) {
+      for (const question of y.questions) {
+        if (!lookup.has(question.id)) lookup.set(question.id, { question, slug: exam.slug, year: y.year })
+      }
+    }
+  }
+  return lookup
+}
+
 /**
  * Simple Fisher-Yates shuffle seeded from Date.now()
  */
