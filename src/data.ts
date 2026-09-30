@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Response } from './attempt-state'
+import { buildIndexLookup } from './QuestionSelection'
 
 export type { Response }
 
@@ -78,6 +79,41 @@ export async function loadPaper(slug: string, year: number): Promise<Paper> {
 /** Matches build-data.mjs, which emits assets to `<exam>/assets/<year>/`. */
 export function assetBase(slug: string, year: number): string {
   return `${DATA_BASE}${slug}/assets/${year}/`
+}
+
+export interface LoadedQuestion {
+  question: Question
+  assetBase: string
+}
+
+/**
+ * Rehydrate questions from stored ids. Each needed paper is fetched once. An id
+ * that left the bank (or its paper) is simply absent from the result.
+ */
+export async function loadQuestionsById(
+  index: DataIndex,
+  ids: string[],
+): Promise<Map<string, LoadedQuestion>> {
+  const lookup = buildIndexLookup(index)
+  const papers = new Map<string, { slug: string; year: number }>()
+  for (const id of ids) {
+    const hit = lookup.get(id)
+    if (hit) papers.set(`${hit.slug}/${hit.year}`, { slug: hit.slug, year: hit.year })
+  }
+  const loaded = await Promise.all(
+    [...papers.values()].map(async ({ slug, year }) => ({
+      base: assetBase(slug, year),
+      paper: await loadPaper(slug, year),
+    })),
+  )
+  const wanted = new Set(ids)
+  const out = new Map<string, LoadedQuestion>()
+  for (const { base, paper } of loaded) {
+    for (const question of paper.questions) {
+      if (wanted.has(question.id) && !out.has(question.id)) out.set(question.id, { question, assetBase: base })
+    }
+  }
+  return out
 }
 
 export function useJson<T>(

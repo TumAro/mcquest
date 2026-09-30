@@ -9,7 +9,8 @@ export interface QuestionPaneProps {
   number: number
   assetBase: string
   draft: Response
-  onDraft: (next: Response) => void
+  onDraft?: (next: Response) => void
+  readOnly?: boolean
 }
 
 export default function QuestionPane({
@@ -18,6 +19,7 @@ export default function QuestionPane({
   assetBase,
   draft,
   onDraft,
+  readOnly = false,
 }: QuestionPaneProps) {
   const type = inferType(question)
   const draftString =
@@ -27,14 +29,25 @@ export default function QuestionPane({
         ? ''
         : undefined
 
+  // Review only: label the stored response and the answer key. Display, not judgement.
+  const tags = (idx: number) =>
+    readOnly && (
+      <>
+        {Array.isArray(draft) && draft.includes(idx) && (
+          <span className="option-tag option-tag--yours">Your answer</span>
+        )}
+        {question.correct?.includes(idx) && <span className="option-tag option-tag--key">Correct answer</span>}
+      </>
+    )
+
   const handleNumericChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.currentTarget.value
     const parsed = parseNumeric(raw)
-    onDraft(parsed)
+    onDraft?.(parsed)
   }
 
   return (
-    <div className="question-pane">
+    <div className={readOnly ? 'question-pane question-pane--review' : 'question-pane'}>
       <div className="question-pane-header">
         <h2>Question {number}</h2>
         <div className="question-pane-meta">
@@ -68,11 +81,13 @@ export default function QuestionPane({
                 name={question.id}
                 value={idx}
                 checked={Array.isArray(draft) && draft[0] === idx}
-                onChange={() => onDraft([idx])}
+                disabled={readOnly}
+                onChange={() => onDraft?.([idx])}
               />
               <span className="option-text">
                 <Math text={option} />
               </span>
+              {tags(idx)}
             </label>
           ))}
         </fieldset>
@@ -87,6 +102,7 @@ export default function QuestionPane({
               <input
                 type="checkbox"
                 checked={Array.isArray(draft) && draft.includes(idx)}
+                disabled={readOnly}
                 onChange={(e) => {
                   const newDraft = Array.isArray(draft) ? [...draft] : []
                   if (e.currentTarget.checked) {
@@ -96,12 +112,13 @@ export default function QuestionPane({
                   }
                   // Sort ascending so the saved shape is stable
                   newDraft.sort((a, b) => a - b)
-                  onDraft(newDraft.length > 0 ? newDraft : [])
+                  onDraft?.(newDraft.length > 0 ? newDraft : [])
                 }}
               />
               <span className="option-text">
                 <Math text={option} />
               </span>
+              {tags(idx)}
             </label>
           ))}
         </fieldset>
@@ -119,7 +136,18 @@ export default function QuestionPane({
             value={draftString ?? ''}
             onChange={handleNumericChange}
             className="numeric-input"
+            disabled={readOnly}
           />
+          {readOnly && question.answer && (
+            <p className="numeric-key">
+              Correct answer:{' '}
+              <span className="mono-num">
+                {question.answer.min === question.answer.max
+                  ? question.answer.min
+                  : `${question.answer.min} to ${question.answer.max}`}
+              </span>
+            </p>
+          )}
         </div>
       )}
     </div>

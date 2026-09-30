@@ -78,6 +78,13 @@ async function answerCorrectly(page: Page, q: PaperQuestion) {
   }
 }
 
+/** Check the first option that is not in the answer key. Returns its index. */
+async function answerWrongSingle(page: Page, q: PaperQuestion): Promise<number> {
+  const wrong = q.options!.findIndex((_, i) => !q.correct!.includes(i))
+  await page.locator('.question-pane-option input').nth(wrong).check()
+  return wrong
+}
+
 const fmt = (n: number) => Number(n.toFixed(2)).toString()
 
 test('TEST-05: one question of each type, submitted, scored on the results screen', async ({ page, request }) => {
@@ -193,4 +200,40 @@ test('timer auto-submit saves the attempt and lands on the results screen', asyn
   // same score rather than the resume dialog.
   await page.reload()
   await expect(page.getByTestId('results-score')).toHaveText(expectedScore)
+})
+
+test('review pairs each response with the answer key for every question', async ({ page, request }) => {
+  const paper = await pickPaper(request)
+  await startPaper(page, paper.slug, paper.year)
+
+  const withNote = (t: string) =>
+    paper.questions.find((q) => inferType(q) === t && q.note) ?? paper.questions.find((q) => inferType(q) === t)!
+  const single = withNote('single')
+  const numeric = withNote('numeric')
+
+  await jumpTo(page, paper.questions.indexOf(single) + 1)
+  const wrongIdx = await answerWrongSingle(page, single)
+  await page.getByRole('button', { name: 'Save & Next' }).click()
+
+  await jumpTo(page, paper.questions.indexOf(numeric) + 1)
+  await answerCorrectly(page, numeric)
+  await page.getByRole('button', { name: 'Save & Next' }).click()
+
+  page.once('dialog', (d) => d.accept())
+  await page.getByRole('button', { name: 'Submit' }).click()
+  await expect(page).toHaveURL(/#\/results\/[^/]+$/)
+
+  await expect(page.locator('[data-question-id]')).toHaveCount(paper.questions.length)
+
+  const wrongItem = page.locator(`[data-question-id="${single.id}"]`)
+  const options = wrongItem.locator('.question-pane-option')
+  await expect(options.nth(wrongIdx)).toContainText('Your answer')
+  await expect(options.nth(wrongIdx)).not.toContainText('Correct answer')
+  await expect(options.nth(single.correct![0])).toContainText('Correct answer')
+  await expect(options.nth(single.correct![0])).not.toContainText('Your answer')
+
+  const numItem = page.locator(`[data-question-id="${numeric.id}"]`)
+  const { min, max } = numeric.answer!
+  await expect(numItem.locator('input[type="number"]')).toHaveValue(String((min + max) / 2))
+  await expect(numItem.locator('.numeric-key')).toContainText(String(min))
 })

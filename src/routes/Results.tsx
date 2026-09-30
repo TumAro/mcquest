@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router'
-import { loadIndex, useJson } from '../data'
+import { loadIndex, loadQuestionsById, useJson } from '../data'
+import QuestionPane from '../QuestionPane'
 import { loadSubmittedAttempt } from '../storage'
 import type { SubmittedAttempt } from '../storage'
 import { buildIndexLookup } from '../QuestionSelection'
@@ -22,7 +23,14 @@ export default function Results() {
   const { data, error } = useJson(async () => {
     const attempt = id ? await loadSubmittedAttempt(id) : null
     const index = attempt ? await loadIndex() : null
-    return { attempt, index }
+    const loaded =
+      attempt && index
+        ? await loadQuestionsById(
+            index,
+            attempt.questions.map((q) => q.id),
+          )
+        : null
+    return { attempt, index, loaded }
   }, [id])
 
   if (error) {
@@ -34,8 +42,8 @@ export default function Results() {
     )
   }
   if (!data) return <div className="loading-state">Loading...</div>
-  const { attempt, index } = data
-  if (!attempt || !index) {
+  const { attempt, index, loaded } = data
+  if (!attempt || !index || !loaded) {
     return (
       <div className="not-found-state">
         <p>Attempt not found.</p>
@@ -115,6 +123,30 @@ export default function Results() {
           ))}
         </tbody>
       </table>
+
+      <section className="review">
+        <h2>Review</h2>
+        {attempt.questions.map((qa, i) => {
+          const item = loaded.get(qa.id)
+          return (
+            <article className="review-item" data-question-id={qa.id} key={qa.id}>
+              {item ? (
+                <QuestionPane
+                  readOnly
+                  question={item.question}
+                  number={i + 1}
+                  assetBase={item.assetBase}
+                  draft={qa.response}
+                />
+              ) : (
+                <p className="review-missing">
+                  Question {i + 1} ({qa.id}) is no longer in the bank.
+                </p>
+              )}
+            </article>
+          )
+        })}
+      </section>
 
       <p>
         <Link to="/">Back to exams</Link>
