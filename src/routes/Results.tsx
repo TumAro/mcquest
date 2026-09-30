@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router'
 import { loadIndex, loadQuestionsById, useJson } from '../data'
 import QuestionPane from '../QuestionPane'
 import MathText from '../Math'
+import BookmarkButton, { useBookmarks } from '../components/BookmarkButton'
 import { loadSubmittedAttempt } from '../storage'
 import type { SubmittedAttempt } from '../storage'
 import { buildIndexLookup } from '../QuestionSelection'
@@ -26,6 +27,7 @@ const MODE_TITLE: Record<SubmittedAttempt['mode'], string> = {
 
 export default function Results() {
   const { id } = useParams()
+  const { isBookmarked, toggle: toggleBookmarked } = useBookmarks()
 
   // `attempt` may be null (unknown id), so the loader returns an object: useJson
   // reports "still loading" as data === null and a bare null could not mean not-found.
@@ -147,6 +149,7 @@ export default function Results() {
                   {statusLabel(qa.correctness)}
                 </span>
                 <span className="mono-num review-marks">{formatMarks(qa.marks)}</span>
+                {item && <BookmarkButton bookmarked={isBookmarked(qa.id)} onToggle={() => toggleBookmarked(qa.id)} />}
               </div>
               {item ? (
                 <QuestionPane

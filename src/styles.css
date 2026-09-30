@@ -207,6 +207,12 @@ a:focus-visible {
   background: color-mix(in srgb, var(--blue) 85%, black);
 }
 
+.btn-bookmark[aria-pressed='true'] {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: var(--blue-weak);
+}
+
 .btn-row {
   display: flex;
   gap: var(--space-4);

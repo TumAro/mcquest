@@ -250,3 +250,52 @@ test('review pairs each response with the answer key for every question', async 
     expect(await details.evaluate((d: HTMLDetailsElement) => d.open)).toBe(true)
   }
 })
+
+test('bookmarks persist across reloads and attempts and are independent of mark-for-review', async ({ page, request }) => {
+  const paper = await pickPaper(request)
+  const bookmark = () => page.getByRole('button', { name: /^bookmark/i })
+  const markedBubble = (n: number) => page.getByRole('button', { name: new RegExp(`^Question ${n},.*marked`) })
+
+  await startPaper(page, paper.slug, paper.year)
+  await bookmark().click()
+  await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
+
+  await page.getByRole('button', { name: 'Save & Next' }).click()
+  await expect(bookmark()).toHaveAttribute('aria-pressed', 'false')
+  await page.getByRole('button', { name: 'Mark for Review & Next' }).click()
+
+  // Marking question 2 did not bookmark it.
+  await jumpTo(page, 2)
+  await expect(markedBubble(2)).toHaveCount(1)
+  await expect(bookmark()).toHaveAttribute('aria-pressed', 'false')
+
+  // Bookmarking question 1 did not mark it.
+  await jumpTo(page, 1)
+  await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
+  await expect(markedBubble(1)).toHaveCount(0)
+
+  page.once('dialog', (d) => d.accept())
+  await page.getByRole('button', { name: 'Submit' }).click()
+  await expect(page).toHaveURL(/#\/results\/[^/]+$/)
+
+  const first = page.locator(`[data-question-id="${paper.questions[0].id}"]`)
+  const third = page.locator(`[data-question-id="${paper.questions[2].id}"]`)
+  const pressed = (item: typeof first) => item.getByRole('button', { name: /^bookmark/i })
+
+  // A bookmark made inside the test shows in the review; add another from the review.
+  await expect(pressed(first)).toHaveAttribute('aria-pressed', 'true')
+  await expect(pressed(third)).toHaveAttribute('aria-pressed', 'false')
+  await pressed(third).click()
+  await expect(pressed(third)).toHaveAttribute('aria-pressed', 'true')
+
+  // Persisted in storage, read back on load.
+  await page.reload()
+  await expect(first).toBeVisible()
+  await expect(pressed(first)).toHaveAttribute('aria-pressed', 'true')
+  await expect(pressed(third)).toHaveAttribute('aria-pressed', 'true')
+
+  // Survives into a later attempt; mark-for-review did not.
+  await startPaper(page, paper.slug, paper.year)
+  await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.getByRole('button', { name: /^Question \d+,.*marked/ })).toHaveCount(0)
+})

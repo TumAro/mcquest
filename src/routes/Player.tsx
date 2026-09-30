@@ -8,6 +8,7 @@ import { isAnswered } from '../attempt-state'
 import { formatTime } from '../timer'
 import QuestionPane from '../QuestionPane'
 import Palette from '../Palette'
+import BookmarkButton, { useBookmarks } from '../components/BookmarkButton'
 import examsConfig from '../../exams.json'
 import './player.css'
 
@@ -65,6 +66,7 @@ export default function Player() {
     [slug, year, isSubjectWise]
   )
 
+  const { isBookmarked, toggle: toggleBookmarked } = useBookmarks()
   const [current, setCurrent] = useState(0)
   const [responses, setResponses] = useState<Record<string, Response>>({})
   const [marked, setMarked] = useState<Record<string, boolean>>({})
@@ -641,6 +643,10 @@ export default function Player() {
           <button className="btn" onClick={handleMarkForReviewNext}>
             Mark for Review &amp; Next
           </button>
+          <BookmarkButton
+            bookmarked={isBookmarked(currentQuestion.id)}
+            onToggle={() => toggleBookmarked(currentQuestion.id)}
+          />
           <button className="btn btn-primary player-submit" onClick={handleSubmit}>
             Submit
           </button>
