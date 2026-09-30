@@ -31,7 +31,7 @@ export default function ResumeDialog({ children }: ResumeDialogProps) {
 
   // Still loading
   if (isLoading) {
-    return <div style={{ padding: '1rem' }}>Loading...</div>
+    return <div className="loading-state">Loading...</div>
   }
 
   // No in-progress attempt, render children normally
@@ -75,61 +75,19 @@ export default function ResumeDialog({ children }: ResumeDialogProps) {
   return (
     <>
       {/* Overlay */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-        }}
-      >
+      <div className="modal-overlay">
         {/* Dialog */}
-        <div
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '2rem',
-            maxWidth: '500px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <h2 style={{ margin: '0 0 1rem 0' }}>Resume Attempt?</h2>
-          <p style={{ margin: '0 0 1.5rem 0', color: '#666' }}>
+        <div className="modal">
+          <h2 className="modal-title">Resume Attempt?</h2>
+          <p className="modal-body">
             An attempt in progress was found. Would you like to resume it or start fresh?
           </p>
 
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
-            <button
-              onClick={handleStartFresh}
-              style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#f0f0f0',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '1rem',
-              }}
-            >
+          <div className="modal-actions">
+            <button className="btn" onClick={handleStartFresh}>
               Start Fresh
             </button>
-            <button
-              onClick={handleResume}
-              style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#0066cc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '1rem',
-              }}
-            >
+            <button className="btn btn-primary" onClick={handleResume}>
               Resume
             </button>
           </div>

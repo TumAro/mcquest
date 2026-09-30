@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { selectQuestions } from '../QuestionSelection'
 import TestOptions, { type RevealMode } from './TestOptions'
 import type { DataIndex, IndexQuestion } from '../data'
+import './config-screen.css'
 
 interface ConfigScreenProps {
   index: DataIndex
@@ -110,18 +111,18 @@ export default function ConfigScreen({
   const topicsMap = index.topics
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '600px' }}>
+    <div className="page">
       <h1>{title}</h1>
 
       {showTopics && (
-        <div style={{ marginBottom: '2rem' }}>
+        <div className="field-group">
           <h2>Topics</h2>
           {Object.entries(topicsMap).map(([categorySlug, category]) => (
-            <div key={categorySlug} style={{ marginBottom: '1rem' }}>
-              <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>{category.label}</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div key={categorySlug} className="topics-category">
+              <h3 className="topics-category-label">{category.label}</h3>
+              <div className="topics-list">
                 {Object.entries(category.topics).map(([topicSlug, topicLabel]) => (
-                  <label key={topicSlug} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <label key={topicSlug} className="option-row">
                     <input
                       type="checkbox"
                       checked={selectedTopics.has(topicSlug)}
@@ -136,23 +137,21 @@ export default function ConfigScreen({
         </div>
       )}
 
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="field-group">
         <h2>Question Count</h2>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div className="field-row">
           <label>
-            <span style={{ marginRight: '0.5rem' }}>Questions:</span>
+            <span className="field-label-inline">Questions:</span>
             <input
               type="number"
               min="1"
               max={maxAvailable}
               value={count}
               onChange={(e) => setCount(parseInt(e.currentTarget.value, 10) || 1)}
-              style={{ width: '80px' }}
+              className="text-input count-input"
             />
           </label>
-          <span style={{ fontSize: '0.875rem', color: '#666' }}>
-            (max {maxAvailable} available)
-          </span>
+          <span className="field-hint">(max {maxAvailable} available)</span>
         </div>
       </div>
 
@@ -166,86 +165,26 @@ export default function ConfigScreen({
       />
 
       {error && (
-        <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: '#ffe0e0', border: '1px solid #dd0000' }}>
-          <p style={{ margin: 0, color: '#cc0000' }}>{error}</p>
+        <div className="alert-error">
+          <p className="alert-text">{error}</p>
         </div>
       )}
 
-      <button
-        onClick={handleStart}
-        style={{
-          padding: '0.75rem 1.5rem',
-          fontSize: '1rem',
-          cursor: 'pointer',
-          backgroundColor: '#0066cc',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-        }}
-      >
+      <button className="btn btn-primary start-button" onClick={handleStart}>
         Start Test
       </button>
 
       {/* Pool warning dialog */}
       {poolWarning && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-          onClick={() => setPoolWarning(null)}
-        >
-          <div
-            style={{
-              backgroundColor: 'white',
-              padding: '2rem',
-              borderRadius: '8px',
-              maxWidth: '400px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              textAlign: 'center',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ marginTop: 0, marginBottom: '1rem', color: '#333' }}>
-              Fewer questions available
-            </h2>
-            <p style={{ marginBottom: '1.5rem', color: '#666', lineHeight: 1.5 }}>
-              {poolWarning.message}
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button
-                onClick={() => setPoolWarning(null)}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  cursor: 'pointer',
-                  backgroundColor: '#f0f0f0',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                }}
-              >
+        <div className="modal-overlay" onClick={() => setPoolWarning(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">Fewer questions available</h2>
+            <p className="modal-body">{poolWarning.message}</p>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setPoolWarning(null)}>
                 Cancel
               </button>
-              <button
-                onClick={handleProceedWithWarning}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  cursor: 'pointer',
-                  backgroundColor: '#0066cc',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                }}
-              >
+              <button className="btn btn-primary" onClick={handleProceedWithWarning}>
                 Proceed with {poolWarning.actualCount} questions
               </button>
             </div>

@@ -1,0 +1,30 @@
+.topics-category {
+  margin-bottom: var(--space-4);
+}
+
+.topics-category-label {
+  margin-bottom: var(--space-2);
+  font-size: var(--text-base);
+}
+
+.topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.count-input {
+  width: 5rem;
+}
+
+.start-button {
+  margin-top: var(--space-2);
+}
+
+.field-label-inline {
+  margin-right: var(--space-2);
+}
+
+.alert-text {
+  margin: 0;
+}

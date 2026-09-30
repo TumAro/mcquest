@@ -9,6 +9,7 @@ import { formatTime } from '../timer'
 import QuestionPane from '../QuestionPane'
 import Palette from '../Palette'
 import examsConfig from '../../exams.json'
+import './player.css'
 
 type RevealMode = 'immediate' | 'onSubmit'
 
@@ -427,12 +428,12 @@ export default function Player() {
   }, [responses, finalQuestions, current, marked, visited, revealMode, correctness])
 
   if (isLoading) {
-    return <div style={{ padding: '1rem' }}>Loading...</div>
+    return <div className="loading-state">Loading...</div>
   }
 
   if (finalQuestions.length === 0) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="not-found-state">
         <p>No questions found.</p>
         <Link to="/">Back</Link>
       </div>
@@ -441,7 +442,7 @@ export default function Player() {
 
   if (!isSubjectWise && (!index || !paper)) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="not-found-state">
         <p>Error loading exam.</p>
         <Link to="/">Back</Link>
       </div>
@@ -452,7 +453,7 @@ export default function Player() {
     const exam = index!.exams.find((e) => e.slug === slug)
     if (!exam) {
       return (
-        <div style={{ padding: '1rem' }}>
+        <div className="not-found-state">
           <p>Exam not found.</p>
           <Link to="/">Back to exams</Link>
         </div>
@@ -462,7 +463,7 @@ export default function Player() {
     const yearData = exam.years.find((y) => y.year === year)
     if (!yearData) {
       return (
-        <div style={{ padding: '1rem' }}>
+        <div className="not-found-state">
           <p>Year not found.</p>
           <Link to={`/exam/${slug}`}>Back to years</Link>
         </div>
@@ -584,61 +585,55 @@ export default function Player() {
   const paneAssetBase = isSubjectWise ? '' : assetBase(slug!, year)
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 300px',
-        gap: '1rem',
-        minHeight: '100vh',
-      }}
-    >
-      <div>
-        <div style={{ padding: '1rem', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>
-            Question {current + 1} of {finalQuestions.length}
+    <div className="player">
+      <div className="player-main">
+        <div className="player-header">
+          <span className="player-progress">
+            Question <span className="mono-num">{current + 1}</span> of{' '}
+            <span className="mono-num">{finalQuestions.length}</span>
           </span>
-          {deadline !== Infinity && (
-            <span style={{ fontSize: '1.2rem', fontFamily: 'monospace', fontWeight: 'bold' }}>
-              {formatTime(Math.max(0, remaining))}
-            </span>
+          {deadline !== Infinity && Number.isFinite(remaining) && (
+            <span className="player-clock">{formatTime(Math.max(0, remaining))}</span>
           )}
         </div>
 
-        <QuestionPane
-          key={currentQuestion.id}
-          question={currentQuestion}
-          number={current + 1}
-          assetBase={paneAssetBase}
-          draft={draft}
-          onDraft={handleDraft}
-        />
+        <div className="player-question-body">
+          <QuestionPane
+            key={currentQuestion.id}
+            question={currentQuestion}
+            number={current + 1}
+            assetBase={paneAssetBase}
+            draft={draft}
+            onDraft={handleDraft}
+          />
+        </div>
 
         {!result ? (
-          <div style={{ padding: '1rem', borderTop: '1px solid #ccc', display: 'flex', gap: '1rem' }}>
-            <button onClick={handleSaveNext} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+          <div className="player-controls">
+            <button className="btn" onClick={handleSaveNext}>
               Save &amp; Next
             </button>
-            <button onClick={handleClearResponse} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            <button className="btn" onClick={handleClearResponse}>
               Clear Response
             </button>
-            <button onClick={handleMarkForReviewNext} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            <button className="btn" onClick={handleMarkForReviewNext}>
               Mark for Review &amp; Next
             </button>
-            <button onClick={handleSubmit} style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginLeft: 'auto' }}>
+            <button className="btn btn-primary player-submit" onClick={handleSubmit}>
               Submit
             </button>
           </div>
         ) : (
-          <div style={{ padding: '1rem', borderTop: '1px solid #ccc' }}>
-            <p style={{ margin: '0 0 0.5rem 0' }}>
+          <div className="player-result">
+            <p className="player-result-score">
               Score: {Math.round(result.score * 100) / 100} / {result.max} — {result.correct} correct, {result.wrong} wrong, {result.unattempted} unattempted
             </p>
-            <p style={{ margin: 0, fontSize: '0.875rem', color: '#666' }}>Attempt submitted. Further changes are not scored.</p>
+            <p className="player-result-note">Attempt submitted. Further changes are not scored.</p>
           </div>
         )}
       </div>
 
-      <div style={{ borderLeft: '1px solid #ccc', backgroundColor: '#fafafa' }}>
+      <div className="player-rail">
         <Palette
           questions={finalQuestions}
           current={current}
@@ -653,15 +648,6 @@ export default function Player() {
           }}
         />
       </div>
-
-      {/* Mobile: single column below 900px; drawer handles palette visibility */}
-      <style>{`
-        @media (max-width: 900px) {
-          div {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   )
 }

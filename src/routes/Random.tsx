@@ -7,7 +7,7 @@ export default function Random() {
   const { data: index } = useJson(() => loadIndex(), [])
 
   if (!index) {
-    return <div style={{ padding: '1rem' }}>Loading...</div>
+    return <div className="loading-state">Loading...</div>
   }
 
   // Pre-select all topics for random mode

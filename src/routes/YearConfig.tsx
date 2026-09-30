@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { loadIndex, loadPaper, useJson } from '../data'
 import TestOptions, { type RevealMode } from './TestOptions'
+import './config-screen.css'
 
 export default function YearConfig() {
   const navigate = useNavigate()
@@ -37,13 +38,13 @@ export default function YearConfig() {
   }
 
   if (!index || !paper) {
-    return <div style={{ padding: '1rem' }}>Loading...</div>
+    return <div className="loading-state">Loading...</div>
   }
 
   const exam = index.exams.find((e) => e.slug === slug)
   if (!exam) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="not-found-state">
         <p>Exam not found.</p>
       </div>
     )
@@ -52,14 +53,14 @@ export default function YearConfig() {
   const yearData = exam.years.find((y) => y.year === year)
   if (!yearData) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="not-found-state">
         <p>Year not found.</p>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="page">
       <h1>
         {exam.label} — {year}
       </h1>
@@ -73,18 +74,7 @@ export default function YearConfig() {
         setRevealMode={setRevealMode}
       />
 
-      <button
-        onClick={handleStart}
-        style={{
-          padding: '0.75rem 1.5rem',
-          fontSize: '1rem',
-          cursor: 'pointer',
-          backgroundColor: '#0066cc',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-        }}
-      >
+      <button className="btn btn-primary start-button" onClick={handleStart}>
         Start Test
       </button>
     </div>

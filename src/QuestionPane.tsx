@@ -38,7 +38,10 @@ export default function QuestionPane({
       <div className="question-pane-header">
         <h2>Question {number}</h2>
         <div className="question-pane-meta">
-          {question.marks} marks | {question.topic}
+          <span className="meta-marks">
+            {question.marks} {question.marks === 1 ? 'mark' : 'marks'}
+          </span>{' '}
+          | {question.topic}
         </div>
       </div>
 

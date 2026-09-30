@@ -6,28 +6,28 @@ export function BrowseExams() {
   const { data: index, error } = useJson(() => loadIndex(), [])
 
   if (error) {
-    return <div style={{ padding: '1rem' }}>Error: {error.message}</div>
+    return <div className="not-found-state">Error: {error.message}</div>
   }
 
   if (!index) {
-    return <div style={{ padding: '1rem' }}>Loading exams...</div>
+    return <div className="loading-state">Loading exams...</div>
   }
 
   if (!index.exams || index.exams.length === 0) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="empty-state">
         <p>No exams found. Run <code>npm run build:data</code> to generate them.</p>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="page">
       <h1>Exams</h1>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="exam-list">
         {index.exams.map((exam) => (
-          <li key={exam.slug} style={{ marginBottom: '1rem' }}>
-            <Link to={`/exam/${exam.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <li key={exam.slug} className="exam-item">
+            <Link to={`/exam/${exam.slug}`}>
               {exam.label} ({exam.years.length} year{exam.years.length !== 1 ? 's' : ''})
             </Link>
           </li>
@@ -42,18 +42,18 @@ export function BrowseYears() {
   const { data: index, error } = useJson(() => loadIndex(), [])
 
   if (error) {
-    return <div style={{ padding: '1rem' }}>Error: {error.message}</div>
+    return <div className="not-found-state">Error: {error.message}</div>
   }
 
   if (!index) {
-    return <div style={{ padding: '1rem' }}>Loading exam...</div>
+    return <div className="loading-state">Loading exam...</div>
   }
 
   const exam = index.exams.find((e) => e.slug === slug)
 
   if (!exam) {
     return (
-      <div style={{ padding: '1rem' }}>
+      <div className="not-found-state">
         <p>Exam not found.</p>
         <Link to="/">Back to exams</Link>
       </div>
@@ -61,15 +61,12 @@ export function BrowseYears() {
   }
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="page">
       <h1>{exam.label}</h1>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="year-list">
         {exam.years.map((year) => (
-          <li key={year.year} style={{ marginBottom: '1rem' }}>
-            <Link
-              to={`/exam/${slug}/${year.year}/config`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+          <li key={year.year} className="year-item">
+            <Link to={`/exam/${slug}/${year.year}/config`}>
               {year.year} ({year.count} question{year.count !== 1 ? 's' : ''})
             </Link>
           </li>

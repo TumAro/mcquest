@@ -1,3 +1,5 @@
+import './config-screen.css'
+
 export type RevealMode = 'immediate' | 'onSubmit'
 
 interface TestOptionsProps {
@@ -25,45 +27,45 @@ export default function TestOptions({
 }: TestOptionsProps) {
   return (
     <>
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="field-group">
         <h2>Timer</h2>
-        <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
+        <label className="option-row">
           <input type="checkbox" checked={timed} onChange={(e) => setTimed(e.currentTarget.checked)} />
           <span>Timed mode</span>
         </label>
         {timed && (
-          <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <label className="option-row">
             <span>Minutes:</span>
             <input
               type="number"
               min="1"
               value={minutes}
               onChange={(e) => setMinutes(parseInt(e.currentTarget.value, 10) || 1)}
-              style={{ width: '80px' }}
+              className="text-input count-input"
             />
           </label>
         )}
       </div>
 
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="field-group">
         <h2>Feedback</h2>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
+        <label className="option-row">
           <input
             type="radio"
             name="reveal-mode"
             checked={revealMode === 'onSubmit'}
             onChange={() => setRevealMode('onSubmit')}
           />
-          <span style={{ marginLeft: '0.5rem' }}>Exam mode — no feedback until submit</span>
+          <span>Exam mode — no feedback until submit</span>
         </label>
-        <label style={{ display: 'block' }}>
+        <label className="option-row">
           <input
             type="radio"
             name="reveal-mode"
             checked={revealMode === 'immediate'}
             onChange={() => setRevealMode('immediate')}
           />
-          <span style={{ marginLeft: '0.5rem' }}>Practice mode — feedback on each answer</span>
+          <span>Practice mode — feedback on each answer</span>
         </label>
       </div>
     </>

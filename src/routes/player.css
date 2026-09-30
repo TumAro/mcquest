@@ -1,0 +1,111 @@
+.player {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.player-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.player-header {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--rule);
+}
+
+.player-progress {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* The one bold element: large Plex Mono with tabular figures, nothing else
+   on the page competes with it. */
+.player-clock {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.player-question-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--space-6);
+  display: flex;
+  justify-content: center;
+}
+
+.player-question-body > * {
+  width: 100%;
+  max-width: 42rem;
+}
+
+.player-controls {
+  flex: none;
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--rule);
+  background: var(--paper-sunk);
+}
+
+.player-submit {
+  margin-left: auto;
+}
+
+.player-result {
+  flex: none;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--rule);
+  background: var(--paper-sunk);
+}
+
+.player-result-score {
+  margin: 0 0 var(--space-2) 0;
+  font-weight: 600;
+}
+
+.player-result-note {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.player-rail {
+  border-left: 1px solid var(--rule);
+  background: var(--paper-sunk);
+}
+
+/* Same breakpoint as the palette drawer (palette.css). The toggle bar moves to
+   the top so it is not pushed below the fold by the full-height column. */
+@media (max-width: 899px) {
+  .player {
+    grid-template-columns: 1fr;
+  }
+
+  .player {
+    min-height: 0;
+    align-content: start;
+  }
+
+  .player-main {
+    min-height: 0;
+  }
+
+  .player-rail {
+    order: -1;
+    border-left: none;
+  }
+}

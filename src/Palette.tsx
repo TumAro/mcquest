@@ -104,20 +104,10 @@ export default function Palette({
                 onClick={() => handleJump(idx)}
                 aria-label={ariaLabel}
                 aria-current={idx === current ? 'page' : undefined}
-                style={{ position: 'relative' }}
               >
                 {idx + 1}
                 {glyph && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '-2px',
-                      right: '-2px',
-                      fontSize: '0.6em',
-                      fontWeight: 'bold',
-                      color: c === 'correct' ? '#0a0' : '#a00',
-                    }}
-                  >
+                  <div className={`palette-glyph palette-glyph-${c === 'correct' ? 'correct' : 'wrong'}`}>
                     {glyph}
                   </div>
                 )}

@@ -4,3 +4,5 @@ node_modules/
 public/data/
 dist/
 *.local
+playwright-report/
+test-results/

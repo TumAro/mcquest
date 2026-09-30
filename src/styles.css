@@ -1,3 +1,49 @@
+:root {
+  /* Colour — cool paper, graphite ink, ballpoint blue */
+  --paper: #FBFCFD;
+  --paper-sunk: #F1F4F7;
+  --ink: #1C2126;
+  --ink-soft: #5A646E;
+  --rule: #D6DDE4;
+  --blue: #1B4DB1;
+  --blue-weak: #E3EAF8;
+  --purple: #6B3FA0;
+  --green: #1F7A4D;
+  --red: #B3261E;
+  --amber: #9A6400;
+
+  /* Type scale: 12 / 14 / 16 / 20 / 28 / 40 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.5rem;
+
+  /* Type roles */
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'IBM Plex Serif', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 999px;
+
+  /* Measure */
+  --measure-page: 40rem;
+  --measure-prose: 68ch;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,14 +51,12 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #fff;
-  color: #000;
-  font-size: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--text-base);
   line-height: 1.5;
 }
 
@@ -22,19 +66,28 @@ body {
 }
 
 h1 {
-  font-size: 28px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
   font-weight: 600;
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--space-4) 0;
 }
 
 h2 {
-  font-size: 20px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
   font-weight: 600;
   margin: 0;
 }
 
+h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin: 0 0 var(--space-2) 0;
+}
+
 a {
-  color: #0066cc;
+  color: var(--blue);
   text-decoration: none;
 }
 
@@ -42,37 +95,22 @@ a:hover {
   text-decoration: underline;
 }
 
+a:visited {
+  color: var(--purple);
+}
+
 button {
-  font-size: 16px;
-  padding: 0.75rem 1rem;
-  border: 1px solid #999;
-  background: #fff;
-  color: #000;
-  border-radius: 2px;
-  cursor: pointer;
+  font-size: var(--text-base);
   font-family: inherit;
-}
-
-button:hover {
-  background: #f0f0f0;
-}
-
-button:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
-a:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
+  cursor: pointer;
 }
 
 code {
-  background: #f4f4f4;
+  background: var(--paper-sunk);
   padding: 2px 6px;
-  border-radius: 2px;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 
 ul {
@@ -82,73 +120,256 @@ ul {
 }
 
 li {
-  padding: 0.25rem 0;
+  padding: var(--space-1) 0;
 }
 
-/* Player layout: two-column grid above 900px */
-@media (min-width: 901px) {
-  /* Grid is set inline on the player div */
+/* Custom form controls — every checkbox and radio in the app shares this
+   look; browser defaults are the single strongest "unstyled" tell. */
+input[type='checkbox'],
+input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  flex-shrink: 0;
+  border: 2px solid var(--ink-soft);
+  background: var(--paper);
+  position: relative;
+  cursor: pointer;
 }
 
-/* Control row styling */
-div[style*="borderTop"][style*="display: flex"] {
+input[type='checkbox'] {
+  border-radius: var(--radius-sm);
+}
+
+input[type='radio'] {
+  border-radius: 50%;
+}
+
+input[type='checkbox']:checked,
+input[type='radio']:checked {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+input[type='checkbox']:checked::after {
+  content: '';
+  position: absolute;
+  left: 0.35rem;
+  top: 0.15rem;
+  width: 0.3rem;
+  height: 0.6rem;
+  border: solid var(--paper);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type='radio']:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0.3rem;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+input[type='checkbox']:focus-visible,
+input[type='radio']:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-base);
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn:hover {
+  background: var(--paper-sunk);
+}
+
+.btn-primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--paper);
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--blue) 85%, black);
+}
+
+.btn-row {
+  display: flex;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
-/* Score line styling */
-div[style*="backgroundColor: #f0f0f0"] {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-  background: #f9f9f9;
+/* Page container — the shared measure and rhythm every screen uses so the
+   front page, config screens and player read as one product. */
+.page {
+  max-width: var(--measure-page);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
 }
 
-/* Browse screens: exam list and year cards */
-.exam-list,
-.year-list {
-  list-style: none;
-  padding: 1rem;
+.field-group {
+  margin-bottom: var(--space-6);
 }
 
-.exam-item,
-.year-item {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  margin-bottom: 0.5rem;
-  border-radius: 2px;
-  background: #fff;
+.field-row {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.exam-item:hover,
-.year-item:hover {
-  background: #f9f9f9;
+.field-hint {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
 }
 
-.exam-item a,
-.year-item a {
-  display: block;
-  text-decoration: none;
-  color: inherit;
+/* A row whose entire width is the click target for its control, not just
+   the checkbox/radio itself. */
+.option-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  margin-inline: calc(-1 * var(--space-3));
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 
-.exam-item a:visited,
-.year-item a:visited {
-  color: #666;
+.option-row:hover {
+  background: var(--paper-sunk);
+}
+
+.alert-error {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--red) 10%, var(--paper));
+  border: 1px solid var(--red);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+}
+
+/* Modals — the resume dialog and the pool-warning dialog share this shell */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: var(--space-4);
+}
+
+.modal {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  max-width: 28rem;
+  width: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+  margin: 0 0 var(--space-4) 0;
+}
+
+.modal-body {
+  margin: 0 0 var(--space-5) 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Generic number/text fields used across config screens */
+.text-input {
+  padding: var(--space-2);
+  font-family: inherit;
+  font-size: var(--text-base);
+  border: 1px solid var(--ink-soft);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.text-input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-color: var(--blue);
+}
+
+/* Numbers that must not jitter: the clock, marks, question counters */
+.mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Loading, empty, and not-found states */
 .empty-state,
 .loading-state,
 .not-found-state {
-  padding: 2rem 1rem;
+  padding: var(--space-8) var(--space-4);
   text-align: center;
-  color: #666;
+  color: var(--ink-soft);
 }
 
 .empty-state h2,
 .loading-state h2,
 .not-found-state h2 {
-  color: #333;
-  margin-bottom: 1rem;
+  color: var(--ink);
+  margin-bottom: var(--space-4);
+}
+
+/* Browse screens: exam list and year cards */
+.exam-list,
+.year-list {
+  padding: 0;
+}
+
+.exam-item,
+.year-item {
+  border: 1px solid var(--rule);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+}
+
+.exam-item:hover,
+.year-item:hover {
+  background: var(--paper-sunk);
+}
+
+.exam-item a,
+.year-item a {
+  display: block;
+  padding: var(--space-4);
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.exam-item a:visited,
+.year-item a:visited {
+  color: var(--ink);
 }
 
 /* Math line-height adjustment for inline content */
@@ -156,10 +377,13 @@ div[style*="backgroundColor: #f0f0f0"] {
   line-height: 1.2;
 }
 
-/* Single column below 900px */
-@media (max-width: 900px) {
-  #root {
-    display: flex;
-    flex-direction: column;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
