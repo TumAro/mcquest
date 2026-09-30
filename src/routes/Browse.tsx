@@ -21,18 +21,48 @@ export function BrowseExams() {
     )
   }
 
+  const questionCount = index.exams.reduce(
+    (total, exam) => total + exam.years.reduce((n, y) => n + y.count, 0),
+    0
+  )
+
   return (
     <div className="page">
-      <h1>Exams</h1>
-      <ul className="exam-list">
-        {index.exams.map((exam) => (
-          <li key={exam.slug} className="exam-item">
-            <Link to={`/exam/${exam.slug}`}>
-              {exam.label} ({exam.years.length} year{exam.years.length !== 1 ? 's' : ''})
+      <h1>mcquest</h1>
+      <p className="page-lede">
+        {questionCount} question{questionCount !== 1 ? 's' : ''} in the bank.
+      </p>
+
+      <section className="mode-section">
+        <h2>Practise</h2>
+        <ul className="mode-list">
+          <li>
+            <Link to="/test/random" className="mode-card">
+              <span className="mode-name">Random</span>
+              <span className="mode-hint">A mixed set drawn from every exam and year</span>
             </Link>
           </li>
-        ))}
-      </ul>
+          <li>
+            <Link to="/test/subject" className="mode-card">
+              <span className="mode-name">By topic</span>
+              <span className="mode-hint">Pick the topics you want to drill</span>
+            </Link>
+          </li>
+        </ul>
+      </section>
+
+      <section className="mode-section">
+        <h2>Sit a paper</h2>
+        <ul className="exam-list">
+          {index.exams.map((exam) => (
+            <li key={exam.slug} className="exam-item">
+              <Link to={`/exam/${exam.slug}`}>
+                {exam.label} ({exam.years.length} year{exam.years.length !== 1 ? 's' : ''})
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   )
 }

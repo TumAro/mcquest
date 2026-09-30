@@ -387,3 +387,60 @@ a:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Front page: entry points --- */
+
+.page-lede {
+  margin: calc(var(--space-2) * -1) 0 var(--space-6);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.mode-section {
+  margin-bottom: var(--space-8);
+}
+
+.mode-section h2 {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-3);
+}
+
+.mode-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+/* The two practice modes are the everyday path, so they carry the blue edge;
+   the exam list below stays quiet. */
+.mode-card {
+  display: block;
+  padding: var(--space-4);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.mode-card:hover {
+  background: var(--blue-weak);
+}
+
+.mode-name {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.mode-hint {
+  display: block;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
