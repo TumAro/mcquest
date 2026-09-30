@@ -1,0 +1,91 @@
+.results-page {
+  max-width: calc(var(--measure-page) + var(--space-8));
+}
+
+.results-title {
+  margin: 0 0 var(--space-4) 0;
+  color: var(--ink-soft);
+}
+
+/* The page's one bold element: Plex Mono, tabular figures. */
+.results-score {
+  margin: 0 0 var(--space-4) 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.results-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0 0 var(--space-5) 0;
+}
+
+.results-counts dt {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.results-counts dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-lg);
+}
+
+.results-counts .results-correct {
+  color: var(--green);
+}
+
+.results-counts .results-wrong {
+  color: var(--red);
+}
+
+.results-scope-note {
+  margin: 0 0 var(--space-5) 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--ink-soft);
+  background: var(--paper-sunk);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-5);
+}
+
+.results-table caption {
+  text-align: left;
+  padding-bottom: var(--space-2);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.results-table th,
+.results-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--text-sm);
+  text-align: left;
+}
+
+.results-table thead th {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.results-table td,
+.results-table thead th:not(:first-child) {
+  text-align: right;
+}
+
+.results-table td {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
