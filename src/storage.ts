@@ -1,4 +1,4 @@
-import { set, get, del, update } from 'idb-keyval'
+import { set, get, del, update, entries } from 'idb-keyval'
 
 const TEST_MODES = ['year-wise', 'subject-wise', 'random', 'bookmarked'] as const
 export type TestMode = (typeof TEST_MODES)[number]
@@ -326,6 +326,32 @@ export async function loadSubmittedAttempt(id: string): Promise<SubmittedAttempt
   } catch (err) {
     console.error('Failed to load submitted attempt:', err)
     return null
+  }
+}
+
+/**
+ * Pure: every stored submitted attempt, oldest first. Only `attempt:`-prefixed
+ * string keys are read (the same store also holds 'in-progress-attempt' and
+ * 'bookmarks'); malformed values are dropped. Records pass through untouched,
+ * so every question's `timeSpent` survives into stats history.
+ */
+export function attemptsFromEntries(all: ReadonlyArray<readonly [unknown, unknown]>): SubmittedAttempt[] {
+  const out: SubmittedAttempt[] = []
+  for (const [key, value] of all) {
+    if (typeof key !== 'string' || !key.startsWith('attempt:')) continue
+    const attempt = deserializeSubmittedAttempt(value)
+    if (attempt) out.push(attempt)
+  }
+  return out.sort((a, b) => a.timestamp - b.timestamp)
+}
+
+/** IndexedDB wrapper — every stored submitted attempt, oldest first. Empty on failure. */
+export async function loadSubmittedAttempts(): Promise<SubmittedAttempt[]> {
+  try {
+    return attemptsFromEntries(await entries())
+  } catch (err) {
+    console.error('Failed to load submitted attempts:', err)
+    return []
   }
 }
 
