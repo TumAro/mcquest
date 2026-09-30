@@ -23,6 +23,7 @@ const MODE_TITLE: Record<SubmittedAttempt['mode'], string> = {
   'year-wise': 'Year-wise test',
   'subject-wise': 'Subject-wise test',
   random: 'Random test',
+  bookmarked: 'Bookmarked test',
 }
 
 export default function Results() {

@@ -19,6 +19,7 @@ interface SubjectConfig {
   count: number
   timedMinutes: number | null
   revealMode: 'immediate' | 'onSubmit'
+  mode?: 'bookmarked'
   questions: { id: string; topic: string; type?: string }[]
   warnings: string[]
 }
@@ -100,7 +101,13 @@ export default function Player() {
   const revealMode: RevealMode = resumedAttempt?.revealMode ?? config?.revealMode ?? 'onSubmit'
   const mode: SubmittedAttempt['mode'] =
     resumedAttempt?.mode ??
-    (slug && year ? 'year-wise' : (config?.topics?.length ?? 0) > 0 ? 'subject-wise' : 'random')
+    (slug && year
+      ? 'year-wise'
+      : config?.mode === 'bookmarked'
+        ? 'bookmarked'
+        : (config?.topics?.length ?? 0) > 0
+          ? 'subject-wise'
+          : 'random')
 
   // Restore from resumed attempt if present
   useEffect(() => {

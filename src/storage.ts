@@ -1,5 +1,9 @@
 import { set, get, del, update } from 'idb-keyval'
 
+const TEST_MODES = ['year-wise', 'subject-wise', 'random', 'bookmarked'] as const
+export type TestMode = (typeof TEST_MODES)[number]
+const isTestMode = (m: unknown): m is TestMode => (TEST_MODES as readonly unknown[]).includes(m)
+
 export type Response = number[] | number | null
 
 export interface InProgressAttempt {
@@ -12,7 +16,7 @@ export interface InProgressAttempt {
   questionIds: string[]
   exam: string
   year?: number
-  mode: 'year-wise' | 'subject-wise' | 'random'
+  mode: TestMode
   timedMinutes: number | null
   startedAt: number
   timePerQuestion: Record<string, number>
@@ -31,7 +35,7 @@ export interface SubmittedAttempt {
   timestamp: number
   exam: string
   year?: number
-  mode: 'year-wise' | 'subject-wise' | 'random'
+  mode: TestMode
   timedMinutes: number | null
   revealMode: 'immediate' | 'onSubmit'
   score: number
@@ -76,8 +80,8 @@ export function serializeInProgressAttempt(attempt: InProgressAttempt): InProgre
   if (attempt.year !== undefined && typeof attempt.year !== 'number') {
     throw new Error('Invalid in-progress attempt: year must be a number or undefined')
   }
-  if (!['year-wise', 'subject-wise', 'random'].includes(attempt.mode)) {
-    throw new Error('Invalid in-progress attempt: mode must be "year-wise", "subject-wise", or "random"')
+  if (!isTestMode(attempt.mode)) {
+    throw new Error('Invalid in-progress attempt: mode must be "year-wise", "subject-wise", "random", or "bookmarked"')
   }
   if (attempt.timedMinutes !== null && typeof attempt.timedMinutes !== 'number') {
     throw new Error('Invalid in-progress attempt: timedMinutes must be a number or null')
@@ -113,7 +117,7 @@ export function deserializeInProgressAttempt(stored: unknown): InProgressAttempt
   if (!Array.isArray(obj.questionIds)) return null
   if (typeof obj.exam !== 'string' || !obj.exam) return null
   if (obj.year !== undefined && typeof obj.year !== 'number') return null
-  if (!['year-wise', 'subject-wise', 'random'].includes(obj.mode as string)) return null
+  if (!isTestMode(obj.mode)) return null
   if (obj.timedMinutes !== null && typeof obj.timedMinutes !== 'number') return null
   if (typeof obj.startedAt !== 'number') return null
   if (!obj.timePerQuestion || typeof obj.timePerQuestion !== 'object') return null
@@ -128,7 +132,7 @@ export function deserializeInProgressAttempt(stored: unknown): InProgressAttempt
     questionIds: obj.questionIds as string[],
     exam: obj.exam as string,
     year: obj.year as number | undefined,
-    mode: obj.mode as 'year-wise' | 'subject-wise' | 'random',
+    mode: obj.mode as TestMode,
     timedMinutes: obj.timedMinutes as number | null,
     startedAt: obj.startedAt as number,
     timePerQuestion: obj.timePerQuestion as Record<string, number>,
@@ -153,8 +157,8 @@ export function serializeSubmittedAttempt(attempt: SubmittedAttempt): SubmittedA
   if (attempt.year !== undefined && typeof attempt.year !== 'number') {
     throw new Error('Invalid submitted attempt: year must be a number or undefined')
   }
-  if (!['year-wise', 'subject-wise', 'random'].includes(attempt.mode)) {
-    throw new Error('Invalid submitted attempt: mode must be "year-wise", "subject-wise", or "random"')
+  if (!isTestMode(attempt.mode)) {
+    throw new Error('Invalid submitted attempt: mode must be "year-wise", "subject-wise", "random", or "bookmarked"')
   }
   if (attempt.timedMinutes !== null && typeof attempt.timedMinutes !== 'number') {
     throw new Error('Invalid submitted attempt: timedMinutes must be a number or null')
@@ -216,7 +220,7 @@ export function deserializeSubmittedAttempt(stored: unknown): SubmittedAttempt |
   if (typeof obj.timestamp !== 'number') return null
   if (typeof obj.exam !== 'string' || !obj.exam) return null
   if (obj.year !== undefined && typeof obj.year !== 'number') return null
-  if (!['year-wise', 'subject-wise', 'random'].includes(obj.mode as string)) return null
+  if (!isTestMode(obj.mode)) return null
   if (obj.timedMinutes !== null && typeof obj.timedMinutes !== 'number') return null
   if (!['immediate', 'onSubmit'].includes(obj.revealMode as string)) return null
   if (typeof obj.score !== 'number') return null
@@ -250,7 +254,7 @@ export function deserializeSubmittedAttempt(stored: unknown): SubmittedAttempt |
     timestamp: obj.timestamp as number,
     exam: obj.exam as string,
     year: obj.year as number | undefined,
-    mode: obj.mode as 'year-wise' | 'subject-wise' | 'random',
+    mode: obj.mode as TestMode,
     timedMinutes: obj.timedMinutes as number | null,
     revealMode: obj.revealMode as 'immediate' | 'onSubmit',
     score: obj.score as number,
