@@ -311,6 +311,21 @@ export async function saveSubmittedAttempt(attempt: SubmittedAttempt): Promise<s
 }
 
 /**
+ * IndexedDB wrapper — load one submitted attempt by id.
+ * Reads the key saveSubmittedAttempt writes. Returns null when missing or
+ * malformed, like loadInProgressAttempt.
+ */
+export async function loadSubmittedAttempt(id: string): Promise<SubmittedAttempt | null> {
+  try {
+    const stored = await get(`attempt:${id}`)
+    return deserializeSubmittedAttempt(stored)
+  } catch (err) {
+    console.error('Failed to load submitted attempt:', err)
+    return null
+  }
+}
+
+/**
  * IndexedDB wrapper — delete in-progress attempt.
  * Safe to call twice (no-op if already deleted).
  * Returns a Promise.

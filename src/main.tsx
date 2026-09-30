@@ -5,6 +5,7 @@ import './styles.css'
 import ResumeDialog from './components/ResumeDialog'
 import { BrowseExams, BrowseYears } from './routes/Browse'
 import Player from './routes/Player'
+import Results from './routes/Results'
 import Subject from './routes/Subject'
 import Random from './routes/Random'
 import YearConfig from './routes/YearConfig'
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/test/subject" element={<Subject />} />
           <Route path="/test/random" element={<Random />} />
           <Route path="/test/play" element={<Player />} />
+          <Route path="/results/:id" element={<Results />} />
         </Routes>
       </ResumeDialog>
     </HashRouter>

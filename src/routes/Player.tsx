@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, Link, useLocation } from 'react-router'
+import { useParams, Link, useLocation, useNavigate } from 'react-router'
 import { loadIndex, loadPaper, assetBase, useJson } from '../data'
 import type { Response, Question } from '../data'
 import { saveInProgressAttempt, loadInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
@@ -69,7 +69,6 @@ export default function Player() {
   const [responses, setResponses] = useState<Record<string, Response>>({})
   const [marked, setMarked] = useState<Record<string, boolean>>({})
   const [visited, setVisited] = useState<Record<string, boolean>>({})
-  const [result, setResult] = useState<{ score: number; max: number; correct: number; wrong: number; unattempted: number } | null>(null)
   const [correctness, setCorrectness] = useState<Record<string, 'correct' | 'wrong' | null>>({})
   const [deadline, setDeadline] = useState<number>(Infinity)
   const [remaining, setRemaining] = useState<number>(Infinity)
@@ -79,11 +78,27 @@ export default function Player() {
   const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
   const [startedAt, setStartedAt] = useState<number | null>(null)
   const autoSubmitted = useRef(false)
+  // Set the instant a submit begins. Blocks a double submit and, crucially, the
+  // save effect's unmount write, which would otherwise re-create the in-progress
+  // attempt that submit just cleared and bring the resume dialog back.
+  const submittedRef = useRef(false)
+  const [saveError, setSaveError] = useState(false)
+  const navigate = useNavigate()
+  // The auto-submit effect's closure is stale relative to finishAttempt's inputs,
+  // so it calls through this ref (same pattern as latestAttempt below).
+  const finishRef = useRef<() => Promise<void>>(async () => {})
 
   // Determine questions and loading state early so they can be used in useEffects
   const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
   const isLoading = isSubjectWise ? questionsLoading : !index || !paper
-  const revealMode: RevealMode = config?.revealMode ?? 'onSubmit'
+  // A resumed attempt carries its own revealMode and mode: config is absent on
+  // resume, so falling back to config alone flipped a resumed practice attempt to
+  // exam mode. A paper started from the year page passes a config object too, so
+  // mode is decided by the URL first, not by the mere presence of config.
+  const revealMode: RevealMode = resumedAttempt?.revealMode ?? config?.revealMode ?? 'onSubmit'
+  const mode: SubmittedAttempt['mode'] =
+    resumedAttempt?.mode ??
+    (slug && year ? 'year-wise' : (config?.topics?.length ?? 0) > 0 ? 'subject-wise' : 'random')
 
   // Restore from resumed attempt if present
   useEffect(() => {
@@ -243,19 +258,16 @@ export default function Player() {
 
   // Auto-submit when time runs out
   useEffect(() => {
-    if (result || autoSubmitted.current || remaining > 0) return
+    if (submittedRef.current || autoSubmitted.current || remaining > 0) return
     autoSubmitted.current = true
     // Delay slightly to avoid state update conflicts
     const timeoutId = setTimeout(() => {
       const unanswered = finalQuestions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
       const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
-      if (confirmed) {
-        const score = scoreAttempt(examsConfig, finalQuestions, responses)
-        setResult(score)
-      }
+      if (confirmed) void finishRef.current()
     }, 0)
     return () => clearTimeout(timeoutId)
-  }, [remaining, result, finalQuestions, responses])
+  }, [remaining, finalQuestions, responses])
 
   // Debounced save of in-progress attempt
   // Keep the latest attempt snapshot in a ref, rewritten on every render.
@@ -270,7 +282,7 @@ export default function Player() {
       ? {
           exam: slug || 'subject',
           year: year || undefined,
-          mode: isSubjectWise ? ((config?.topics?.length ?? 0) > 0 ? 'subject-wise' : 'random') : 'year-wise',
+          mode,
           timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
           revealMode,
           questionIds: finalQuestions.map((q) => q.id),
@@ -287,9 +299,10 @@ export default function Player() {
   // Write on a fixed cadence, independent of render frequency, plus once on the
   // way out so the final state is never lost.
   useEffect(() => {
-    if (result) return
-
     const write = () => {
+      // After submit the in-progress attempt is gone on purpose; writing it back
+      // (this also runs on unmount) would resurrect the resume dialog.
+      if (submittedRef.current) return
       const attempt = latestAttempt.current
       if (attempt) {
         saveInProgressAttempt(attempt).catch((err) => {
@@ -313,13 +326,7 @@ export default function Player() {
       document.removeEventListener('visibilitychange', onLeave)
       write()
     }
-  }, [result])
-
-  // Clear in-progress attempt when result is submitted
-  useEffect(() => {
-    if (!result) return
-    clearInProgressAttempt()
-  }, [result])
+  }, [])
 
   // Keyboard handler
   useEffect(() => {
@@ -528,54 +535,65 @@ export default function Player() {
     }
   }
 
+  const finishAttempt = async () => {
+    if (submittedRef.current) return
+    submittedRef.current = true
+
+    const score = scoreAttempt(examsConfig, finalQuestions, responses)
+
+    // Record submitted attempt with per-question detail
+    const timeOnCurrentQ = currentQuestionStartedAt ? Date.now() - currentQuestionStartedAt : 0
+    const attemptRecord: SubmittedAttempt = {
+      id: crypto.randomUUID(),
+      timestamp: Date.now(),
+      exam: slug || 'subject',
+      year: year || undefined,
+      mode,
+      timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
+      revealMode,
+      score: score.score,
+      max: score.max,
+      correct: score.correct,
+      wrong: score.wrong,
+      unattempted: score.unattempted,
+      questions: finalQuestions.map(q => {
+        const qResult = score.results.find((r: any) => r.id === q.id)
+        // Add elapsed time for the current question if still on it
+        let timeOnQ = timePerQuestion[q.id] ?? 0
+        if (q.id === finalQuestions[current].id) {
+          timeOnQ += timeOnCurrentQ
+        }
+        const status = qResult?.status ?? 'unattempted'
+        const correctness: 'correct' | 'wrong' | null =
+          status === 'correct' ? 'correct' : status === 'wrong' ? 'wrong' : null
+        return {
+          id: q.id,
+          response: responses[q.id] ?? null,
+          correctness,
+          marks: qResult?.score ?? 0,
+          timeSpent: Math.floor(timeOnQ / 1000), // Convert ms to seconds
+        }
+      })
+    }
+
+    // The in-progress attempt is cleared only after the record is safely stored,
+    // so a failed save leaves the attempt resumable.
+    try {
+      await saveSubmittedAttempt(attemptRecord)
+      await clearInProgressAttempt()
+      navigate(`/results/${attemptRecord.id}`, { replace: true })
+    } catch (err) {
+      console.error('Failed to save submitted attempt:', err)
+      submittedRef.current = false
+      setSaveError(true)
+    }
+  }
+  finishRef.current = finishAttempt
+
   const handleSubmit = () => {
     const unanswered = finalQuestions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
     const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
-    if (confirmed) {
-      const score = scoreAttempt(examsConfig, finalQuestions, responses)
-
-      // Record submitted attempt with per-question detail
-      const timeOnCurrentQ = currentQuestionStartedAt ? Date.now() - currentQuestionStartedAt : 0
-      const attemptRecord: SubmittedAttempt = {
-        id: crypto.randomUUID(),
-        timestamp: Date.now(),
-        exam: slug || 'subject',
-        year: year || undefined,
-        mode: isSubjectWise ? (config?.topics?.length ?? 0 > 0 ? 'subject-wise' : 'random') : 'year-wise',
-        timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
-        revealMode,
-        score: score.score,
-        max: score.max,
-        correct: score.correct,
-        wrong: score.wrong,
-        unattempted: score.unattempted,
-        questions: finalQuestions.map(q => {
-          const qResult = score.results.find((r: any) => r.id === q.id)
-          // Add elapsed time for the current question if still on it
-          let timeOnQ = timePerQuestion[q.id] ?? 0
-          if (q.id === finalQuestions[current].id) {
-            timeOnQ += timeOnCurrentQ
-          }
-          const status = qResult?.status ?? 'unattempted'
-          const correctness: 'correct' | 'wrong' | null =
-            status === 'correct' ? 'correct' : status === 'wrong' ? 'wrong' : null
-          return {
-            id: q.id,
-            response: responses[q.id] ?? null,
-            correctness,
-            marks: qResult?.score ?? 0,
-            timeSpent: Math.floor(timeOnQ / 1000), // Convert ms to seconds
-          }
-        })
-      }
-
-      // Save submitted attempt (fire and forget)
-      saveSubmittedAttempt(attemptRecord).catch(err => {
-        console.error('Failed to save submitted attempt:', err)
-      })
-
-      setResult(score)
-    }
+    if (confirmed) void finishAttempt()
   }
 
   if (!visited[currentQuestion.id]) {
@@ -608,29 +626,25 @@ export default function Player() {
           />
         </div>
 
-        {!result ? (
-          <div className="player-controls">
-            <button className="btn" onClick={handleSaveNext}>
-              Save &amp; Next
-            </button>
-            <button className="btn" onClick={handleClearResponse}>
-              Clear Response
-            </button>
-            <button className="btn" onClick={handleMarkForReviewNext}>
-              Mark for Review &amp; Next
-            </button>
-            <button className="btn btn-primary player-submit" onClick={handleSubmit}>
-              Submit
-            </button>
-          </div>
-        ) : (
-          <div className="player-result">
-            <p className="player-result-score">
-              Score: {Math.round(result.score * 100) / 100} / {result.max} — {result.correct} correct, {result.wrong} wrong, {result.unattempted} unattempted
-            </p>
-            <p className="player-result-note">Attempt submitted. Further changes are not scored.</p>
+        {saveError && (
+          <div className="alert-error" role="alert">
+            Your attempt could not be saved. Press Submit again.
           </div>
         )}
+        <div className="player-controls">
+          <button className="btn" onClick={handleSaveNext}>
+            Save &amp; Next
+          </button>
+          <button className="btn" onClick={handleClearResponse}>
+            Clear Response
+          </button>
+          <button className="btn" onClick={handleMarkForReviewNext}>
+            Mark for Review &amp; Next
+          </button>
+          <button className="btn btn-primary player-submit" onClick={handleSubmit}>
+            Submit
+          </button>
+        </div>
       </div>
 
       <div className="player-rail">
