@@ -54,6 +54,12 @@ export function BrowseExams() {
               <span className="mode-hint">Re-sit the questions you saved</span>
             </Link>
           </li>
+          <li>
+            <Link to="/stats" className="mode-card">
+              <span className="mode-name">Weak topics</span>
+              <span className="mode-hint">See which topics are costing marks</span>
+            </Link>
+          </li>
         </ul>
       </section>
 

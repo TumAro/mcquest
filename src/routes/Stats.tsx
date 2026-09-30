@@ -23,13 +23,27 @@ export default function Stats() {
 
   const { ranked, insufficient, skipped } = statsFromHistory(data.attempts, data.index)
 
+  const n = data.attempts.length
+
   return (
     <div className="page">
       <h1>Weak topics</h1>
       {ranked.length === 0 && insufficient.length === 0 ? (
-        <p>No answered questions yet.</p>
+        <div className="empty-state" data-testid="stats-empty">
+          <p>No answered questions yet. Finish a test and your accuracy by topic will show up here.</p>
+          <Link to="/">Back to the front page</Link>
+        </div>
       ) : (
         <>
+          <p className="page-lede" data-testid="stats-tests">
+            Across {n} submitted test{n !== 1 ? 's' : ''}.
+          </p>
+          {ranked.length === 0 && (
+            <p className="field-hint" data-testid="stats-thin">
+              Nothing is ranked yet. A topic needs {MIN_ATTEMPTS} attempts before its accuracy means anything, so keep
+              sitting tests and the weakest will surface here.
+            </p>
+          )}
           {ranked.length > 0 && (
             <>
               <h2>Weakest first</h2>

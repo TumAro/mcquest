@@ -181,3 +181,26 @@ test('topics are ranked worst first and a topic under the threshold is listed se
   await expect(insufficient.first().getByTestId('stat-attempts')).toHaveText('2')
   await expect(page.getByTestId('ranked-table').locator(`tr[data-topic="${thin}"]`)).toHaveCount(0)
 })
+
+test('the front page leads to a stats page that says so when there is no history', async ({ page }) => {
+  await page.goto('/#/')
+  await page.getByRole('link', { name: /weak topics/i }).click()
+  await expect(page).toHaveURL(/#\/stats$/)
+  await expect(page.getByTestId('stats-empty')).toBeVisible()
+  await expect(page.locator('tr[data-topic]')).toHaveCount(0)
+  await expect(page.locator('table')).toHaveCount(0)
+})
+
+test('after one test every topic is under the threshold and the page explains it', async ({ page, request }) => {
+  await submitOneWrong(page, await pickPaper(request))
+
+  await page.goto('/#/')
+  await page.getByRole('link', { name: /weak topics/i }).click()
+  await expect(page.getByTestId('stats-thin')).toBeVisible()
+  await expect(page.getByTestId('ranked-table')).toHaveCount(0)
+  await expect(page.getByTestId('insufficient-table')).toHaveCount(1)
+  const rows = page.getByTestId('insufficient-table').locator('tr[data-topic]')
+  await expect(rows).toHaveCount(1)
+  await expect(rows.first().getByTestId('stat-attempts')).toHaveText('1')
+  await expect(page.getByTestId('stats-tests')).toHaveText(/1 submitted test/)
+})
