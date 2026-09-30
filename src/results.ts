@@ -71,3 +71,20 @@ export function topicBreakdown(
   // Label order, deliberately not accuracy: a worst-first ranking is Phase 7.
   return [...rows.values()].sort((a, b) => a.label.localeCompare(b.label))
 }
+
+type Correctness = 'correct' | 'wrong' | null
+
+/** D-04: a wrong answer opens its solution; right or unattempted stays collapsed but available. */
+export function noteOpenByDefault(correctness: Correctness): boolean {
+  return correctness === 'wrong'
+}
+
+export function statusLabel(correctness: Correctness): string {
+  return correctness === 'correct' ? 'Correct' : correctness === 'wrong' ? 'Wrong' : 'Not attempted'
+}
+
+/** formatScore with an explicit plus on positive values. */
+export function formatMarks(n: number): string {
+  const s = formatScore(n)
+  return n > 0 && s !== '0' ? `+${s}` : s
+}

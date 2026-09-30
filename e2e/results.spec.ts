@@ -236,4 +236,17 @@ test('review pairs each response with the answer key for every question', async 
   const { min, max } = numeric.answer!
   await expect(numItem.locator('input[type="number"]')).toHaveValue(String((min + max) / 2))
   await expect(numItem.locator('.numeric-key')).toContainText(String(min))
+
+  // D-04: the solution is open for the wrong answer, collapsed-but-available for the right one.
+  await expect(wrongItem.locator('.review-status')).toHaveText(/Wrong$/)
+  if (single.note) expect(await wrongItem.locator('details').evaluate((d: HTMLDetailsElement) => d.open)).toBe(true)
+
+  await expect(numItem.locator('.review-status')).toHaveText(/Correct$/)
+  await expect(numItem.locator('.review-marks')).toHaveText(`+${fmt(numeric.marks)}`)
+  if (numeric.note) {
+    const details = numItem.locator('details')
+    expect(await details.evaluate((d: HTMLDetailsElement) => d.open)).toBe(false)
+    await details.locator('summary').click()
+    expect(await details.evaluate((d: HTMLDetailsElement) => d.open)).toBe(true)
+  }
 })

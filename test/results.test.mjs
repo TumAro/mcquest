@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
-import { formatScore, formatAccuracy, topicLabels, topicBreakdown } from '../src/results.ts'
+import { formatScore, formatAccuracy, topicLabels, topicBreakdown, noteOpenByDefault, statusLabel, formatMarks } from '../src/results.ts'
 import { buildIndexLookup } from '../src/QuestionSelection.ts'
 
 test('formatScore rounds to two decimals and trims trailing zeros', () => {
@@ -108,4 +108,25 @@ test('buildIndexLookup against the real index: size equals the distinct question
   const lookup = buildIndexLookup(index)
   assert.equal(lookup.size, ids.size)
   assert.ok(lookup.size > 0)
+})
+
+test('noteOpenByDefault: open only when the stored answer was wrong (D-04)', () => {
+  assert.equal(noteOpenByDefault('wrong'), true)
+  assert.equal(noteOpenByDefault('correct'), false)
+  assert.equal(noteOpenByDefault(null), false)
+})
+
+test('statusLabel names the three stored states', () => {
+  assert.equal(statusLabel('correct'), 'Correct')
+  assert.equal(statusLabel('wrong'), 'Wrong')
+  assert.equal(statusLabel(null), 'Not attempted')
+})
+
+test('formatMarks signs positive values and never prints -0', () => {
+  assert.equal(formatMarks(2), '+2')
+  assert.equal(formatMarks(4.75), '+4.75')
+  assert.equal(formatMarks(-0.6666667), '-0.67')
+  assert.equal(formatMarks(0), '0')
+  assert.equal(formatMarks(-0.001), '0')
+  assert.equal(formatMarks(0.001), '0')
 })

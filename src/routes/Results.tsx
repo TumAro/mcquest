@@ -1,10 +1,19 @@
 import { useParams, Link } from 'react-router'
 import { loadIndex, loadQuestionsById, useJson } from '../data'
 import QuestionPane from '../QuestionPane'
+import MathText from '../Math'
 import { loadSubmittedAttempt } from '../storage'
 import type { SubmittedAttempt } from '../storage'
 import { buildIndexLookup } from '../QuestionSelection'
-import { formatScore, formatAccuracy, topicBreakdown, topicLabels } from '../results'
+import {
+  formatScore,
+  formatAccuracy,
+  formatMarks,
+  noteOpenByDefault,
+  statusLabel,
+  topicBreakdown,
+  topicLabels,
+} from '../results'
 import './results.css'
 
 // A Record over the mode union: widening the union later fails type-check until
@@ -130,6 +139,15 @@ export default function Results() {
           const item = loaded.get(qa.id)
           return (
             <article className="review-item" data-question-id={qa.id} key={qa.id}>
+              <div className="review-head">
+                <span className={`review-status review-status--${(qa.correctness ?? 'none')}`}>
+                  <span aria-hidden="true">
+                    {qa.correctness === 'correct' ? '\u2713' : qa.correctness === 'wrong' ? '\u2717' : '\u2013'}
+                  </span>{' '}
+                  {statusLabel(qa.correctness)}
+                </span>
+                <span className="mono-num review-marks">{formatMarks(qa.marks)}</span>
+              </div>
               {item ? (
                 <QuestionPane
                   readOnly
@@ -143,6 +161,17 @@ export default function Results() {
                   Question {i + 1} ({qa.id}) is no longer in the bank.
                 </p>
               )}
+              {item &&
+                (item.question.note ? (
+                  <details className="review-note" open={noteOpenByDefault(qa.correctness)}>
+                    <summary>Solution</summary>
+                    <div className="review-note-body">
+                      <MathText text={item.question.note} />
+                    </div>
+                  </details>
+                ) : (
+                  <p className="review-note-empty">No solution is written for this question.</p>
+                ))}
             </article>
           )
         })}
