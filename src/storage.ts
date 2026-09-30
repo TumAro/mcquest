@@ -1,4 +1,4 @@
-import { set, get, del } from 'idb-keyval'
+import { set, get, del, update } from 'idb-keyval'
 
 export type Response = number[] | number | null
 
@@ -336,4 +336,42 @@ export async function clearInProgressAttempt(): Promise<void> {
   } catch (err) {
     console.error('Failed to clear in-progress attempt:', err)
   }
+}
+
+// Permanent bookmarks: a plain array of question ids, nothing else (D-06).
+// Deliberately separate from per-attempt `marked` flags (D-05).
+const BOOKMARKS_KEY = 'bookmarks'
+
+/** Pure: anything but an array of non-empty strings degrades to a clean, de-duplicated list. */
+export function deserializeBookmarks(stored: unknown): string[] {
+  if (!Array.isArray(stored)) return []
+  return [...new Set(stored.filter((x): x is string => typeof x === 'string' && x !== ''))]
+}
+
+/** Pure: returns a new list with `id` added (at the end) or removed. Never mutates `list`. */
+export function toggleBookmarkIn(list: readonly string[], id: string): string[] {
+  if (typeof id !== 'string' || id === '') return [...list]
+  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
+}
+
+export async function loadBookmarks(): Promise<string[]> {
+  try {
+    return deserializeBookmarks(await get(BOOKMARKS_KEY))
+  } catch (err) {
+    console.error('Failed to load bookmarks:', err)
+    return []
+  }
+}
+
+/**
+ * Toggle one bookmark and return the resulting list. idb-keyval `update` does the
+ * read and the write in one transaction, so two quick toggles cannot lose one.
+ */
+export async function toggleBookmark(id: string): Promise<string[]> {
+  try {
+    await update(BOOKMARKS_KEY, (cur) => toggleBookmarkIn(deserializeBookmarks(cur), id))
+  } catch (err) {
+    console.error('Failed to toggle bookmark:', err)
+  }
+  return loadBookmarks()
 }
