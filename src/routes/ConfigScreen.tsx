@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { selectQuestions } from '../QuestionSelection'
 import TestOptions, { type RevealMode } from './TestOptions'
 import type { DataIndex, IndexQuestion } from '../data'
@@ -10,6 +10,10 @@ interface ConfigScreenProps {
   showTopics?: boolean
   initialTopics?: Set<string>
   initialRevealMode?: RevealMode
+  /** A pre-built pool (bookmarks): no topic or count controls, Start uses exactly these. */
+  fixedQuestions?: IndexQuestion[]
+  mode?: 'bookmarked'
+  lede?: ReactNode
   onStart: (config: TestConfig) => void
 }
 
@@ -20,6 +24,7 @@ export interface TestConfig {
   revealMode: RevealMode
   questions: IndexQuestion[]
   warnings: string[]
+  mode?: 'bookmarked'
 }
 
 export default function ConfigScreen({
@@ -28,6 +33,9 @@ export default function ConfigScreen({
   showTopics = true,
   initialTopics = new Set(),
   initialRevealMode = 'immediate',
+  fixedQuestions,
+  mode,
+  lede,
   onStart,
 }: ConfigScreenProps) {
   const [selectedTopics, setSelectedTopics] = useState<Set<string>>(initialTopics)
@@ -51,6 +59,19 @@ export default function ConfigScreen({
   const handleStart = () => {
     setError('')
     setPoolWarning(null)
+
+    if (fixedQuestions) {
+      onStart({
+        topics: [],
+        count: fixedQuestions.length,
+        timedMinutes: timed ? minutes : null,
+        revealMode,
+        questions: fixedQuestions,
+        warnings: [],
+        mode,
+      })
+      return
+    }
 
     const topicsToUse = showTopics ? selectedTopics : new Set(Object.keys(index.topics).flatMap(categorySlug => Object.keys(index.topics[categorySlug].topics)))
 
@@ -113,8 +134,9 @@ export default function ConfigScreen({
   return (
     <div className="page">
       <h1>{title}</h1>
+      {lede}
 
-      {showTopics && (
+      {showTopics && !fixedQuestions && (
         <div className="field-group">
           <h2>Topics</h2>
           {Object.entries(topicsMap).map(([categorySlug, category]) => (
@@ -137,7 +159,7 @@ export default function ConfigScreen({
         </div>
       )}
 
-      <div className="field-group">
+      {!fixedQuestions && <div className="field-group">
         <h2>Question Count</h2>
         <div className="field-row">
           <label>
@@ -153,7 +175,7 @@ export default function ConfigScreen({
           </label>
           <span className="field-hint">(max {maxAvailable} available)</span>
         </div>
-      </div>
+      </div>}
 
       <TestOptions
         timed={timed}

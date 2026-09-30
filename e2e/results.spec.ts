@@ -299,3 +299,49 @@ test('bookmarks persist across reloads and attempts and are independent of mark-
   await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByRole('button', { name: /^Question \d+,.*marked/ })).toHaveCount(0)
 })
+
+test('Bookmarked mode builds a test from exactly the bookmarked questions', async ({ page, request }) => {
+  const paper = await pickPaper(request)
+  const bookmark = () => page.getByRole('button', { name: /^bookmark/i })
+  const first = (t: string) => paper.questions.findIndex((q) => inferType(q) === t)
+
+  await startPaper(page, paper.slug, paper.year)
+  for (const t of ['single', 'numeric']) {
+    await jumpTo(page, first(t) + 1)
+    await bookmark().click()
+    await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
+  }
+  page.once('dialog', (d) => d.accept())
+  await page.getByRole('button', { name: 'Submit' }).click()
+  await expect(page).toHaveURL(/#\/results\/[^/]+$/)
+
+  // Third bookmark comes from the review, not the test.
+  const multi = page.locator(`[data-question-id="${paper.questions[first('multi')].id}"]`)
+  await multi.getByRole('button', { name: /^bookmark/i }).click()
+  await expect(multi.getByRole('button', { name: /^bookmark/i })).toHaveAttribute('aria-pressed', 'true')
+
+  await page.goto('/#/')
+  await page.getByRole('link', { name: /bookmarked/i }).click()
+  await expect(page.getByTestId('bookmarked-count')).toHaveText(/^3 /)
+  await page.getByRole('button', { name: 'Start Test' }).click()
+
+  await expect(page.locator('.player-progress')).toHaveText(/Question 1 of 3/, { timeout: 15000 })
+  await expect(page.locator('.palette-bubble')).toHaveCount(3)
+  for (let n = 1; n <= 3; n++) {
+    await jumpTo(page, n)
+    await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
+  }
+
+  page.once('dialog', (d) => d.accept())
+  await page.getByRole('button', { name: 'Submit' }).click()
+  await expect(page).toHaveURL(/#\/results\/[^/]+$/)
+  await expect(page.locator('.results-title')).toHaveText(/bookmarked/i)
+  await expect(page.getByTestId('results-score')).toBeVisible()
+  await expect(page.getByTestId('results-scope-note')).toHaveCount(0)
+})
+
+test('Bookmarked mode shows an empty state when nothing is bookmarked', async ({ page }) => {
+  await page.goto('/#/test/bookmarked')
+  await expect(page.getByText(/no bookmarks yet/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Start Test' })).toHaveCount(0)
+})

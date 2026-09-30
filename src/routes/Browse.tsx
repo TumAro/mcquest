@@ -48,6 +48,12 @@ export function BrowseExams() {
               <span className="mode-hint">Pick the topics you want to drill</span>
             </Link>
           </li>
+          <li>
+            <Link to="/test/bookmarked" className="mode-card">
+              <span className="mode-name">Bookmarked</span>
+              <span className="mode-hint">Re-sit the questions you saved</span>
+            </Link>
+          </li>
         </ul>
       </section>
 
