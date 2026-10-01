@@ -204,3 +204,84 @@ test('after one test every topic is under the threshold and the page explains it
   await expect(rows.first().getByTestId('stat-attempts')).toHaveText('1')
   await expect(page.getByTestId('stats-tests')).toHaveText(/1 submitted test/)
 })
+
+/** Read one value from idb-keyval's default store. */
+async function readKey(page: Page, key: string): Promise<unknown> {
+  return page.evaluate(
+    (k) =>
+      new Promise((resolve, reject) => {
+        const open = indexedDB.open('keyval-store')
+        open.onerror = () => reject(open.error)
+        open.onsuccess = () => {
+          const req = open.result.transaction('keyval').objectStore('keyval').get(k)
+          req.onsuccess = () => resolve(req.result ?? null)
+          req.onerror = () => reject(req.error)
+        }
+      }),
+    key,
+  )
+}
+
+test('practice weakest starts a test drawn only from the bottom of the ranking', async ({ page, request }) => {
+  const index: SeedIndex & { topics: Record<string, { topics: Record<string, string> }> } = await (
+    await request.get('/data/index.json')
+  ).json()
+  const slugs = topicsWithQuestions(index).map(([slug]) => slug)
+  // More ranked topics than the weakest count, so the selection is actually exercised.
+  if (slugs.length < 5) throw new Error('Need at least 5 topics with questions in public/data to test practice weakest.')
+  const n = slugs.length
+  const labelOf = new Map<string, string>()
+  for (const cat of Object.values(index.topics)) for (const [slug, label] of Object.entries(cat.topics)) labelOf.set(slug, label)
+  const topicOfId = new Map<string, string>()
+  for (const exam of index.exams) for (const y of exam.years) for (const q of y.questions) topicOfId.set(q.id, q.topic)
+
+  const outcomes: Record<string, ('correct' | 'wrong')[]> = {}
+  slugs.forEach((slug, i) => {
+    outcomes[slug] = Array.from({ length: n }, (_, k) => (k < i ? 'correct' : 'wrong'))
+  })
+  await seedHistory(page, index, outcomes)
+  await page.goto('/#/stats')
+
+  await expect(page.getByTestId('ranked-table')).toBeVisible()
+  const rankedLabels = await page.locator('[data-testid="ranked-table"] tr[data-topic] th').allTextContents()
+  expect(rankedLabels).toHaveLength(n)
+
+  await page.getByRole('button', { name: /practice weakest topics/i }).click()
+  await expect(page).toHaveURL(/#\/test\/weakest$/)
+
+  await expect(page.getByTestId('weakest-count')).toBeVisible()
+  const weakLabels = await page.getByTestId('weakest-topic').allTextContents()
+  expect(weakLabels.length).toBeGreaterThanOrEqual(1)
+  expect(weakLabels.length).toBeLessThan(rankedLabels.length)
+  expect(weakLabels).toEqual(rankedLabels.slice(0, weakLabels.length))
+  expect(weakLabels).toEqual(slugs.slice(0, weakLabels.length).map((s) => labelOf.get(s) ?? s))
+
+  const count = parseInt((await page.getByTestId('weakest-count').textContent()) ?? '', 10)
+  expect(count).toBeGreaterThanOrEqual(1)
+
+  await page.getByRole('button', { name: 'Start Test' }).click()
+  await expect(page.locator('.player-progress')).toContainText(`Question 1 of ${count}`)
+  await expect(page.locator('.palette-bubble')).toHaveCount(count)
+
+  // The player saves on a cadence: wait for the in-progress record, then check what it holds.
+  await expect.poll(() => readKey(page, 'in-progress-attempt'), { timeout: 15000 }).not.toBeNull()
+  const saved = (await readKey(page, 'in-progress-attempt')) as { questionIds: string[] }
+  expect(saved.questionIds).toHaveLength(count)
+  const weakSlugs = new Set(slugs.slice(0, weakLabels.length))
+  for (const id of saved.questionIds) expect(weakSlugs.has(topicOfId.get(id)!)).toBe(true)
+})
+
+test('practice weakest is withheld until something is ranked', async ({ page, request }) => {
+  const index: SeedIndex = await (await request.get('/data/index.json')).json()
+  const outcomes: Record<string, ('correct' | 'wrong')[]> = {}
+  for (const [slug] of topicsWithQuestions(index)) outcomes[slug] = ['wrong']
+  await seedHistory(page, index, outcomes)
+
+  await page.goto('/#/stats')
+  await expect(page.getByTestId('stats-thin')).toBeVisible()
+  await expect(page.getByRole('button', { name: /practice weakest topics/i })).toHaveCount(0)
+
+  await page.goto('/#/test/weakest')
+  await expect(page.getByTestId('weakest-empty')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Start Test' })).toHaveCount(0)
+})
