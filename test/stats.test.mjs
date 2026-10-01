@@ -1,6 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { topicStats, statsFromHistory, MIN_ATTEMPTS } from '../src/stats.ts'
+import {
+  topicStats,
+  statsFromHistory,
+  MIN_ATTEMPTS,
+  weakestTopics,
+  WEAKEST_TOPIC_COUNT,
+  WEAKEST_QUESTION_COUNT,
+} from '../src/stats.ts'
 import { attemptsFromEntries } from '../src/storage.ts'
 
 // Neutral made-up fixtures: no bank names.
@@ -193,4 +200,38 @@ test('attemptsFromEntries keeps only attempt: records, oldest first, timeSpent e
   assert.deepEqual(out[1].questions.map((q) => q.timeSpent), newer.questions.map((q) => q.timeSpent))
   assert.deepEqual(out[0].questions.map((q) => q.timeSpent), older.questions.map((q) => q.timeSpent))
   assert.deepEqual(attemptsFromEntries([]), [])
+})
+
+const row = (topic) => ({ topic, label: topic, correct: 0, wrong: 0, attempts: 3, accuracy: 0 })
+
+test('weakestTopics takes the front of the ranking, copies, and honours an override', () => {
+  const ranked = Array.from({ length: WEAKEST_TOPIC_COUNT + 2 }, (_, i) => row(`t${i}`))
+  const copy = [...ranked]
+  const out = weakestTopics(ranked)
+  assert.deepEqual(out.map((r) => r.topic), ranked.slice(0, WEAKEST_TOPIC_COUNT).map((r) => r.topic))
+  assert.deepEqual(ranked, copy, 'input is not mutated')
+  assert.notEqual(out, ranked)
+  assert.equal(weakestTopics(ranked, 1).length, 1)
+  assert.deepEqual(weakestTopics([row('only')]).map((r) => r.topic), ['only'])
+  assert.deepEqual(weakestTopics([]), [])
+})
+
+test('weakest topics through the real chain: lowest accuracy first, never a sub-threshold topic', () => {
+  // topic i (a..e) has MIN_ATTEMPTS outcomes with i correct; accuracy rises with i. 'z' has one wrong, under threshold.
+  const letters = ['a', 'b', 'c', 'd', 'e']
+  const pairs = []
+  letters.forEach((l, i) => {
+    for (let k = 0; k < MIN_ATTEMPTS; k++) pairs.push(['q-' + l + '1', k < i ? C : W])
+  })
+  pairs.push(['q-z1', W])
+  const scrambled = pairs.reverse()
+  const { ranked } = topicStats([attempt(scrambled)], topicOf, labelOf)
+  const weak = weakestTopics(ranked).map((r) => r.topic)
+  assert.deepEqual(weak, letters.slice(0, WEAKEST_TOPIC_COUNT).map((l) => `topic-${l}`))
+  assert.ok(!weak.includes('topic-z'))
+})
+
+test('the weakest constants are positive integers and the question cap covers every topic', () => {
+  for (const n of [WEAKEST_TOPIC_COUNT, WEAKEST_QUESTION_COUNT]) assert.ok(Number.isInteger(n) && n > 0)
+  assert.ok(WEAKEST_QUESTION_COUNT >= WEAKEST_TOPIC_COUNT)
 })
