@@ -6,6 +6,8 @@ import { saveInProgressAttempt, loadInProgressAttempt, clearInProgressAttempt, s
 import type { StartConfig } from '../start'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
+import { shortcutFor, type Shortcut } from '../keys'
+import { inferType } from '../../scripts/lib/rules.mjs'
 import { formatTime } from '../timer'
 import QuestionPane from '../QuestionPane'
 import Palette from '../Palette'
@@ -179,13 +181,6 @@ export default function Player() {
     void finishRef.current() // time-up submits without asking
   }, [remaining])
 
-  useEffect(() => {
-    if (!confirming) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setConfirming(false)
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [confirming])
-
   // Debounced save of in-progress attempt
   // Keep the latest attempt snapshot in a ref, rewritten on every render.
   //
@@ -249,111 +244,78 @@ export default function Player() {
     }
   }, [])
 
-  // Keyboard handler
-  useEffect(() => {
-    if (questions.length === 0) return
+  // One handler per action. The buttons and the keys call the same functions; the
+  // document listener below is stable and reaches them through a ref rewritten
+  // every render (same pattern as finishRef). Defined above the early returns so
+  // the hooks stay unconditional.
+  const currentQuestion = questions[current]
+  const draft = currentQuestion ? (responses[currentQuestion.id] ?? null) : null
 
-    const handleKeydown = (e: KeyboardEvent) => {
-      // Don't fire number keys if focus is in a numeric input
-      const active = document.activeElement
-      const isNumericFocused = active instanceof HTMLInputElement && active.type === 'number'
-
-      const q = questions[current]
-      if (!q) return
-
-      // Number keys (1-4): select options, but not if numeric input is focused
-      if (!isNumericFocused && (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4')) {
-        const idx = parseInt(e.key, 10) - 1
-        if (q.type === 'single' && q.options && idx < q.options.length) {
-          setResponses({ ...responses, [q.id]: [idx] })
-        } else if (q.type === 'multi' && q.options && idx < q.options.length) {
-          const curr = responses[q.id]
-          const selected = Array.isArray(curr) ? [...curr] : []
-          const pos = selected.indexOf(idx)
-          if (pos >= 0) {
-            selected.splice(pos, 1)
-          } else {
-            selected.push(idx)
-          }
-          setResponses({ ...responses, [q.id]: selected })
-        }
-      }
-
-      // Enter: Save and Next (always works, even if numeric focused)
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        // Save current response if answered
-        const draft = responses[q.id] ?? null
-        const newResponses = { ...responses }
-        if (isAnswered(draft)) {
-          newResponses[q.id] = draft
-        }
-        setResponses(newResponses)
-
-        // Compute correctness in practice mode
-        if (revealMode === 'immediate' && isAnswered(draft)) {
-          const result = scoreQuestion(examsConfig, q, draft)
-          const c = result.status === 'correct' ? 'correct' : result.status === 'wrong' ? 'wrong' : null
-          setCorrectness({ ...correctness, [q.id]: c })
-        }
-
-        // Clear the review flag when saving
-        const newMarked = { ...marked }
-        delete newMarked[q.id]
-        setMarked(newMarked)
-
-        if (current < questions.length - 1) {
-          const nextIdx = current + 1
-          setCurrent(nextIdx)
-          const nextQ = questions[nextIdx]
-          setVisited({ ...visited, [nextQ.id]: true })
-        }
-      }
-
-      // M or m: Mark for Review and Next (not if numeric focused)
-      if (!isNumericFocused && (e.key === 'm' || e.key === 'M')) {
-        e.preventDefault()
-        const draft = responses[q.id] ?? null
-        const newResponses = { ...responses }
-        if (isAnswered(draft)) {
-          newResponses[q.id] = draft
-        } else {
-          delete newResponses[q.id]
-        }
-        setResponses(newResponses)
-        setMarked({ ...marked, [q.id]: true })
-
-        if (current < questions.length - 1) {
-          const nextIdx = current + 1
-          setCurrent(nextIdx)
-          const nextQ = questions[nextIdx]
-          setVisited({ ...visited, [nextQ.id]: true })
-        }
-      }
-
-      // Arrow keys: Navigate between questions (not if numeric focused)
-      if (!isNumericFocused) {
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault()
-          if (current > 0) {
-            setCurrent(current - 1)
-            const prevQ = questions[current - 1]
-            setVisited({ ...visited, [prevQ.id]: true })
-          }
-        } else if (e.key === 'ArrowRight') {
-          e.preventDefault()
-          if (current < questions.length - 1) {
-            setCurrent(current + 1)
-            const nextQ = questions[current + 1]
-            setVisited({ ...visited, [nextQ.id]: true })
-          }
-        }
-      }
+  const goTo = (idx: number) => {
+    setCurrent(idx)
+    setVisited({ ...visited, [questions[idx].id]: true })
+  }
+  const advance = () => {
+    if (current < questions.length - 1) goTo(current + 1)
+  }
+  const handleDraft = (next: Response) => setResponses({ ...responses, [currentQuestion.id]: next })
+  const handleClearResponse = () => {
+    const rest = { ...responses }
+    delete rest[currentQuestion.id]
+    setResponses(rest)
+  }
+  const handleSaveNext = () => {
+    // Practice mode reveals correct/wrong the moment an answer is saved.
+    if (revealMode === 'immediate' && isAnswered(draft)) {
+      const status = scoreQuestion(examsConfig, currentQuestion, draft).status
+      setCorrectness({ ...correctness, [currentQuestion.id]: status === 'correct' || status === 'wrong' ? status : null })
     }
+    // Saving clears the review flag.
+    const rest = { ...marked }
+    delete rest[currentQuestion.id]
+    setMarked(rest)
+    advance()
+  }
+  const handleMarkForReviewNext = () => {
+    // An unanswered draft (an empty multi, a blank number) is not kept.
+    if (!isAnswered(draft)) handleClearResponse()
+    setMarked({ ...marked, [currentQuestion.id]: true })
+    advance()
+  }
+  const pickOption = (idx: number) => {
+    const options = currentQuestion.options
+    if (!options || idx >= options.length) return
+    const type = inferType(currentQuestion)
+    if (type === 'single') {
+      handleDraft([idx])
+    } else if (type === 'multi') {
+      const chosen = Array.isArray(draft) ? draft : []
+      handleDraft(chosen.includes(idx) ? chosen.filter((i) => i !== idx) : [...chosen, idx])
+    }
+  }
 
-    document.addEventListener('keydown', handleKeydown)
-    return () => document.removeEventListener('keydown', handleKeydown)
-  }, [responses, questions, current, marked, visited, revealMode, correctness])
+  // Returns whether the shortcut was handled, so the listener only swallows keys it used.
+  const runShortcut = useRef<(s: Shortcut) => boolean>(() => false)
+  runShortcut.current = (s) => {
+    if (!currentQuestion || confirming) return false
+    if (s.kind === 'pick') pickOption(s.index)
+    else if (s.kind === 'save') handleSaveNext()
+    else if (s.kind === 'mark') handleMarkForReviewNext()
+    else if (current + s.delta >= 0 && current + s.delta < questions.length) goTo(current + s.delta)
+    return true
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') return setConfirming(false)
+      const t = e.target instanceof HTMLElement ? e.target : null
+      const target = t && { tag: t.tagName.toLowerCase(), type: t instanceof HTMLInputElement ? t.type : undefined }
+      const shortcut = shortcutFor(e.key, target)
+      if (shortcut && runShortcut.current(shortcut)) e.preventDefault()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
 
   if (questionsLoading) {
     return <div className="loading-state">Loading...</div>
@@ -366,63 +328,6 @@ export default function Player() {
         <Link to="/">Back</Link>
       </div>
     )
-  }
-
-  const currentQuestion = questions[current]
-  const draft = responses[currentQuestion.id] ?? null
-
-  const handleDraft = (next: Response) => {
-    const newResponses = { ...responses, [currentQuestion.id]: next }
-    setResponses(newResponses)
-  }
-
-  const handleSaveNext = () => {
-    if (isAnswered(draft)) {
-      setResponses({ ...responses, [currentQuestion.id]: draft })
-    }
-
-    // Compute correctness in practice mode
-    if (revealMode === 'immediate' && isAnswered(draft)) {
-      const result = scoreQuestion(examsConfig, currentQuestion, draft)
-      const c = result.status === 'correct' ? 'correct' : result.status === 'wrong' ? 'wrong' : null
-      setCorrectness({ ...correctness, [currentQuestion.id]: c })
-    }
-
-    // Clear the review flag when saving
-    const newMarked = { ...marked }
-    delete newMarked[currentQuestion.id]
-    setMarked(newMarked)
-
-    if (current < questions.length - 1) {
-      const nextIdx = current + 1
-      setCurrent(nextIdx)
-      const nextQ = questions[nextIdx]
-      setVisited({ ...visited, [nextQ.id]: true })
-    }
-  }
-
-  const handleClearResponse = () => {
-    const newResponses = { ...responses }
-    delete newResponses[currentQuestion.id]
-    setResponses(newResponses)
-  }
-
-  const handleMarkForReviewNext = () => {
-    if (isAnswered(draft)) {
-      setResponses({ ...responses, [currentQuestion.id]: draft })
-    } else {
-      const newResponses = { ...responses }
-      delete newResponses[currentQuestion.id]
-      setResponses(newResponses)
-    }
-    setMarked({ ...marked, [currentQuestion.id]: true })
-
-    if (current < questions.length - 1) {
-      const nextIdx = current + 1
-      setCurrent(nextIdx)
-      const nextQ = questions[nextIdx]
-      setVisited({ ...visited, [nextQ.id]: true })
-    }
   }
 
   const finishAttempt = async () => {
@@ -568,11 +473,7 @@ export default function Player() {
           marked={marked}
           visited={visited}
           correctness={correctness}
-          onJump={(idx) => {
-            setCurrent(idx)
-            const q = questions[idx]
-            setVisited({ ...visited, [q.id]: true })
-          }}
+          onJump={goTo}
         />
       </div>
     </div>
