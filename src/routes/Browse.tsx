@@ -1,11 +1,17 @@
+import { useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { loadIndex, useJson } from '../data'
-import { loadSettings } from '../storage'
+import { deserializeSettings, loadSettings, saveSettings, type Settings as SettingsValue } from '../storage'
 import { randomStart } from '../start'
+import { applyTheme } from '../theme'
+import Settings from '../components/Settings'
 
 export function BrowseExams() {
   const navigate = useNavigate()
   const { data, error } = useJson(async () => ({ index: await loadIndex(), settings: await loadSettings() }), [])
+  const [changed, setChanged] = useState<SettingsValue | null>(null)
+  const [open, setOpen] = useState(false)
+  const gear = useRef<HTMLButtonElement>(null)
 
   if (error) {
     return <div className="not-found-state">Error: {error.message}</div>
@@ -15,7 +21,18 @@ export function BrowseExams() {
     return <div className="loading-state">Loading exams...</div>
   }
 
-  const { index, settings } = data
+  const { index } = data
+  const settings = changed ?? data.settings
+  const change = (raw: SettingsValue) => {
+    const next = deserializeSettings(raw)
+    if (next.theme !== settings.theme) applyTheme(next.theme)
+    setChanged(next)
+    void saveSettings(next)
+  }
+  const close = () => {
+    setOpen(false)
+    gear.current?.focus()
+  }
 
   if (!index.exams || index.exams.length === 0) {
     return (
@@ -32,7 +49,25 @@ export function BrowseExams() {
 
   return (
     <div className="page">
-      <h1>mcquest</h1>
+      <div className="page-header">
+        <h1>mcquest</h1>
+        <div className="btn-row">
+          <Link to="/stats" className="btn">
+            Stats
+          </Link>
+          <button
+            ref={gear}
+            type="button"
+            className="btn btn-icon"
+            aria-label="Settings"
+            aria-haspopup="dialog"
+            onClick={() => setOpen(true)}
+          >
+            <span aria-hidden="true">{'⚙︎'}</span>
+          </button>
+        </div>
+      </div>
+      {open && <Settings settings={settings} onChange={change} onClose={close} />}
       <p className="page-lede">
         {questionCount} question{questionCount !== 1 ? 's' : ''} in the bank.
       </p>

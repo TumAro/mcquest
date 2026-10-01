@@ -213,6 +213,26 @@ a:focus-visible {
   background: var(--blue-weak);
 }
 
+/* Compact square button for a single glyph */
+.btn-icon {
+  padding: var(--space-3);
+  line-height: 1;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+fieldset.field-group {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+}
+
 .btn-row {
   display: flex;
   gap: var(--space-4);
