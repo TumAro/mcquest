@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router'
-import { loadIndex, loadPaper, assetBase, useJson } from '../data'
-import type { Response, Question } from '../data'
+import { loadIndex, loadPaper, assetBase, loadQuestionsById, useJson } from '../data'
+import type { Response, Question, LoadedQuestion } from '../data'
 import { saveInProgressAttempt, loadInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
@@ -76,6 +76,7 @@ export default function Player() {
   const [deadline, setDeadline] = useState<number>(Infinity)
   const [remaining, setRemaining] = useState<number>(Infinity)
   const [questions, setQuestions] = useState<Question[]>([])
+  const [assetBases, setAssetBases] = useState<Record<string, string>>({})
   const [questionsLoading, setQuestionsLoading] = useState(isSubjectWise)
   const [currentQuestionStartedAt, setCurrentQuestionStartedAt] = useState<number | null>(null)
   const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
@@ -139,54 +140,28 @@ export default function Player() {
     setCurrentQuestionStartedAt(Date.now())
   }, [finalQuestions.length, startedAt, resumedAttempt])
 
-  // Load questions for subject-wise tests
+  // Load questions for a fresh start (the loader owns each question's asset base)
   useEffect(() => {
     if (!isSubjectWise || !config || !index || resumedAttempt) return
 
-    const loadSubjectQuestions = async () => {
-      try {
-        const loaded: Question[] = []
-        const seen = new Set<string>()
-
-        for (const indexQ of config.questions) {
-          if (seen.has(indexQ.id)) continue
-          seen.add(indexQ.id)
-
-          // Find the exam and year for this question
-          for (const exam of index.exams) {
-            let found = false
-            for (const y of exam.years) {
-              const indexQuestion = y.questions.find((q) => q.id === indexQ.id)
-              if (indexQuestion) {
-                const paper = await loadPaper(exam.slug, y.year)
-                const fullQuestion = paper.questions.find((q) => q.id === indexQ.id)
-                if (fullQuestion) {
-                  loaded.push(fullQuestion)
-                  found = true
-                  break
-                }
-              }
-            }
-            if (found) break
-          }
-        }
-
-        setQuestions(loaded)
+    let cancelled = false
+    loadQuestionsById(index, config.questions.map((q) => q.id))
+      .then((byId) => {
+        if (cancelled) return
+        const ordered = config.questions.map((q) => byId.get(q.id)).filter((l): l is LoadedQuestion => Boolean(l))
+        setQuestions(ordered.map((l) => l.question))
+        setAssetBases(Object.fromEntries(ordered.map((l) => [l.question.id, l.assetBase])))
         setQuestionsLoading(false)
         autoSubmitted.current = false
-
-        // Set up deadline if timed
-        if (config.timedMinutes !== null) {
-          const deadlineTime = Date.now() + config.timedMinutes * 60000
-          setDeadline(deadlineTime)
-        }
-      } catch (err) {
-        console.error('Failed to load subject questions:', err)
-        setQuestionsLoading(false)
-      }
+        if (config.timedMinutes !== null) setDeadline(Date.now() + config.timedMinutes * 60000)
+      })
+      .catch((err) => {
+        console.error('Failed to load questions:', err)
+        if (!cancelled) setQuestionsLoading(false)
+      })
+    return () => {
+      cancelled = true
     }
-
-    loadSubjectQuestions()
   }, [isSubjectWise, config, index, resumedAttempt])
 
   // Rehydrate a resumed subject-wise/random attempt.
@@ -614,7 +589,7 @@ export default function Player() {
     setVisited({ ...visited, [currentQuestion.id]: true })
   }
 
-  const paneAssetBase = isSubjectWise ? '' : assetBase(slug!, year)
+  const paneAssetBase = isSubjectWise ? (assetBases[currentQuestion.id] ?? '') : assetBase(slug!, year)
 
   return (
     <div className="player">

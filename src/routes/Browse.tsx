@@ -1,17 +1,21 @@
-import { Link, useParams } from 'react-router'
-import { loadIndex } from '../data'
-import { useJson } from '../data'
+import { Link, useNavigate, useParams } from 'react-router'
+import { loadIndex, useJson } from '../data'
+import { loadSettings } from '../storage'
+import { randomStart } from '../start'
 
 export function BrowseExams() {
-  const { data: index, error } = useJson(() => loadIndex(), [])
+  const navigate = useNavigate()
+  const { data, error } = useJson(async () => ({ index: await loadIndex(), settings: await loadSettings() }), [])
 
   if (error) {
     return <div className="not-found-state">Error: {error.message}</div>
   }
 
-  if (!index) {
+  if (!data) {
     return <div className="loading-state">Loading exams...</div>
   }
+
+  const { index, settings } = data
 
   if (!index.exams || index.exams.length === 0) {
     return (
@@ -37,10 +41,20 @@ export function BrowseExams() {
         <h2>Practise</h2>
         <ul className="mode-list">
           <li>
-            <Link to="/test/random" className="mode-card">
+            <button
+              type="button"
+              className="mode-card"
+              disabled={questionCount === 0}
+              onClick={() => {
+                const config = randomStart(index, settings)
+                if (config) navigate('/test/play', { state: { config } })
+              }}
+            >
               <span className="mode-name">Random</span>
-              <span className="mode-hint">A mixed set drawn from every exam and year</span>
-            </Link>
+              <span className="mode-hint">
+                {Math.min(settings.questionCount, questionCount)} questions drawn from every exam and year
+              </span>
+            </button>
           </li>
           <li>
             <Link to="/test/subject" className="mode-card">

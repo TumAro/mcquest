@@ -1,10 +1,11 @@
 import { set, get, del, update, entries } from 'idb-keyval'
+import type { Response } from './attempt-state'
 
 const TEST_MODES = ['year-wise', 'subject-wise', 'random', 'bookmarked'] as const
 export type TestMode = (typeof TEST_MODES)[number]
 const isTestMode = (m: unknown): m is TestMode => (TEST_MODES as readonly unknown[]).includes(m)
 
-export type Response = number[] | number | null
+export type RevealMode = 'immediate' | 'onSubmit'
 
 export interface InProgressAttempt {
   current: number
@@ -12,7 +13,7 @@ export interface InProgressAttempt {
   marked: Record<string, boolean>
   visited: Record<string, boolean>
   remaining: number
-  revealMode: 'immediate' | 'onSubmit'
+  revealMode: RevealMode
   questionIds: string[]
   exam: string
   year?: number
@@ -37,7 +38,7 @@ export interface SubmittedAttempt {
   year?: number
   mode: TestMode
   timedMinutes: number | null
-  revealMode: 'immediate' | 'onSubmit'
+  revealMode: RevealMode
   score: number
   max: number
   correct: number
@@ -404,4 +405,58 @@ export async function toggleBookmark(id: string): Promise<string[]> {
     console.error('Failed to toggle bookmark:', err)
   }
   return loadBookmarks()
+}
+
+// Settings hold only what stops a repeated question (D-05). The stored record is
+// untrusted: every field falls back on its own and numbers are clamped.
+export type Theme = 'system' | 'light' | 'dark'
+
+export interface Settings {
+  theme: Theme
+  paperMinutes: number
+  drillMinutes: number | null
+  questionCount: number
+  drillFeedback: boolean
+}
+
+export const DEFAULT_SETTINGS: Settings = {
+  theme: 'system',
+  paperMinutes: 120,
+  drillMinutes: null,
+  questionCount: 10,
+  drillFeedback: true,
+}
+
+const SETTINGS_KEY = 'settings'
+
+const clampInt = (v: unknown, max: number): number | null =>
+  typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(1, Math.round(v))) : null
+
+export function deserializeSettings(stored: unknown): Settings {
+  const o = (typeof stored === 'object' && stored !== null ? stored : {}) as Record<string, unknown>
+  const d = DEFAULT_SETTINGS
+  return {
+    theme: o.theme === 'light' || o.theme === 'dark' || o.theme === 'system' ? o.theme : d.theme,
+    paperMinutes: clampInt(o.paperMinutes, 600) ?? d.paperMinutes,
+    drillMinutes: clampInt(o.drillMinutes, 600),
+    questionCount: clampInt(o.questionCount, 200) ?? d.questionCount,
+    drillFeedback: typeof o.drillFeedback === 'boolean' ? o.drillFeedback : d.drillFeedback,
+  }
+}
+
+export async function loadSettings(): Promise<Settings> {
+  try {
+    return deserializeSettings(await get(SETTINGS_KEY))
+  } catch (err) {
+    console.error('Failed to load settings:', err)
+    return { ...DEFAULT_SETTINGS }
+  }
+}
+
+export async function saveSettings(settings: Settings): Promise<void> {
+  try {
+    await set(SETTINGS_KEY, deserializeSettings(settings))
+  } catch (err) {
+    console.error('Failed to save settings:', err)
+  }
 }

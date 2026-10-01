@@ -435,6 +435,14 @@ a:focus-visible {
   color: var(--ink);
 }
 
+/* The Random card is a button (a visited link would turn its label purple). */
+button.mode-card {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
 .mode-card:hover {
   background: var(--blue-weak);
 }
