@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { DEFAULT_SETTINGS, deserializeSettings } from '../src/storage.ts'
+import { readFileSync } from 'node:fs'
+import { DEFAULT_SETTINGS, THEME_KEY, deserializeSettings } from '../src/storage.ts'
 
 test('defaults: system theme, 120 minute paper, untimed drills, 10 questions, feedback on', () => {
   assert.deepEqual(DEFAULT_SETTINGS, {
@@ -48,4 +49,32 @@ test('numbers round to integers and clamp; drillMinutes null stays null', () => 
 
 test('drillFeedback keeps a real boolean', () => {
   assert.equal(deserializeSettings({ drillFeedback: false }).drillFeedback, false)
+})
+
+// The theme is mirrored to localStorage and applied by an inline script before first paint (D-09).
+const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+
+test('THEME_KEY is a non-empty string', () => {
+  assert.equal(typeof THEME_KEY, 'string')
+  assert.ok(THEME_KEY.length > 0)
+})
+
+test('index.html has one inline pre-paint script that reads THEME_KEY and whitelists light and dark', () => {
+  const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1])
+  assert.equal(inline.length, 1)
+  assert.ok(inline[0].includes(THEME_KEY))
+  assert.match(inline[0], /'light'/)
+  assert.match(inline[0], /'dark'/)
+  assert.match(inline[0], /data-theme|dataset\.theme/)
+})
+
+test('the inline script runs before any stylesheet or module script', () => {
+  const at = html.indexOf('<script')
+  assert.ok(at > 0)
+  assert.ok(!html.slice(0, at).includes('stylesheet'))
+  assert.ok(html.indexOf('type="module"') > at)
+})
+
+test('index.html declares color-scheme light dark', () => {
+  assert.match(html, /<meta\s+name="color-scheme"\s+content="light dark"/)
 })
