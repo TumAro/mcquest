@@ -1,6 +1,5 @@
 import './config-screen.css'
-
-export type RevealMode = 'immediate' | 'onSubmit'
+import type { RevealMode } from '../storage'
 
 interface TestOptionsProps {
   timed: boolean

@@ -7,7 +7,6 @@ import { BrowseExams, BrowseYears } from './routes/Browse'
 import Player from './routes/Player'
 import Results from './routes/Results'
 import Subject from './routes/Subject'
-import Random from './routes/Random'
 import Bookmarked from './routes/Bookmarked'
 import Weakest from './routes/Weakest'
 import Stats from './routes/Stats'
@@ -21,10 +20,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/" element={<BrowseExams />} />
           <Route path="/exam/:slug" element={<BrowseYears />} />
           <Route path="/exam/:slug/:year/config" element={<YearConfig />} />
-          <Route path="/exam/:slug/:year/play" element={<Player />} />
-          <Route path="/exam/:slug/:year" element={<YearConfig />} />
           <Route path="/test/subject" element={<Subject />} />
-          <Route path="/test/random" element={<Random />} />
           <Route path="/test/bookmarked" element={<Bookmarked />} />
           <Route path="/test/weakest" element={<Weakest />} />
           <Route path="/test/play" element={<Player />} />

@@ -41,19 +41,7 @@ export default function ResumeDialog({ children }: ResumeDialogProps) {
 
   // Render resume dialog
   const handleResume = () => {
-    const state =
-      attempt.mode === 'year-wise'
-        ? // Year-wise: navigate with slug and year in URL
-          {}
-        : // Subject-wise/random: navigate with resumedAttempt in state
-          { resumedAttempt: attempt }
-
-    navigate(
-      attempt.mode === 'year-wise'
-        ? `/exam/${attempt.exam}/${attempt.year || 0}/play`
-        : `/test/play`,
-      { state }
-    )
+    navigate('/test/play')
 
     // Dismiss the dialog. Without this the dialog stays mounted and keeps
     // covering its children, so Resume appears to do nothing — navigating to

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { loadIndex, loadPaper, useJson } from '../data'
-import TestOptions, { type RevealMode } from './TestOptions'
+import TestOptions from './TestOptions'
+import type { RevealMode } from '../storage'
+import type { StartConfig } from '../start'
 import './config-screen.css'
 
 export default function YearConfig() {
@@ -23,18 +25,15 @@ export default function YearConfig() {
   const handleStart = () => {
     if (!paper) return
 
-    navigate(`/exam/${slug}/${year}/play`, {
-      state: {
-        config: {
-          timedMinutes: timed ? minutes : null,
-          revealMode,
-          questions: paper.questions,
-          topics: [],
-          count: paper.questions.length,
-          warnings: [],
-        },
-      },
-    })
+    const config: StartConfig = {
+      mode: 'year-wise',
+      exam: slug,
+      year,
+      questions: paper.questions,
+      timedMinutes: timed ? minutes : null,
+      revealMode,
+    }
+    navigate('/test/play', { state: { config } })
   }
 
   if (!index || !paper) {

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { selectQuestions } from '../QuestionSelection'
-import TestOptions, { type RevealMode } from './TestOptions'
+import TestOptions from './TestOptions'
+import type { RevealMode } from '../storage'
 import type { DataIndex, IndexQuestion } from '../data'
 import './config-screen.css'
 

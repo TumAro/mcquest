@@ -11,7 +11,7 @@ export default function Subject() {
   }
 
   const handleStart = (config: TestConfig) => {
-    navigate('/test/play', { state: { config } })
+    navigate('/test/play', { state: { config: { ...config, mode: 'subject-wise' } } })
   }
 
   return <ConfigScreen index={index} title="Subject-wise Test" showTopics={true} onStart={handleStart} />

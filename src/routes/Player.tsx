@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, Link, useLocation, useNavigate } from 'react-router'
-import { loadIndex, loadPaper, assetBase, loadQuestionsById, useJson } from '../data'
-import type { Response, Question, LoadedQuestion } from '../data'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { loadIndex, loadQuestionsById, useJson } from '../data'
+import type { Response, Question } from '../data'
 import { saveInProgressAttempt, loadInProgressAttempt, clearInProgressAttempt, saveSubmittedAttempt, type InProgressAttempt, type SubmittedAttempt } from '../storage'
+import type { StartConfig } from '../start'
 import { scoreAttempt, scoreQuestion } from '../../scripts/lib/marking.mjs'
 import { isAnswered } from '../attempt-state'
 import { formatTime } from '../timer'
@@ -12,29 +13,15 @@ import BookmarkButton, { useBookmarks } from '../components/BookmarkButton'
 import examsConfig from '../../exams.json'
 import './player.css'
 
-type RevealMode = 'immediate' | 'onSubmit'
-
-interface SubjectConfig {
-  topics: string[]
-  count: number
-  timedMinutes: number | null
-  revealMode: 'immediate' | 'onSubmit'
-  mode?: 'bookmarked'
-  questions: { id: string; topic: string; type?: string }[]
-  warnings: string[]
-}
-
 export default function Player() {
-  const { slug, year: yearStr } = useParams()
-  const year = yearStr ? parseInt(yearStr, 10) : 0
   const location = useLocation()
 
-  const config = location.state?.config as SubjectConfig | undefined
+  // A fresh start is a config in router state. With none, this is a resume: the
+  // attempt is read straight from storage, which is already the source of truth
+  // (navigating to the URL the user is already on does not reliably deliver
+  // fresh location state).
+  const config = location.state?.config as StartConfig | undefined
 
-  // A resumed attempt is read straight from storage rather than passed through
-  // router state. Storage is already the source of truth, and navigating to the
-  // URL the user is already on does not reliably deliver fresh location state —
-  // which silently produced a player with none of the saved answers restored.
   const [resumedAttempt, setResumedAttempt] = useState<InProgressAttempt | undefined>(undefined)
   const [resumeChecked, setResumeChecked] = useState(false)
 
@@ -58,14 +45,7 @@ export default function Player() {
     }
   }, [config])
 
-  // Entry point detection
-  const isSubjectWise = Boolean(config) || Boolean(resumedAttempt) || (!slug && resumeChecked)
-
   const { data: index } = useJson(() => loadIndex(), [])
-  const { data: paper } = useJson(
-    () => (slug && year ? loadPaper(slug, year) : isSubjectWise ? Promise.resolve(null) : Promise.reject(new Error('Missing params'))),
-    [slug, year, isSubjectWise]
-  )
 
   const { isBookmarked, toggle: toggleBookmarked } = useBookmarks()
   const [current, setCurrent] = useState(0)
@@ -77,7 +57,7 @@ export default function Player() {
   const [remaining, setRemaining] = useState<number>(Infinity)
   const [questions, setQuestions] = useState<Question[]>([])
   const [assetBases, setAssetBases] = useState<Record<string, string>>({})
-  const [questionsLoading, setQuestionsLoading] = useState(isSubjectWise)
+  const [questionsLoading, setQuestionsLoading] = useState(true)
   const [currentQuestionStartedAt, setCurrentQuestionStartedAt] = useState<number | null>(null)
   const [timePerQuestion, setTimePerQuestion] = useState<Record<string, number>>({})
   const [startedAt, setStartedAt] = useState<number | null>(null)
@@ -93,23 +73,13 @@ export default function Player() {
   // so it calls through this ref (same pattern as latestAttempt below).
   const finishRef = useRef<() => Promise<void>>(async () => {})
 
-  // Determine questions and loading state early so they can be used in useEffects
-  const finalQuestions = isSubjectWise ? questions : paper?.questions ?? []
-  const isLoading = isSubjectWise ? questionsLoading : !index || !paper
-  // A resumed attempt carries its own revealMode and mode: config is absent on
-  // resume, so falling back to config alone flipped a resumed practice attempt to
-  // exam mode. A paper started from the year page passes a config object too, so
-  // mode is decided by the URL first, not by the mere presence of config.
-  const revealMode: RevealMode = resumedAttempt?.revealMode ?? config?.revealMode ?? 'onSubmit'
-  const mode: SubmittedAttempt['mode'] =
-    resumedAttempt?.mode ??
-    (slug && year
-      ? 'year-wise'
-      : config?.mode === 'bookmarked'
-        ? 'bookmarked'
-        : (config?.topics?.length ?? 0) > 0
-          ? 'subject-wise'
-          : 'random')
+  // A resumed attempt carries its own revealMode, mode, exam and year: config is
+  // absent on resume, so falling back to config alone flipped a resumed practice
+  // attempt to exam mode.
+  const revealMode = resumedAttempt?.revealMode ?? config?.revealMode ?? 'onSubmit'
+  const mode: SubmittedAttempt['mode'] = resumedAttempt?.mode ?? config?.mode ?? 'random'
+  const exam = resumedAttempt?.exam ?? config?.exam ?? 'subject'
+  const year = resumedAttempt?.year ?? config?.year
 
   // Restore from resumed attempt if present
   useEffect(() => {
@@ -134,26 +104,30 @@ export default function Player() {
 
   // Initialize startedAt on first load (if not resuming)
   useEffect(() => {
-    if (finalQuestions.length === 0 || startedAt !== null) return
+    if (questions.length === 0 || startedAt !== null) return
     if (resumedAttempt) return // Don't reinitialize if resuming
     setStartedAt(Date.now())
     setCurrentQuestionStartedAt(Date.now())
-  }, [finalQuestions.length, startedAt, resumedAttempt])
+  }, [questions.length, startedAt, resumedAttempt])
 
-  // Load questions for a fresh start (the loader owns each question's asset base)
+  // The one load path. The stored record holds question IDs, never question
+  // copies, so a fresh config and a resumed attempt both come back through the
+  // ids; loadQuestionsById keeps each question's own asset base beside it.
   useEffect(() => {
-    if (!isSubjectWise || !config || !index || resumedAttempt) return
+    if (!index || !resumeChecked) return
+    const wanted = config ? config.questions.map((q) => q.id) : (resumedAttempt?.questionIds ?? [])
 
     let cancelled = false
-    loadQuestionsById(index, config.questions.map((q) => q.id))
+    loadQuestionsById(index, wanted)
       .then((byId) => {
         if (cancelled) return
-        const ordered = config.questions.map((q) => byId.get(q.id)).filter((l): l is LoadedQuestion => Boolean(l))
-        setQuestions(ordered.map((l) => l.question))
-        setAssetBases(Object.fromEntries(ordered.map((l) => [l.question.id, l.assetBase])))
+        // Keep the stored order; drop any ID the bank no longer holds.
+        const loaded = wanted.flatMap((id) => byId.get(id) ?? [])
+        setQuestions(loaded.map((l) => l.question))
+        setAssetBases(Object.fromEntries(loaded.map((l) => [l.question.id, l.assetBase])))
         setQuestionsLoading(false)
         autoSubmitted.current = false
-        if (config.timedMinutes !== null) setDeadline(Date.now() + config.timedMinutes * 60000)
+        if (config && config.timedMinutes !== null) setDeadline(Date.now() + config.timedMinutes * 60000)
       })
       .catch((err) => {
         console.error('Failed to load questions:', err)
@@ -162,64 +136,16 @@ export default function Player() {
     return () => {
       cancelled = true
     }
-  }, [isSubjectWise, config, index, resumedAttempt])
-
-  // Rehydrate a resumed subject-wise/random attempt.
-  //
-  // The stored record holds question IDs, never question copies — that is what
-  // lets attempt history survive the bank being edited. So on resume the
-  // questions have to be fetched back from the index, in the order they were
-  // stored. Without this the player resumes with an empty paper.
-  useEffect(() => {
-    if (!isSubjectWise || !resumedAttempt || !index) return
-
-    let cancelled = false
-
-    const rehydrate = async () => {
-      try {
-        const byId = new Map<string, Question>()
-
-        for (const exam of index.exams) {
-          for (const y of exam.years) {
-            const wanted = y.questions.filter((q) => resumedAttempt.questionIds.includes(q.id))
-            if (!wanted.length) continue
-            const paper = await loadPaper(exam.slug, y.year)
-            for (const q of paper.questions) {
-              if (resumedAttempt.questionIds.includes(q.id)) byId.set(q.id, q)
-            }
-          }
-        }
-
-        if (cancelled) return
-
-        // Preserve the stored order; drop any ID the bank no longer contains.
-        const ordered = resumedAttempt.questionIds
-          .map((id) => byId.get(id))
-          .filter((q): q is Question => Boolean(q))
-
-        setQuestions(ordered)
-        setQuestionsLoading(false)
-        autoSubmitted.current = false
-      } catch (err) {
-        console.error('Failed to rehydrate resumed attempt:', err)
-        if (!cancelled) setQuestionsLoading(false)
-      }
-    }
-
-    rehydrate()
-    return () => {
-      cancelled = true
-    }
-  }, [isSubjectWise, resumedAttempt, index])
+  }, [index, resumeChecked, config, resumedAttempt])
 
   // Track time per question when current changes. The ref holds the index whose
   // clock is running, so the time is credited to the question that was left
   // however it was left (Save & Next, palette jump either way, arrow key).
   useEffect(() => {
-    if (finalQuestions.length === 0 || currentQuestionStartedAt === null) return
+    if (questions.length === 0 || currentQuestionStartedAt === null) return
     if (clockIndexRef.current === current) return
 
-    const leftQ = finalQuestions[clockIndexRef.current]
+    const leftQ = questions[clockIndexRef.current]
     if (leftQ) {
       const elapsed = Date.now() - currentQuestionStartedAt
       setTimePerQuestion((prev) => ({
@@ -230,7 +156,7 @@ export default function Player() {
 
     clockIndexRef.current = current
     setCurrentQuestionStartedAt(Date.now())
-  }, [current, finalQuestions])
+  }, [current, questions])
 
   // Timer interval
   useEffect(() => {
@@ -251,12 +177,12 @@ export default function Player() {
     autoSubmitted.current = true
     // Delay slightly to avoid state update conflicts
     const timeoutId = setTimeout(() => {
-      const unanswered = finalQuestions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
+      const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
       const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
       if (confirmed) void finishRef.current()
     }, 0)
     return () => clearTimeout(timeoutId)
-  }, [remaining, finalQuestions, responses])
+  }, [remaining, questions, responses])
 
   // Debounced save of in-progress attempt
   // Keep the latest attempt snapshot in a ref, rewritten on every render.
@@ -267,14 +193,14 @@ export default function Player() {
   // exactly why nothing was persisted on a timed test.
   const latestAttempt = useRef<InProgressAttempt | null>(null)
   latestAttempt.current =
-    finalQuestions.length && startedAt && !questionsLoading
+    questions.length && startedAt && !questionsLoading
       ? {
-          exam: slug || 'subject',
-          year: year || undefined,
+          exam,
+          year,
           mode,
           timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
           revealMode,
-          questionIds: finalQuestions.map((q) => q.id),
+          questionIds: questions.map((q) => q.id),
           responses,
           marked,
           visited,
@@ -319,14 +245,14 @@ export default function Player() {
 
   // Keyboard handler
   useEffect(() => {
-    if (finalQuestions.length === 0) return
+    if (questions.length === 0) return
 
     const handleKeydown = (e: KeyboardEvent) => {
       // Don't fire number keys if focus is in a numeric input
       const active = document.activeElement
       const isNumericFocused = active instanceof HTMLInputElement && active.type === 'number'
 
-      const q = finalQuestions[current]
+      const q = questions[current]
       if (!q) return
 
       // Number keys (1-4): select options, but not if numeric input is focused
@@ -370,10 +296,10 @@ export default function Player() {
         delete newMarked[q.id]
         setMarked(newMarked)
 
-        if (current < finalQuestions.length - 1) {
+        if (current < questions.length - 1) {
           const nextIdx = current + 1
           setCurrent(nextIdx)
-          const nextQ = finalQuestions[nextIdx]
+          const nextQ = questions[nextIdx]
           setVisited({ ...visited, [nextQ.id]: true })
         }
       }
@@ -391,10 +317,10 @@ export default function Player() {
         setResponses(newResponses)
         setMarked({ ...marked, [q.id]: true })
 
-        if (current < finalQuestions.length - 1) {
+        if (current < questions.length - 1) {
           const nextIdx = current + 1
           setCurrent(nextIdx)
-          const nextQ = finalQuestions[nextIdx]
+          const nextQ = questions[nextIdx]
           setVisited({ ...visited, [nextQ.id]: true })
         }
       }
@@ -405,14 +331,14 @@ export default function Player() {
           e.preventDefault()
           if (current > 0) {
             setCurrent(current - 1)
-            const prevQ = finalQuestions[current - 1]
+            const prevQ = questions[current - 1]
             setVisited({ ...visited, [prevQ.id]: true })
           }
         } else if (e.key === 'ArrowRight') {
           e.preventDefault()
-          if (current < finalQuestions.length - 1) {
+          if (current < questions.length - 1) {
             setCurrent(current + 1)
-            const nextQ = finalQuestions[current + 1]
+            const nextQ = questions[current + 1]
             setVisited({ ...visited, [nextQ.id]: true })
           }
         }
@@ -421,13 +347,13 @@ export default function Player() {
 
     document.addEventListener('keydown', handleKeydown)
     return () => document.removeEventListener('keydown', handleKeydown)
-  }, [responses, finalQuestions, current, marked, visited, revealMode, correctness])
+  }, [responses, questions, current, marked, visited, revealMode, correctness])
 
-  if (isLoading) {
+  if (questionsLoading) {
     return <div className="loading-state">Loading...</div>
   }
 
-  if (finalQuestions.length === 0) {
+  if (questions.length === 0) {
     return (
       <div className="not-found-state">
         <p>No questions found.</p>
@@ -436,38 +362,7 @@ export default function Player() {
     )
   }
 
-  if (!isSubjectWise && (!index || !paper)) {
-    return (
-      <div className="not-found-state">
-        <p>Error loading exam.</p>
-        <Link to="/">Back</Link>
-      </div>
-    )
-  }
-
-  if (!isSubjectWise) {
-    const exam = index!.exams.find((e) => e.slug === slug)
-    if (!exam) {
-      return (
-        <div className="not-found-state">
-          <p>Exam not found.</p>
-          <Link to="/">Back to exams</Link>
-        </div>
-      )
-    }
-
-    const yearData = exam.years.find((y) => y.year === year)
-    if (!yearData) {
-      return (
-        <div className="not-found-state">
-          <p>Year not found.</p>
-          <Link to={`/exam/${slug}`}>Back to years</Link>
-        </div>
-      )
-    }
-  }
-
-  const currentQuestion = finalQuestions[current]
+  const currentQuestion = questions[current]
   const draft = responses[currentQuestion.id] ?? null
 
   const handleDraft = (next: Response) => {
@@ -492,10 +387,10 @@ export default function Player() {
     delete newMarked[currentQuestion.id]
     setMarked(newMarked)
 
-    if (current < finalQuestions.length - 1) {
+    if (current < questions.length - 1) {
       const nextIdx = current + 1
       setCurrent(nextIdx)
-      const nextQ = finalQuestions[nextIdx]
+      const nextQ = questions[nextIdx]
       setVisited({ ...visited, [nextQ.id]: true })
     }
   }
@@ -516,10 +411,10 @@ export default function Player() {
     }
     setMarked({ ...marked, [currentQuestion.id]: true })
 
-    if (current < finalQuestions.length - 1) {
+    if (current < questions.length - 1) {
       const nextIdx = current + 1
       setCurrent(nextIdx)
-      const nextQ = finalQuestions[nextIdx]
+      const nextQ = questions[nextIdx]
       setVisited({ ...visited, [nextQ.id]: true })
     }
   }
@@ -528,15 +423,15 @@ export default function Player() {
     if (submittedRef.current) return
     submittedRef.current = true
 
-    const score = scoreAttempt(examsConfig, finalQuestions, responses)
+    const score = scoreAttempt(examsConfig, questions, responses)
 
     // Record submitted attempt with per-question detail
     const timeOnCurrentQ = currentQuestionStartedAt ? Date.now() - currentQuestionStartedAt : 0
     const attemptRecord: SubmittedAttempt = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
-      exam: slug || 'subject',
-      year: year || undefined,
+      exam,
+      year,
       mode,
       timedMinutes: deadline === Infinity ? null : Math.ceil((deadline - Date.now()) / 60000),
       revealMode,
@@ -545,11 +440,11 @@ export default function Player() {
       correct: score.correct,
       wrong: score.wrong,
       unattempted: score.unattempted,
-      questions: finalQuestions.map(q => {
+      questions: questions.map(q => {
         const qResult = score.results.find((r: any) => r.id === q.id)
         // Add elapsed time for the current question if still on it
         let timeOnQ = timePerQuestion[q.id] ?? 0
-        if (q.id === finalQuestions[current].id) {
+        if (q.id === questions[current].id) {
           timeOnQ += timeOnCurrentQ
         }
         const status = qResult?.status ?? 'unattempted'
@@ -580,7 +475,7 @@ export default function Player() {
   finishRef.current = finishAttempt
 
   const handleSubmit = () => {
-    const unanswered = finalQuestions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
+    const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
     const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
     if (confirmed) void finishAttempt()
   }
@@ -589,15 +484,13 @@ export default function Player() {
     setVisited({ ...visited, [currentQuestion.id]: true })
   }
 
-  const paneAssetBase = isSubjectWise ? (assetBases[currentQuestion.id] ?? '') : assetBase(slug!, year)
-
   return (
     <div className="player">
       <div className="player-main">
         <div className="player-header">
           <span className="player-progress">
             Question <span className="mono-num">{current + 1}</span> of{' '}
-            <span className="mono-num">{finalQuestions.length}</span>
+            <span className="mono-num">{questions.length}</span>
           </span>
           {deadline !== Infinity && Number.isFinite(remaining) && (
             <span className="player-clock">{formatTime(Math.max(0, remaining))}</span>
@@ -609,7 +502,7 @@ export default function Player() {
             key={currentQuestion.id}
             question={currentQuestion}
             number={current + 1}
-            assetBase={paneAssetBase}
+            assetBase={assetBases[currentQuestion.id]}
             draft={draft}
             onDraft={handleDraft}
           />
@@ -642,7 +535,7 @@ export default function Player() {
 
       <div className="player-rail">
         <Palette
-          questions={finalQuestions}
+          questions={questions}
           current={current}
           responses={responses}
           marked={marked}
@@ -650,7 +543,7 @@ export default function Player() {
           correctness={correctness}
           onJump={(idx) => {
             setCurrent(idx)
-            const q = finalQuestions[idx]
+            const q = questions[idx]
             setVisited({ ...visited, [q.id]: true })
           }}
         />

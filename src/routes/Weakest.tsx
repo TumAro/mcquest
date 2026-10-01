@@ -68,10 +68,7 @@ export default function Weakest() {
       title="Practice weakest topics"
       fixedQuestions={questions}
       lede={lede}
-      onStart={(config: TestConfig) =>
-        // The topics field is what makes Player record this as a subject-wise test.
-        navigate('/test/play', { state: { config: { ...config, topics: slugs } } })
-      }
+      onStart={(config: TestConfig) => navigate('/test/play', { state: { config: { ...config, mode: 'subject-wise' } } })}
     />
   )
 }
