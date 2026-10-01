@@ -41,6 +41,8 @@ test('Random starts a drill in one click on the defaults', async ({ page, reques
 
   await expect(page.locator('.player-progress')).toContainText(`Question 1 of ${n}`)
   await expect(page.locator('.palette-bubble')).toHaveCount(n)
+  // The clock appears on the first tick after the deadline is set, so give it one.
+  await page.waitForTimeout(500)
   await expect(page.locator('.player-clock')).toHaveCount(0)
 })
 
