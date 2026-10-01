@@ -68,6 +68,7 @@ export default function Player() {
   // attempt that submit just cleared and bring the resume dialog back.
   const submittedRef = useRef(false)
   const [saveError, setSaveError] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const navigate = useNavigate()
   // The auto-submit effect's closure is stale relative to finishAttempt's inputs,
   // so it calls through this ref (same pattern as latestAttempt below).
@@ -166,7 +167,7 @@ export default function Player() {
       const now = Date.now()
       const rem = Math.max(0, deadline - now)
       setRemaining(rem / 1000)
-    }, 100)
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [deadline])
@@ -175,23 +176,27 @@ export default function Player() {
   useEffect(() => {
     if (submittedRef.current || autoSubmitted.current || remaining > 0) return
     autoSubmitted.current = true
-    // Delay slightly to avoid state update conflicts
-    const timeoutId = setTimeout(() => {
-      const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
-      const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
-      if (confirmed) void finishRef.current()
-    }, 0)
-    return () => clearTimeout(timeoutId)
-  }, [remaining, questions, responses])
+    void finishRef.current() // time-up submits without asking
+  }, [remaining])
+
+  useEffect(() => {
+    if (!confirming) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setConfirming(false)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [confirming])
 
   // Debounced save of in-progress attempt
   // Keep the latest attempt snapshot in a ref, rewritten on every render.
   //
   // The save cadence MUST NOT be driven by an effect that depends on `remaining`:
-  // the timer updates it every 100ms, so a debounce timeout created in such an
-  // effect is cleared by the cleanup ten times a second and never fires. That is
-  // exactly why nothing was persisted on a timed test.
-  const latestAttempt = useRef<InProgressAttempt | null>(null)
+  // a debounce timeout created in such an effect is cleared by the cleanup on
+  // every tick and never fires. That is exactly why nothing was persisted on a
+  // timed test. `remaining` is not in the snapshot: write() computes it from the
+  // deadline at write time, so it is exact however rarely the clock re-renders.
+  const deadlineRef = useRef(deadline)
+  deadlineRef.current = deadline
+  const latestAttempt = useRef<Omit<InProgressAttempt, 'remaining'> | null>(null)
   latestAttempt.current =
     questions.length && startedAt && !questionsLoading
       ? {
@@ -205,7 +210,6 @@ export default function Player() {
           marked,
           visited,
           current,
-          remaining: remaining * 1000, // seconds to ms; the clock pauses while closed
           startedAt,
           timePerQuestion,
         }
@@ -220,7 +224,9 @@ export default function Player() {
       if (submittedRef.current) return
       const attempt = latestAttempt.current
       if (attempt) {
-        saveInProgressAttempt(attempt).catch((err) => {
+        // The clock pauses while closed; infinite when there is no deadline.
+        const remaining = Math.max(0, deadlineRef.current - Date.now())
+        saveInProgressAttempt({ ...attempt, remaining }).catch((err) => {
           console.error('Failed to save in-progress attempt:', err)
         })
       }
@@ -474,11 +480,7 @@ export default function Player() {
   }
   finishRef.current = finishAttempt
 
-  const handleSubmit = () => {
-    const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
-    const confirmed = window.confirm(`Submit? ${unanswered} question(s) unanswered.`)
-    if (confirmed) void finishAttempt()
-  }
+  const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
 
   if (!visited[currentQuestion.id]) {
     setVisited({ ...visited, [currentQuestion.id]: true })
@@ -527,11 +529,36 @@ export default function Player() {
             bookmarked={isBookmarked(currentQuestion.id)}
             onToggle={() => toggleBookmarked(currentQuestion.id)}
           />
-          <button className="btn btn-primary player-submit" onClick={handleSubmit}>
+          <button className="btn btn-primary player-submit" onClick={() => setConfirming(true)}>
             Submit
           </button>
         </div>
       </div>
+
+      {confirming && (
+        <div className="modal-overlay">
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+            <h2 className="modal-title" id="submit-title">Submit test?</h2>
+            <p className="modal-body">
+              {unanswered === 0 ? 'Every question is answered.' : `${unanswered} question(s) unanswered.`}
+            </p>
+            <div className="modal-actions">
+              <button className="btn" autoFocus onClick={() => setConfirming(false)}>
+                Keep working
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setConfirming(false)
+                  void finishAttempt()
+                }}
+              >
+                Submit test
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="player-rail">
         <Palette

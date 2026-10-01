@@ -1,5 +1,6 @@
 import { test, expect, type Page, type APIRequestContext } from '@playwright/test'
 import { inferType } from '../scripts/lib/rules.mjs'
+import { startPaper, jumpTo, submitTest } from './helpers'
 
 /**
  * STAT-01/02 — the weak-topics page. Drives the real UI. Nothing here names an
@@ -39,16 +40,6 @@ async function pickPaper(request: APIRequestContext): Promise<LoadedPaper> {
   return hit
 }
 
-async function startPaper(page: Page, slug: string, year: number) {
-  await page.goto(`/#/exam/${slug}/${year}/config`)
-  await page.getByRole('button', { name: 'Start Test' }).click()
-  await expect(page.getByRole('button', { name: 'Save & Next' })).toBeVisible({ timeout: 15000 })
-}
-
-async function jumpTo(page: Page, n: number) {
-  await page.getByRole('button', { name: new RegExp(`^Question ${n},`) }).click()
-}
-
 /** Check the first option that is not in the answer key. */
 async function answerWrongSingle(page: Page, q: PaperQuestion) {
   const wrong = q.options!.findIndex((_, i) => !q.correct!.includes(i))
@@ -63,8 +54,7 @@ async function submitOneWrong(page: Page, paper: LoadedPaper): Promise<PaperQues
   await jumpTo(page, pos + 1)
   await answerWrongSingle(page, q)
   await page.getByRole('button', { name: 'Save & Next' }).click()
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
   return q
 }

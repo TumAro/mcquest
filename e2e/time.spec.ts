@@ -1,4 +1,5 @@
 import { test, expect, type Page, type APIRequestContext } from '@playwright/test'
+import { startPaper, jumpTo, submitTest } from './helpers'
 
 /**
  * STAT-04 / D-05 — time spent on a question is stored against that question,
@@ -31,20 +32,9 @@ async function pickPaper(request: APIRequestContext): Promise<LoadedPaper> {
   throw new Error('No paper in public/data has at least 3 questions; the time spec needs one.')
 }
 
-async function startPaper(page: Page, p: LoadedPaper) {
-  await page.goto(`/#/exam/${p.slug}/${p.year}/config`)
-  await page.getByRole('button', { name: 'Start Test' }).click()
-  await expect(page.getByRole('button', { name: 'Save & Next' })).toBeVisible({ timeout: 15000 })
-}
-
-async function jumpTo(page: Page, n: number) {
-  await page.getByRole('button', { name: new RegExp(`^Question ${n},`) }).click()
-}
-
 /** Submit, then return the stored per-question timeSpent keyed by question id. */
 async function submitAndRead(page: Page): Promise<Record<string, number>> {
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
   const id = page.url().split('/results/')[1]
   const record = await page.evaluate(
@@ -74,7 +64,7 @@ test('a palette round trip credits each question, and the untouched one stays at
   request,
 }) => {
   const p = await pickPaper(request)
-  await startPaper(page, p)
+  await startPaper(page, p.slug, p.year)
 
   await page.waitForTimeout(DWELL_MS)
   await jumpTo(page, 3)
@@ -90,7 +80,7 @@ test('a palette round trip credits each question, and the untouched one stays at
 
 test('Save & Next credits the question that was left', async ({ page, request }) => {
   const p = await pickPaper(request)
-  await startPaper(page, p)
+  await startPaper(page, p.slug, p.year)
 
   await page.waitForTimeout(DWELL_MS)
   await page.getByRole('button', { name: 'Save & Next' }).click()
