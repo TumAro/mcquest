@@ -12,6 +12,10 @@ import { topicLabels } from './results.ts'
 /** D-02, locked: a topic needs this many attempts before its accuracy is ranked. */
 export const MIN_ATTEMPTS = 3
 
+/** The practice-weakest test draws from this many of the worst-ranked topics, and holds at most this many questions. */
+export const WEAKEST_TOPIC_COUNT = 3
+export const WEAKEST_QUESTION_COUNT = 10
+
 export interface TopicStat {
   topic: string
   label: string
@@ -81,4 +85,9 @@ export function statsFromHistory(attempts: readonly AttemptLike[], index: DataIn
     (id) => lookup.get(id)?.question.topic,
     (slug) => labels[slug] ?? slug,
   )
+}
+
+/** The bottom of the ranking (D-04). `ranked` is already worst-first and above the threshold. */
+export function weakestTopics(ranked: readonly TopicStat[], n: number = WEAKEST_TOPIC_COUNT): TopicStat[] {
+  return ranked.slice(0, n)
 }

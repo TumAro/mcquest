@@ -9,6 +9,7 @@ import Results from './routes/Results'
 import Subject from './routes/Subject'
 import Random from './routes/Random'
 import Bookmarked from './routes/Bookmarked'
+import Weakest from './routes/Weakest'
 import Stats from './routes/Stats'
 import YearConfig from './routes/YearConfig'
 
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/test/subject" element={<Subject />} />
           <Route path="/test/random" element={<Random />} />
           <Route path="/test/bookmarked" element={<Bookmarked />} />
+          <Route path="/test/weakest" element={<Weakest />} />
           <Route path="/test/play" element={<Player />} />
           <Route path="/results/:id" element={<Results />} />
           <Route path="/stats" element={<Stats />} />

@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { loadIndex, useJson } from '../data'
 import { loadSubmittedAttempts } from '../storage'
 import { statsFromHistory, MIN_ATTEMPTS } from '../stats'
@@ -6,6 +6,7 @@ import { formatAccuracy } from '../results'
 import './results.css'
 
 export default function Stats() {
+  const navigate = useNavigate()
   const { data, error } = useJson(
     async () => ({ attempts: await loadSubmittedAttempts(), index: await loadIndex() }),
     [],
@@ -73,6 +74,12 @@ export default function Stats() {
                   ))}
                 </tbody>
               </table>
+              <p>
+                <button type="button" className="btn btn-primary" onClick={() => navigate('/test/weakest')}>
+                  Practice weakest topics
+                </button>
+              </p>
+              <p className="field-hint">Starts a test from the bottom of this ranking.</p>
             </>
           )}
           {insufficient.length > 0 && (
