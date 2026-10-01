@@ -429,6 +429,9 @@ export const DEFAULT_SETTINGS: Settings = {
 
 const SETTINGS_KEY = 'settings'
 
+/** localStorage mirror of the theme, read by the inline script in index.html before first paint (D-09). */
+export const THEME_KEY = 'mcquest-theme'
+
 const clampInt = (v: unknown, max: number): number | null =>
   typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(1, Math.round(v))) : null
 
@@ -455,7 +458,13 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function saveSettings(settings: Settings): Promise<void> {
   try {
-    await set(SETTINGS_KEY, deserializeSettings(settings))
+    const clean = deserializeSettings(settings)
+    await set(SETTINGS_KEY, clean)
+    try {
+      localStorage.setItem(THEME_KEY, clean.theme)
+    } catch {
+      // localStorage missing or blocked: the idb record stays the source of truth
+    }
   } catch (err) {
     console.error('Failed to save settings:', err)
   }

@@ -11,6 +11,11 @@ import Bookmarked from './routes/Bookmarked'
 import Weakest from './routes/Weakest'
 import Stats from './routes/Stats'
 import YearConfig from './routes/YearConfig'
+import { loadSettings } from './storage'
+import { applyTheme } from './theme'
+
+// Reconcile the attribute with the stored record in case the localStorage mirror is missing.
+void loadSettings().then((s) => applyTheme(s.theme))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
