@@ -29,7 +29,7 @@ interface BookmarkButtonProps {
 export default function BookmarkButton({ bookmarked, onToggle }: BookmarkButtonProps) {
   return (
     <button type="button" className="btn btn-bookmark" aria-pressed={bookmarked} onClick={onToggle}>
-      <span aria-hidden="true">{bookmarked ? '\u2605' : '\u2606'}</span> {bookmarked ? 'Bookmarked' : 'Bookmark'}
+      <span aria-hidden="true">{bookmarked ? '\u2605' : '\u2606'}</span> Bookmark
     </button>
   )
 }

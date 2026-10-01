@@ -1,5 +1,6 @@
 import { test, expect, type Page, type APIRequestContext } from '@playwright/test'
 import { inferType } from '../scripts/lib/rules.mjs'
+import { startPaper, jumpTo, submitTest } from './helpers'
 
 /**
  * TEST-05 — a submitted test is scored on the results screen.
@@ -49,23 +50,6 @@ async function pickPaper(request: APIRequestContext): Promise<LoadedPaper> {
   return hit
 }
 
-async function startPaper(
-  page: Page,
-  slug: string,
-  year: number,
-  opts: { practice?: boolean; minutes?: number } = {},
-) {
-  await page.goto(`/#/exam/${slug}/${year}/config`)
-  if (opts.practice) await page.getByRole('radio', { name: /practice mode/i }).check()
-  if (opts.minutes) await page.locator('input[type="number"]').fill(String(opts.minutes))
-  await page.getByRole('button', { name: 'Start Test' }).click()
-  await expect(page.getByRole('button', { name: 'Save & Next' })).toBeVisible({ timeout: 15000 })
-}
-
-async function jumpTo(page: Page, n: number) {
-  await page.getByRole('button', { name: new RegExp(`^Question ${n},`) }).click()
-}
-
 async function answerCorrectly(page: Page, q: PaperQuestion) {
   const type = inferType(q)
   if (type === 'numeric') {
@@ -104,8 +88,7 @@ test('TEST-05: one question of each type, submitted, scored on the results scree
   }
   const max = paper.questions.reduce((a, q) => a + q.marks, 0)
 
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
 
   const expectedScore = `${fmt(score)} / ${fmt(max)}`
@@ -152,8 +135,7 @@ test('a resumed year-wise attempt keeps its mode through to the results screen',
   await expect(page.getByRole('button', { name: 'Save & Next' })).toBeVisible({ timeout: 15000 })
   await expect(page.getByRole('button', { name: 'Question 1, answered', exact: true })).toBeVisible()
 
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\//)
   await expect(page.getByTestId('results-scope-note')).toBeVisible()
 })
@@ -187,7 +169,6 @@ test('timer auto-submit saves the attempt and lands on the results screen', asyn
   await answerCorrectly(page, q)
   await page.getByRole('button', { name: 'Save & Next' }).click()
 
-  page.once('dialog', (d) => d.accept())
   await page.clock.fastForward('01:05')
   await expect(page).toHaveURL(/#\/results\/[^/]+$/, { timeout: 15000 })
 
@@ -219,8 +200,7 @@ test('review pairs each response with the answer key for every question', async 
   await answerCorrectly(page, numeric)
   await page.getByRole('button', { name: 'Save & Next' }).click()
 
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
 
   await expect(page.locator('[data-question-id]')).toHaveCount(paper.questions.length)
@@ -274,8 +254,7 @@ test('bookmarks persist across reloads and attempts and are independent of mark-
   await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
   await expect(markedBubble(1)).toHaveCount(0)
 
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
 
   const first = page.locator(`[data-question-id="${paper.questions[0].id}"]`)
@@ -311,8 +290,7 @@ test('Bookmarked mode builds a test from exactly the bookmarked questions', asyn
     await bookmark().click()
     await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
   }
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
 
   // Third bookmark comes from the review, not the test.
@@ -332,8 +310,7 @@ test('Bookmarked mode builds a test from exactly the bookmarked questions', asyn
     await expect(bookmark()).toHaveAttribute('aria-pressed', 'true')
   }
 
-  page.once('dialog', (d) => d.accept())
-  await page.getByRole('button', { name: 'Submit' }).click()
+  await submitTest(page)
   await expect(page).toHaveURL(/#\/results\/[^/]+$/)
   await expect(page.locator('.results-title')).toHaveText(/bookmarked/i)
   await expect(page.getByTestId('results-score')).toBeVisible()

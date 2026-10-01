@@ -27,14 +27,14 @@
   color: var(--ink-soft);
 }
 
-/* The one bold element: large Plex Mono with tabular figures, nothing else
-   on the page competes with it. */
+/* Deliberately quiet: body-sized, soft ink. The paper is the focus, not the
+   clock; it stays visible so time is never a surprise. */
 .player-clock {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: var(--text-2xl);
-  font-weight: 600;
-  color: var(--ink);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--ink-soft);
   line-height: 1;
 }
 
