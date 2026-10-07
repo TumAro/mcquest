@@ -91,3 +91,17 @@
     border-left: none;
   }
 }
+
+/* Practice-mode verdict, under the locked question */
+.player-verdict {
+  margin: var(--space-3) 0 0;
+  font-weight: 600;
+}
+
+.player-verdict--correct {
+  color: var(--green);
+}
+
+.player-verdict--wrong {
+  color: var(--red);
+}

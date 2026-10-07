@@ -1,0 +1,748 @@
+{
+  "exam": "GATE MA",
+  "year": 2023,
+  "questions": [
+    {
+      "marks": 1,
+      "topic": "multivariable-calculus",
+      "question": "Let $f,g:\\mathbb{R}^2\\to\\mathbb{R}$ be defined by $f(x,y)=x^2-\\dfrac32xy^2$ and $g(x,y)=4x^4-5x^2y+y^2$ for all $(x,y)\\in\\mathbb{R}^2$. Consider the following statements:\n$P$: $f$ has a saddle point at $(0,0)$.\n$Q$: $g$ has a saddle point at $(0,0)$.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "$P$ is FALSE but $Q$ is TRUE",
+        "$P$ is TRUE but $Q$ is FALSE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-1"
+    },
+    {
+      "marks": 1,
+      "topic": "topological-spaces",
+      "question": "Let $\\mathbb{R}^3$ be a topological space with the usual topology and $\\mathbb{Q}$ denote the set of rational numbers. Define the subspaces $X,Y,Z$ and $W$ of $\\mathbb{R}^3$ as follows: $X=\\{(x,y,z)\\in\\mathbb{R}^3:|x|+|y|+|z|\\in\\mathbb{Q}\\}$, $Y=\\{(x,y,z)\\in\\mathbb{R}^3:xyz=1\\}$, $Z=\\{(x,y,z)\\in\\mathbb{R}^3:x^2+y^2+z^2=1\\}$, $W=\\{(x,y,z)\\in\\mathbb{R}^3:xyz=0\\}$. Which of the following statements is correct?",
+      "options": [
+        "$X$ is homeomorphic to $Y$",
+        "$Z$ is homeomorphic to $W$",
+        "$Y$ is homeomorphic to $W$",
+        "$X$ is NOT homeomorphic to $W$"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-2"
+    },
+    {
+      "marks": 1,
+      "topic": "measure-integration",
+      "question": "Let $P(x)=1+e^{2\\pi ix}+2e^{3\\pi ix}$, $x\\in\\mathbb{R}$, $i=\\sqrt{-1}$. Then $\\displaystyle\\lim_{N\\to\\infty}\\dfrac1N\\sum_{k=0}^{N-1}P(k\\sqrt2)$ is equal to",
+      "options": [
+        "$0$",
+        "$1$",
+        "$3$",
+        "$4$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2023-3"
+    },
+    {
+      "marks": 1,
+      "topic": "linear-transformations",
+      "question": "Let $T:\\mathbb{R}^3\\to\\mathbb{R}^3$ be a linear transformation satisfying $T(1,0,0)=(0,1,1)$, $T(1,1,0)=(1,0,1)$ and $T(1,1,1)=(1,1,2)$. Then",
+      "options": [
+        "$T$ is one-one but $T$ is NOT onto",
+        "$T$ is one-one and onto",
+        "$T$ is NEITHER one-one NOR onto",
+        "$T$ is NOT one-one but $T$ is onto"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2023-4"
+    },
+    {
+      "marks": 1,
+      "topic": "power-series-singularities",
+      "question": "Let $\\mathbb{D}=\\{z\\in\\mathbb{C}:|z|<1\\}$ and $f:\\mathbb{D}\\to\\mathbb{C}$ be defined by $f(z)=z-25z^3+\\dfrac{z^5}{5!}-\\dfrac{z^7}{7!}+\\dfrac{z^9}{9!}-\\dfrac{z^{11}}{11!}$. Consider the following statements:\n$P$: $f$ has three zeros (counting multiplicity) in $\\mathbb{D}$.\n$Q$: $f$ has one zero in $\\mathbb{U}=\\{z\\in\\mathbb{C}:\\tfrac12<|z|<1\\}$.\nThen",
+      "options": [
+        "$P$ is TRUE but $Q$ is FALSE",
+        "$P$ is FALSE but $Q$ is TRUE",
+        "both $P$ and $Q$ are TRUE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-5"
+    },
+    {
+      "marks": 1,
+      "topic": "measure-integration",
+      "question": "Let $\\mathcal N\\subseteq\\mathbb{R}$ be a non-measurable set with respect to the Lebesgue measure on $\\mathbb{R}$. Consider the following statements:\n$P$: If $M=\\{x\\in\\mathcal N:x\\text{ is irrational}\\}$, then $M$ is Lebesgue measurable.\n$Q$: The boundary of $\\mathcal N$ has positive Lebesgue outer measure.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "$P$ is TRUE and $Q$ is FALSE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2023-6"
+    },
+    {
+      "marks": 1,
+      "topic": "measure-integration",
+      "question": "For $k\\in\\mathbb{N}$, let $E_k$ be a measurable subset of $[0,1]$ with Lebesgue measure $\\dfrac1{k^2}$. Define $E=\\cap_{n=1}^\\infty\\cup_{k=n}^\\infty E_k$ and $F=\\cup_{n=1}^\\infty\\cap_{k=n}^\\infty E_k$. Consider the following statements:\n$P$: Lebesgue measure of $E$ is equal to zero.\n$Q$: Lebesgue measure of $F$ is equal to zero.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "both $P$ and $Q$ are FALSE",
+        "$P$ is TRUE but $Q$ is FALSE",
+        "$Q$ is TRUE but $P$ is FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-7"
+    },
+    {
+      "marks": 1,
+      "topic": "connectedness-compactness",
+      "question": "Consider $\\mathbb{R}^2$ with the usual Euclidean metric. Let $X=\\{(x,x\\sin\\tfrac1x)\\in\\mathbb{R}^2:x\\in(0,1]\\}\\cup\\{(0,y)\\in\\mathbb{R}^2:-\\infty<y<\\infty\\}$ and $Y=\\{(x,\\sin\\tfrac1x)\\in\\mathbb{R}^2:x\\in(0,1]\\}\\cup\\{(0,y)\\in\\mathbb{R}^2:-\\infty<y<\\infty\\}$. Consider the following statements:\n$P$: $X$ is a connected subset of $\\mathbb{R}^2$.\n$Q$: $Y$ is a connected subset of $\\mathbb{R}^2$.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "$P$ is TRUE and $Q$ is FALSE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-8"
+    },
+    {
+      "marks": 1,
+      "topic": "eigenvalues",
+      "question": "Let $M=\\begin{bmatrix}4&-3\\\\1&0\\end{bmatrix}$. Consider the following statements:\n$P$: $M^8+M^{12}$ is diagonalizable.\n$Q$: $M^7+M^9$ is diagonalizable.\nWhich of the following statements is correct?",
+      "options": [
+        "$P$ is TRUE and $Q$ is FALSE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "Both $P$ and $Q$ are FALSE",
+        "Both $P$ and $Q$ are TRUE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-9"
+    },
+    {
+      "marks": 1,
+      "topic": "metric-spaces",
+      "question": "Let $C[0,1]=\\{f:[0,1]\\to\\mathbb{R}:f\\text{ is continuous}\\}$. Consider the metric space $(C[0,1],d_\\infty)$, where $d_\\infty(f,g)=\\sup\\{|f(x)-g(x)|:x\\in[0,1]\\}$ for $f,g\\in C[0,1]$. Let $f_0(x)=0$ for all $x\\in[0,1]$ and $X=\\{f\\in(C[0,1],d_\\infty):d_\\infty(f_0,f)\\ge\\tfrac12\\}$. Let $f_1,f_2\\in C[0,1]$ be defined by $f_1(x)=x$ and $f_2(x)=1-x$ for all $x\\in[0,1]$. Consider the following statements:\n$P$: $f_1$ is in the interior of $X$.\n$Q$: $f_2$ is in the interior of $X$.\nWhich of the following statements is correct?",
+      "options": [
+        "$P$ is TRUE and $Q$ is FALSE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "Both $P$ and $Q$ are FALSE",
+        "Both $P$ and $Q$ are TRUE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-10"
+    },
+    {
+      "marks": 1,
+      "topic": "continuity",
+      "question": "Consider the metrics $\\rho_1$ and $\\rho_2$ on $\\mathbb{R}$, defined by $\\rho_1(x,y)=|x-y|$ and $\\rho_2(x,y)=0$ if $x=y$, $1$ if $x\\ne y$. Let $X=\\{n\\in\\mathbb{N}:n\\ge3\\}$ and $Y=\\{n+\\tfrac1n:n\\in\\mathbb{N}\\}$. Define $f:X\\cup Y\\to\\mathbb{R}$ by $f(x)=2$ if $x\\in X$ and $3$ if $x\\in Y$. Consider the following statements:\n$P$: The function $f:(X\\cup Y,\\rho_1)\\to(\\mathbb{R},\\rho_1)$ is uniformly continuous.\n$Q$: The function $f:(X\\cup Y,\\rho_2)\\to(\\mathbb{R},\\rho_1)$ is uniformly continuous.\nThen",
+      "options": [
+        "$P$ is TRUE and $Q$ is FALSE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "both $P$ and $Q$ are FALSE",
+        "both $P$ and $Q$ are TRUE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2023-11"
+    },
+    {
+      "marks": 1,
+      "topic": "canonical-forms",
+      "question": "Let $T:\\mathbb{R}^4\\to\\mathbb{R}^4$ be a linear transformation and the null space of $T$ be the subspace of $\\mathbb{R}^4$ given by $\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4:4x_1+3x_2+2x_3+x_4=0\\}$. If $\\text{Rank}(T-3I)=3$, where $I$ is the identity map on $\\mathbb{R}^4$, then the minimal polynomial of $T$ is",
+      "options": [
+        "$x(x-3)$",
+        "$x(x-3)^3$",
+        "$x^3(x-3)$",
+        "$x^2(x-3)^2$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-12"
+    },
+    {
+      "marks": 1,
+      "topic": "dual-spaces",
+      "question": "Let $C[0,1]$ denote the set of all real valued continuous functions defined on $[0,1]$ and $\\|f\\|_\\infty=\\sup\\{|f(x)|:x\\in[0,1]\\}$ for all $f\\in C[0,1]$. Let $X=\\{f\\in C[0,1]:f(0)=f(1)=0\\}$. Define $F:(C[0,1],\\|\\cdot\\|_\\infty)\\to\\mathbb{R}$ by $F(f)=\\int_0^1f(t)\\,dt$ for all $f\\in C[0,1]$. Denote $S_X=\\{f\\in X:\\|f\\|_\\infty=1\\}$. Then the set $\\{f\\in X:F(f)=\\|F\\|\\}\\cap S_X$ has",
+      "options": [
+        "NO element",
+        "exactly one element",
+        "exactly two elements",
+        "an infinite number of elements"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-13"
+    },
+    {
+      "marks": 1,
+      "topic": "topological-spaces",
+      "question": "Let $X$ and $Y$ be two topological spaces. A continuous map $f:X\\to Y$ is said to be proper if $f^{-1}(K)$ is compact in $X$ for every compact subset $K$ of $Y$, where $f^{-1}(K)=\\{x\\in X:f(x)\\in K\\}$. Consider $\\mathbb{R}$ with the usual topology. If $\\mathbb{R}\\setminus\\{0\\}$ has the subspace topology induced from $\\mathbb{R}$ and $\\mathbb{R}\\times\\mathbb{R}$ has the product topology, then which of the following maps is proper?",
+      "options": [
+        "$f:\\mathbb{R}\\setminus\\{0\\}\\to\\mathbb{R}$ defined by $f(x)=x$",
+        "$f:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}\\times\\mathbb{R}$ defined by $f(x,y)=(x+y,y)$",
+        "$f:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}$ defined by $f(x,y)=x$",
+        "$f:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}$ defined by $f(x,y)=x^2-y^2$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2023-14"
+    },
+    {
+      "marks": 1,
+      "topic": "lp-models",
+      "question": "Consider the following Linear Programming Problem P: Minimize $3x_1+4x_2$ subject to $x_1-x_2\\le1$, $x_1+x_2\\ge3$, $x_1\\ge0$, $x_2\\ge0$. The optimal value of the problem P is _____.",
+      "answer": {
+        "min": 10,
+        "max": 10
+      },
+      "id": "gate-ma-2023-15"
+    },
+    {
+      "marks": 1,
+      "topic": "wave-heat-equations",
+      "question": "Let $u(x,t)$ be the solution of $\\dfrac{\\partial^2u}{\\partial x^2}-\\dfrac1{c^2}\\dfrac{\\partial^2u}{\\partial t^2}=0$, $x\\in(-\\infty,\\infty)$, $t>0$, $u(x,0)=\\sin x$, $x\\in(-\\infty,\\infty)$, $\\dfrac{\\partial u}{\\partial t}(x,0)=\\cos x$, $x\\in(-\\infty,\\infty)$, for some positive real number $c$. Let the domain of dependence of the solution $u$ at the point $P(3,2)$ be the line segment on the $x$-axis with end points $Q$ and $R$. If the area of the triangle $PQR$ is $8$ square units, then the value of $c^2$ is _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2023-16"
+    },
+    {
+      "marks": 1,
+      "topic": "power-series-singularities",
+      "question": "Let $\\dfrac{z}{1-z-z^2}=\\displaystyle\\sum_{n=0}^\\infty a_nz^n$, $a_n\\in\\mathbb{R}$, for all $z$ in some neighbourhood of $0$ in $\\mathbb{C}$. Then the value of $a_6+a_5$ is equal to _____.",
+      "answer": {
+        "min": 13,
+        "max": 13
+      },
+      "id": "gate-ma-2023-17"
+    },
+    {
+      "marks": 1,
+      "topic": "interpolation",
+      "question": "Let $p(x)=x^3-2x+2$. If $q(x)$ is the interpolating polynomial of degree less than or equal to $4$ for the data $x:\\ -2,-1,0,1,3$; $q(x):\\ p(-2),p(-1),2.5,p(1),p(3)$, then the value of $\\dfrac{d^4q}{dx^4}$ at $x=0$ is _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2023-18"
+    },
+    {
+      "marks": 1,
+      "topic": "numerical-integration",
+      "question": "For a fixed $c\\in\\mathbb{R}$, let $\\alpha=\\displaystyle\\int_0^2(9x^2-5cx^4)\\,dx$. If the value of $\\displaystyle\\int_0^2(9x^2-5cx^4)\\,dx$ obtained by using the Trapezoidal rule is equal to $\\alpha$, then the value of $c$ is _____ (rounded off to 2 decimal places).",
+      "answer": {
+        "min": 0.24,
+        "max": 0.26
+      },
+      "id": "gate-ma-2023-19"
+    },
+    {
+      "marks": 1,
+      "topic": "multiple-integrals",
+      "question": "If for some $\\alpha\\in\\mathbb{R}$, $\\displaystyle\\int_1^4\\int_{-x}^x\\dfrac{1}{x^2+y^2}\\,dy\\,dx=\\int_{-\\pi/4}^{\\pi/4}\\int_{\\sec\\theta}^{\\alpha\\sec\\theta}\\dfrac1r\\,dr\\,d\\theta$, then the value of $\\alpha$ equals _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2023-20"
+    },
+    {
+      "marks": 1,
+      "topic": "multiple-integrals",
+      "question": "Let $S$ be the portion of the plane $z=2x+2y-100$ which lies inside the cylinder $x^2+y^2=1$. If the surface area of $S$ is $\\alpha\\pi$, then the value of $\\alpha$ is equal to _____.",
+      "answer": {
+        "min": 3,
+        "max": 3
+      },
+      "id": "gate-ma-2023-21"
+    },
+    {
+      "marks": 1,
+      "topic": "hilbert-spaces",
+      "question": "Let $L^2[-1,1]=\\left\\{f:[-1,1]\\to\\mathbb{R}:f\\text{ is Lebesgue measurable and }\\int_{-1}^1|f(x)|^2dx<\\infty\\right\\}$ and the norm $\\|f\\|_2=\\left(\\int_{-1}^1|f(x)|^2dx\\right)^{1/2}$ for $f\\in L^2[-1,1]$. Let $F:(L^2[-1,1],\\|\\cdot\\|_2)\\to\\mathbb{R}$ be defined by $F(f)=\\int_{-1}^1f(x)x^2\\,dx$ for all $f\\in L^2[-1,1]$. If $\\|F\\|$ denotes the norm of the linear functional $F$, then $5\\|F\\|^2$ is equal to _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2023-22"
+    },
+    {
+      "marks": 1,
+      "topic": "laplace-transforms",
+      "question": "Let $y(t)$ be the solution of the initial value problem $y''+4y=\\begin{cases}t,&0\\le t\\le2\\\\2,&2<t<\\infty\\end{cases}$ and $y(0)=y'(0)=0$. If $\\alpha=y\\left(\\tfrac\\pi2\\right)$, then the value of $\\dfrac4\\pi\\alpha$ is _____ (rounded off to 2 decimal places).",
+      "answer": {
+        "min": 0.49,
+        "max": 0.51
+      },
+      "id": "gate-ma-2023-23"
+    },
+    {
+      "marks": 1,
+      "topic": "inner-product-spaces",
+      "question": "Consider $\\mathbb{R}^4$ with the inner product $\\langle x,y\\rangle=\\sum_{i=1}^4x_iy_i$, for $x=(x_1,x_2,x_3,x_4)$ and $y=(y_1,y_2,y_3,y_4)$. Let $M=\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4:x_1=x_3\\}$ and $M^\\perp$ denote the orthogonal complement of $M$. The dimension of $M^\\perp$ is equal to _____.",
+      "answer": {
+        "min": 1,
+        "max": 1
+      },
+      "id": "gate-ma-2023-24"
+    },
+    {
+      "marks": 1,
+      "topic": "eigenvalues",
+      "question": "Let $M=\\begin{bmatrix}3&-1&-2\\\\0&2&4\\\\0&0&1\\end{bmatrix}$ and $I=\\begin{bmatrix}1&0&0\\\\0&1&0\\\\0&0&1\\end{bmatrix}$. If $6M^{-1}=M^2-6M+\\alpha I$ for some $\\alpha\\in\\mathbb{R}$, then the value of $\\alpha$ is equal to _____.",
+      "answer": {
+        "min": 11,
+        "max": 11
+      },
+      "id": "gate-ma-2023-25"
+    },
+    {
+      "marks": 2,
+      "topic": "groups",
+      "question": "Let $GL_2(\\mathbb{C})$ denote the group of $2\\times2$ invertible complex matrices with usual matrix multiplication. For $S,T\\in GL_2(\\mathbb{C})$, $\\langle S,T\\rangle$ denotes the subgroup generated by $S$ and $T$. Let $S=\\begin{bmatrix}0&-1\\\\1&0\\end{bmatrix}\\in GL_2(\\mathbb{C})$ and $G_1,G_2,G_3$ be three subgroups of $GL_2(\\mathbb{C})$ given by $G_1=\\langle S,T_1\\rangle$, where $T_1=\\begin{bmatrix}i&0\\\\0&i\\end{bmatrix}$, $G_2=\\langle S,T_2\\rangle$, where $T_2=\\begin{bmatrix}i&0\\\\0&-i\\end{bmatrix}$, $G_3=\\langle S,T_3\\rangle$, where $T_3=\\begin{bmatrix}0&1\\\\1&0\\end{bmatrix}$. Let $Z(G_i)$ denote the center of $G_i$ for $i=1,2,3$. Which of the following statements is correct?",
+      "options": [
+        "$G_1$ is isomorphic to $G_3$",
+        "$Z(G_1)$ is isomorphic to $Z(G_2)$",
+        "$Z(G_3)=\\left\\{\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}\\right\\}$",
+        "$Z(G_2)$ is isomorphic to $Z(G_3)$"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-26"
+    },
+    {
+      "marks": 2,
+      "topic": "bounded-operators",
+      "question": "Let $\\ell^2=\\{(x_1,x_2,x_3,\\ldots):x_n\\in\\mathbb{R}\\text{ for all }n\\in\\mathbb{N}\\text{ and }\\sum_{n=1}^\\infty x_n^2<\\infty\\}$. For a sequence $(x_1,x_2,x_3,\\ldots)\\in\\ell^2$, define $\\|(x_1,x_2,x_3,\\ldots)\\|_2=\\left(\\sum_{n=1}^\\infty x_n^2\\right)^{1/2}$. Let $S:(\\ell^2,\\|\\cdot\\|_2)\\to(\\ell^2,\\|\\cdot\\|_2)$ and $T:(\\ell^2,\\|\\cdot\\|_2)\\to(\\ell^2,\\|\\cdot\\|_2)$ be defined by $S(x_1,x_2,x_3,\\ldots)=(y_1,y_2,y_3,\\ldots)$, where $y_n=0$ if $n=1$ and $y_n=x_{n-1}$ if $n\\ge2$; $T(x_1,x_2,x_3,\\ldots)=(y_1,y_2,y_3,\\ldots)$, where $y_n=0$ if $n$ is odd and $y_n=x_n$ if $n$ is even. Then",
+      "options": [
+        "$S$ is a compact linear map and $T$ is NOT a compact linear map",
+        "$S$ is NOT a compact linear map and $T$ is a compact linear map",
+        "both $S$ and $T$ are compact linear maps",
+        "NEITHER $S$ NOR $T$ is a compact linear map"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-27"
+    },
+    {
+      "marks": 2,
+      "topic": "normed-spaces",
+      "question": "Let $c_{00}=\\{(x_1,x_2,x_3,\\ldots):x_i\\in\\mathbb{R},i\\in\\mathbb{N},x_i\\ne0\\text{ only for finitely many indices }i\\}$. For $(x_1,x_2,x_3,\\ldots)\\in c_{00}$, let $\\|(x_1,x_2,x_3,\\ldots)\\|_\\infty=\\sup\\{|x_i|:i\\in\\mathbb{N}\\}$. Define $F,G:(c_{00},\\|\\cdot\\|_\\infty)\\to(c_{00},\\|\\cdot\\|_\\infty)$ by $F((x_1,x_2,\\ldots,x_n,\\ldots))=\\left((1+1)x_1,(2+\\tfrac12)x_2,\\ldots,(n+\\tfrac1n)x_n,\\ldots\\right)$, $G((x_1,x_2,\\ldots,x_n,\\ldots))=\\left(\\dfrac{x_1}{1+1},\\dfrac{x_2}{2+\\frac12},\\ldots,\\dfrac{x_n}{n+\\frac1n},\\ldots\\right)$ for all $(x_1,x_2,\\ldots,x_n,\\ldots)\\in c_{00}$. Then",
+      "options": [
+        "$F$ is continuous but $G$ is NOT continuous",
+        "$F$ is NOT continuous but $G$ is continuous",
+        "both $F$ and $G$ are continuous",
+        "NEITHER $F$ NOR $G$ is continuous"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2023-28"
+    },
+    {
+      "marks": 2,
+      "topic": "first-order-pde",
+      "question": "Consider the Cauchy problem $x\\dfrac{\\partial u}{\\partial x}+y\\dfrac{\\partial u}{\\partial y}=u$; $u=f(t)$ on the initial curve $\\Gamma=(t,t)$; $t>0$. Consider the following statements:\n$P$: If $f(t)=2t+1$, then there exists a unique solution to the Cauchy problem in a neighbourhood of $\\Gamma$.\n$Q$: If $f(t)=2t-1$, then there exist infinitely many solutions to the Cauchy problem in a neighbourhood of $\\Gamma$.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "$P$ is TRUE and $Q$ is FALSE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2023-29"
+    },
+    {
+      "marks": 2,
+      "topic": "numerical-linear-systems",
+      "question": "Consider the linear system $Mx=b$, where $M=\\begin{bmatrix}2&-1\\\\-4&3\\end{bmatrix}$ and $b=\\begin{bmatrix}-2\\\\5\\end{bmatrix}$. Suppose $M=LU$, where $L$ and $U$ are lower triangular and upper triangular square matrices, respectively. Consider the following statements:\n$P$: If each element of the main diagonal of $L$ is $1$, then $\\text{trace}(U)=3$.\n$Q$: For any choice of the initial vector $x^{(0)}$, the Jacobi iterates $x^{(k)}$, $k=1,2,3,\\ldots$ converge to the unique solution of the linear system $Mx=b$.\nThen",
+      "options": [
+        "both $P$ and $Q$ are TRUE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "$P$ is TRUE and $Q$ is FALSE",
+        "both $P$ and $Q$ are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-30"
+    },
+    {
+      "marks": 2,
+      "topic": "sturm-liouville",
+      "question": "Let $\\phi$ and $\\psi$ be two linearly independent solutions of the ordinary differential equation $y''+(2-\\cos x)y=0$, $x\\in\\mathbb{R}$. Let $\\alpha,\\beta\\in\\mathbb{R}$ be such that $\\alpha<\\beta$, $\\phi(\\alpha)=\\phi(\\beta)=0$ and $\\phi(x)\\ne0$ for all $x\\in(\\alpha,\\beta)$. Consider the following statements:\n$P$: $\\phi'(\\alpha)\\phi'(\\beta)>0$.\n$Q$: $\\phi(x)\\psi(x)\\ne0$ for all $x\\in(\\alpha,\\beta)$.\nThen",
+      "options": [
+        "$P$ is TRUE and $Q$ is FALSE",
+        "$P$ is FALSE and $Q$ is TRUE",
+        "both $P$ and $Q$ are FALSE",
+        "both $P$ and $Q$ are TRUE"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2023-31"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "analytic-functions",
+      "question": "Let $\\mathbb{D}=\\{z\\in\\mathbb{C}:|z|<1\\}$ and $f:\\mathbb{D}\\to\\mathbb{C}$ be an analytic function given by the power series $f(z)=\\sum_{n=0}^\\infty a_nz^n$, where $a_0=a_1=1$ and $a_n=\\dfrac1{2^{2n}}$ for $n\\ge2$. Consider the following statements:\n$P$: If $z_0\\in\\mathbb{D}$, then $f$ is one-one in some neighbourhood of $z_0$.\n$Q$: If $E=\\{z\\in\\mathbb{C}:|z|\\le\\tfrac12\\}$, then $f(E)$ is a closed subset of $\\mathbb{C}$.\nWhich of the following statements is/are correct?",
+      "options": [
+        "$P$ is TRUE",
+        "$Q$ is TRUE",
+        "$Q$ is FALSE",
+        "$P$ is FALSE"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "id": "gate-ma-2023-32"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "analytic-functions",
+      "question": "Let $\\Omega$ be an open connected subset of $\\mathbb{C}$ containing $U=\\{z\\in\\mathbb{C}:|z|\\le\\tfrac12\\}$. Let $\\mathfrak J=\\{f:\\Omega\\to\\mathbb{C}:f\\text{ is analytic and }\\sup_{z,w\\in U}|f(z)-f(w)|=1\\}$. Consider the following statements:\n$P$: There exists $f\\in\\mathfrak J$ such that $|f'(0)|\\ge2$.\n$Q$: $|f^{(3)}(0)|\\le48$ for all $f\\in\\mathfrak J$, where $f^{(3)}$ denotes the third derivative of $f$.\nThen",
+      "options": [
+        "$P$ is TRUE",
+        "$Q$ is FALSE",
+        "$P$ is FALSE",
+        "$Q$ is TRUE"
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "id": "gate-ma-2023-33"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "separation-countability",
+      "question": "Let $(\\mathbb{R},\\tau)$ be a topological space, where the topology $\\tau$ is defined as $\\tau=\\{U\\subseteq\\mathbb{R}:U=\\emptyset\\text{ or }1\\in U\\}$. Which of the following statements is/are correct?",
+      "options": [
+        "$(\\mathbb{R},\\tau)$ is first countable",
+        "$(\\mathbb{R},\\tau)$ is Hausdorff",
+        "$(\\mathbb{R},\\tau)$ is separable",
+        "The closure of $(1,5)$ is $[1,5]$"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2023-34"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "rings",
+      "question": "Let $\\mathcal R=\\{p(x)\\in\\mathbb{Q}[x]:p(0)\\in\\mathbb{Z}\\}$, where $\\mathbb{Q}$ denotes the set of rational numbers and $\\mathbb{Z}$ denotes the set of integers. For $a\\in\\mathcal R$, let $\\langle a\\rangle$ denote the ideal generated by $a$ in $\\mathcal R$. Which of the following statements is/are correct?",
+      "options": [
+        "If $p(x)$ is an irreducible element in $\\mathcal R$, then $\\langle p(x)\\rangle$ is a prime ideal in $\\mathcal R$",
+        "$\\mathcal R$ is a unique factorization domain",
+        "$\\langle x\\rangle$ is a prime ideal in $\\mathcal R$",
+        "$\\mathcal R$ is NOT a principal ideal domain"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-35"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "rings",
+      "question": "Consider the rings $\\mathcal S_1=\\mathbb{Z}[x]/\\langle2,x^3\\rangle$ and $\\mathcal S_2=\\mathbb{Z}_2[x]/\\langle x^2\\rangle$, where $\\langle2,x^3\\rangle$ denotes the ideal generated by $\\{2,x^3\\}$ in $\\mathbb{Z}[x]$ and $\\langle x^2\\rangle$ denotes the ideal generated by $x^2$ in $\\mathbb{Z}_2[x]$. Which of the following statements is/are correct?",
+      "options": [
+        "Every prime ideal of $\\mathcal S_1$ is a maximal ideal",
+        "$\\mathcal S_2$ has exactly one maximal ideal",
+        "Every element of $\\mathcal S_1$ is either nilpotent or a unit",
+        "There exists an element in $\\mathcal S_2$ which is NEITHER nilpotent NOR a unit"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "id": "gate-ma-2023-36"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "measure-integration",
+      "question": "Consider the sequence of Lebesgue measurable functions $f_n:\\mathbb{R}\\to\\mathbb{R}$ given by $f_n(x)=n^2(x-n)$ if $x\\in\\left[n,n+\\tfrac1{n^2}\\right]$ and $0$ otherwise. For a measurable subset $E$ of $\\mathbb{R}$, denote $m(E)$ to be the Lebesgue measure of $E$. Which of the following statements is/are correct?",
+      "options": [
+        "$\\sup_{x\\in\\mathbb{R}}|f_n(x)|\\to0$ as $n\\to\\infty$",
+        "$\\int_{\\mathbb{R}}|f_n(x)|\\,dx\\to0$ as $n\\to\\infty$",
+        "$m\\left(\\{x\\in\\mathbb{R}:|f_n(x)|>\\tfrac12\\}\\right)\\to0$ as $n\\to\\infty$",
+        "$m(\\{x\\in\\mathbb{R}:|f_n(x)|>0\\})\\to0$ as $n\\to\\infty$"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "id": "gate-ma-2023-37"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "measure-integration",
+      "question": "Define the characteristic function $\\chi_E$ of a subset $E$ in $\\mathbb{R}$ by $\\chi_E(x)=1$ if $x\\in E$, $0$ if $x\\notin E$. For $1\\le p<2$, let $L^p[0,1]=\\{f:[0,1]\\to\\mathbb{R}:f\\text{ is Lebesgue measurable and }\\int_0^1|f(x)|^pdx<\\infty\\}$. Let $f:[0,1]\\to\\mathbb{R}$ be defined by $f(x)=\\sum_{n=1}^\\infty\\dfrac{2^n}{n^3}\\chi_{\\left[\\frac1{2^{n+1}},\\frac1{2^n}\\right]}(x)$. Consider the following two statements:\n$P$: $f\\in L^p[0,1]$ for every $p\\in(1,2)$.\n$Q$: $f\\in L^1[0,1]$.\nThen",
+      "options": [
+        "$P$ is TRUE",
+        "$Q$ is TRUE",
+        "$Q$ is FALSE",
+        "$P$ is FALSE"
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "id": "gate-ma-2023-38"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "autonomous-systems",
+      "question": "Let $x(t),y(t)$, $t\\in\\mathbb{R}$, be two functions satisfying the following system of differential equations: $x'(t)=y(t)$, $y'(t)=x(t)$, and $x(0)=\\alpha$, $y(0)=\\beta$, where $\\alpha,\\beta$ are real numbers. Which of the following statements is/are correct?",
+      "options": [
+        "If $\\alpha=1,\\beta=-1$, then $|x(t)|+|y(t)|\\to0$ as $t\\to\\infty$",
+        "If $\\alpha=1,\\beta=1$, then $|x(t)|+|y(t)|\\to0$ as $t\\to\\infty$",
+        "If $\\alpha=1.01,\\beta=-1$, then $|x(t)|+|y(t)|\\to0$ as $t\\to\\infty$",
+        "If $\\alpha=1,\\beta=1.01$, then $|x(t)|+|y(t)|\\to0$ as $t\\to\\infty$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2023-39"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "numerical-integration",
+      "question": "For $h>0$, and $\\alpha,\\beta,\\gamma\\in\\mathbb{R}$, let $D_hf(a)=\\dfrac{\\alpha f(a-h)+\\beta f(a)+\\gamma f(a+2h)}{6h}$ be a three-point formula to approximate $f'(a)$ for any differentiable function $f:\\mathbb{R}\\to\\mathbb{R}$ and $a\\in\\mathbb{R}$. If $D_hf(a)=f'(a)$ for every polynomial $f$ of degree less than or equal to $2$ and for all $a\\in\\mathbb{R}$, then",
+      "options": [
+        "$\\alpha+2\\gamma=-2$",
+        "$\\alpha+2\\beta-2\\gamma=0$",
+        "$\\alpha+2\\gamma=2$",
+        "$\\alpha+2\\beta-2\\gamma=1$"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "id": "gate-ma-2023-40"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "nonlinear-equations",
+      "question": "Let $f$ be a twice continuously differentiable function on $[a,b]$ such that $f'(x)<0$ and $f''(x)<0$ for all $x\\in(a,b)$. Let $f(\\zeta)=0$ for some $\\zeta\\in(a,b)$. The Newton-Raphson method to compute $\\zeta$ is given by $x_{k+1}=x_k-\\dfrac{f(x_k)}{f'(x_k)}$, $k=0,1,2,\\ldots$ for an initial guess $x_0$. If $x_k\\in(\\zeta,b)$ for some $k\\ge0$, then which of the following statements is/are correct?",
+      "options": [
+        "$x_{k+1}>\\zeta$",
+        "$x_{k+1}<\\zeta$",
+        "$x_{k+1}<x_k$",
+        "For every $\\eta\\in(\\zeta,x_k)$, $\\dfrac{f'(\\eta)}{f'(x_k)}>1$"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2023-41"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "differentiation-several-variables",
+      "question": "Let $f:\\mathbb{R}^2\\to\\mathbb{R}$ be defined by $f(x,y)=\\dfrac{2x^2y}{x^2+y^2}$ for $(x,y)\\ne(0,0)$ and $f(0,0)=0$. Then",
+      "options": [
+        "the directional derivative of $f$ at $(0,0)$ in the direction of $\\left(\\tfrac1{\\sqrt2},\\tfrac1{\\sqrt2}\\right)$ is $\\tfrac1{\\sqrt2}$",
+        "the directional derivative of $f$ at $(0,0)$ in the direction of $(0,1)$ is $1$",
+        "the directional derivative of $f$ at $(0,0)$ in the direction of $(1,0)$ is $0$",
+        "$f$ is NOT differentiable at $(0,0)$"
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "id": "gate-ma-2023-42"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "metric-spaces",
+      "question": "Let $C[0,1]=\\{f:[0,1]\\to\\mathbb{R}:f\\text{ is continuous}\\}$ and $d_\\infty(f,g)=\\sup\\{|f(x)-g(x)|:x\\in[0,1]\\}$ for $f,g\\in C[0,1]$. For each $n\\in\\mathbb{N}$, define $f_n:[0,1]\\to\\mathbb{R}$ by $f_n(x)=x^n$ for all $x\\in[0,1]$. Let $P=\\{f_n:n\\in\\mathbb{N}\\}$. Which of the following statements is/are correct?",
+      "options": [
+        "$P$ is totally bounded in $(C[0,1],d_\\infty)$",
+        "$P$ is bounded in $(C[0,1],d_\\infty)$",
+        "$P$ is closed in $(C[0,1],d_\\infty)$",
+        "$P$ is open in $(C[0,1],d_\\infty)$"
+      ],
+      "correct": [
+        1,
+        2
+      ],
+      "id": "gate-ma-2023-43"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "groups",
+      "question": "Let $G$ be an abelian group and $\\Phi:G\\to(\\mathbb{Z},+)$ be a surjective group homomorphism. Let $1=\\Phi(a)$ for some $a\\in G$. Consider the following statements:\n$P$: For every $g\\in G$, there exists an $n\\in\\mathbb{Z}$ such that $ga^n\\in\\ker(\\Phi)$.\n$Q$: Let $e$ be the identity of $G$ and $\\langle a\\rangle$ be the subgroup generated by $a$. Then $G=\\ker(\\Phi)\\langle a\\rangle$ and $\\ker(\\Phi)\\cap\\langle a\\rangle=\\{e\\}$.\nWhich of the following statements is/are correct?",
+      "options": [
+        "$P$ is TRUE",
+        "$P$ is FALSE",
+        "$Q$ is TRUE",
+        "$Q$ is FALSE"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2023-44"
+    },
+    {
+      "marks": 2,
+      "topic": "vector-calculus",
+      "question": "Let $C$ be the curve of intersection of the cylinder $x^2+y^2=4$ and the plane $z-2=0$. Suppose $C$ is oriented in the counterclockwise direction around the $z$-axis, when viewed from above. If $\\left|\\displaystyle\\int_C(\\sin x+e^x)\\,dx+4x\\,dy+e^z\\cos^2z\\,dz\\right|=\\alpha\\pi$, then the value of $\\alpha$ equals _____.",
+      "answer": {
+        "min": 16,
+        "max": 16
+      },
+      "id": "gate-ma-2023-45"
+    },
+    {
+      "marks": 2,
+      "topic": "hilbert-spaces",
+      "question": "Let $\\ell^2=\\{(x_1,x_2,x_3,\\ldots):x_n\\in\\mathbb{R}\\text{ for all }n\\in\\mathbb{N}\\text{ and }\\sum_{n=1}^\\infty x_n^2<\\infty\\}$. For a sequence $(x_1,x_2,x_3,\\ldots)\\in\\ell^2$, define $\\|(x_1,x_2,x_3,\\ldots)\\|_2=\\left(\\sum_{n=1}^\\infty x_n^2\\right)^{1/2}$. Consider the subspace $M=\\left\\{(x_1,x_2,x_3,\\ldots)\\in\\ell^2:\\sum_{n=1}^\\infty\\dfrac{x_n}{4^n}=0\\right\\}$. Let $M^\\perp$ denote the orthogonal complement of $M$ in the Hilbert space $(\\ell^2,\\|\\cdot\\|_2)$. Consider $\\left(1,\\tfrac12,\\tfrac13,\\tfrac14,\\ldots\\right)\\in\\ell^2$. If the orthogonal projection of $\\left(1,\\tfrac12,\\tfrac13,\\tfrac14,\\ldots\\right)$ onto $M^\\perp$ is given by $\\alpha\\left(\\sum_{n=1}^\\infty\\dfrac1{n4^n}\\right)\\left(\\tfrac14,\\tfrac1{4^2},\\tfrac1{4^3},\\ldots\\right)$ for some $\\alpha\\in\\mathbb{R}$, then $\\alpha$ equals _____.",
+      "answer": {
+        "min": 15,
+        "max": 15
+      },
+      "id": "gate-ma-2023-46"
+    },
+    {
+      "marks": 2,
+      "topic": "transportation-problems",
+      "question": "Consider the transportation problem between five sources and four destinations as given in the cost table below. The supply and demand at each of the source and destination are also provided. Costs (columns $P,Q,R,S$; Supply): Source 1: $13,8,12,9$; $20$. Source 2: $10,7,5,20$; $10$. Source 3: $3,19,5,12$; $50$. Source 4: $4,9,7,15$; $30$. Source 5: $14,0,1,7$; $40$. Demand: $P=60$, $Q=10$, $R=20$, $S=60$. Let $C_N$ and $C_L$ be the total cost of the initial basic feasible solution obtained from the North-West corner method and the Least-Cost method, respectively. Then $C_N-C_L$ equals _____.",
+      "answer": {
+        "min": 380,
+        "max": 380
+      },
+      "id": "gate-ma-2023-47"
+    },
+    {
+      "marks": 2,
+      "topic": "groups",
+      "question": "Let $\\sigma\\in S_8$, where $S_8$ is the permutation group on $8$ elements. Suppose $\\sigma$ is the product of $\\sigma_1$ and $\\sigma_2$, where $\\sigma_1$ is a $4$-cycle and $\\sigma_2$ is a $3$-cycle in $S_8$. If $\\sigma_1$ and $\\sigma_2$ are disjoint cycles, then the number of elements in $S_8$ which are conjugate to $\\sigma$ is _____.",
+      "answer": {
+        "min": 3360,
+        "max": 3360
+      },
+      "id": "gate-ma-2023-48"
+    },
+    {
+      "marks": 2,
+      "topic": "eigenvalues",
+      "question": "Let $A$ be a $3\\times3$ real matrix with $\\det(A+iI)=0$, where $i=\\sqrt{-1}$ and $I$ is the $3\\times3$ identity matrix. If $\\det(A)=3$, then the trace of $A^2$ is _____.",
+      "answer": {
+        "min": 7,
+        "max": 7
+      },
+      "id": "gate-ma-2023-49"
+    },
+    {
+      "marks": 2,
+      "topic": "canonical-forms",
+      "question": "Let $A=[a_{ij}]$ be a $3\\times3$ real matrix such that $A\\begin{bmatrix}1\\\\2\\\\1\\end{bmatrix}=2\\begin{bmatrix}1\\\\2\\\\1\\end{bmatrix}$, $A\\begin{bmatrix}0\\\\1\\\\1\\end{bmatrix}=2\\begin{bmatrix}0\\\\1\\\\1\\end{bmatrix}$ and $A\\begin{bmatrix}-1\\\\1\\\\0\\end{bmatrix}=4\\begin{bmatrix}-1\\\\1\\\\0\\end{bmatrix}$. If $m$ is the degree of the minimal polynomial of $A$, then $a_{11}+a_{21}+a_{31}+m$ equals _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2023-50"
+    },
+    {
+      "marks": 2,
+      "topic": "second-order-pde",
+      "question": "Let $\\Omega$ be the disk $x^2+y^2<4$ in $\\mathbb{R}^2$ with boundary $\\partial\\Omega$. If $u(x,y)$ is the solution of the Dirichlet problem $\\dfrac{\\partial^2u}{\\partial x^2}+\\dfrac{\\partial^2u}{\\partial y^2}=0$, $(x,y)\\in\\Omega$, $u(x,y)=1+2x^2$, $(x,y)\\in\\partial\\Omega$, then the value of $u(0,1)$ is _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2023-51"
+    },
+    {
+      "marks": 2,
+      "topic": "series-solutions",
+      "question": "For every $k\\in\\mathbb{N}\\cup\\{0\\}$, let $y_k(x)$ be a polynomial of degree $k$ with $y_k(1)=5$. Further, let $y_k(x)$ satisfy the Legendre equation $(1-x^2)y''-2xy'+k(k+1)y=0$. If $\\dfrac12\\displaystyle\\int_{-1}^1\\sum_{k=1}^n(y_k(x)-y_{k-1}(x))^2dx-\\int_{-1}^1\\sum_{k=1}^n(y_k(x))^2dx=24$, for some positive integer $n$, then the value of $n$ is _____.",
+      "answer": {
+        "min": 12,
+        "max": 12
+      },
+      "id": "gate-ma-2023-52"
+    },
+    {
+      "marks": 2,
+      "topic": "series-solutions",
+      "question": "Consider the ordinary differential equation (ODE) $4(\\ln x)y''+3y'+y=0$, $x>1$. If $r_1$ and $r_2$ are the roots of the indicial equation of the above ODE at the regular singular point $x=1$, then $|r_1-r_2|$ is equal to _____ (rounded off to 2 decimal places).",
+      "answer": {
+        "min": 0.24,
+        "max": 0.26
+      },
+      "id": "gate-ma-2023-53"
+    },
+    {
+      "marks": 2,
+      "topic": "wave-heat-equations",
+      "question": "Let $u(x,t)$ be the solution of the non-homogeneous wave equation $\\dfrac{\\partial^2u}{\\partial x^2}-\\dfrac{\\partial^2u}{\\partial t^2}=\\sin x\\sin(2t)$, $0<x<\\pi$, $t>0$, $u(x,0)=0$ and $\\dfrac{\\partial u}{\\partial t}(x,0)=0$ for $0\\le x\\le\\pi$, $u(0,t)=0$, $u(\\pi,t)=0$ for $t\\ge0$. Then the value of $u\\left(\\dfrac\\pi2,\\dfrac{3\\pi}2\\right)$ is _____ (rounded off to 2 decimal places).",
+      "answer": {
+        "min": 0.64,
+        "max": 0.7
+      },
+      "id": "gate-ma-2023-54"
+    },
+    {
+      "marks": 2,
+      "topic": "lp-models",
+      "question": "Consider the Linear Programming Problem P: Maximize $3x_1+2x_2+5x_3$ subject to $x_1+2x_2+x_3\\le44$, $x_1+2x_3\\le48$, $x_1+4x_2\\le52$, $x_1\\ge0$, $x_2\\ge0$, $x_3\\ge0$. The optimal value of the problem P is equal to _____.",
+      "answer": {
+        "min": 140,
+        "max": 140
+      },
+      "id": "gate-ma-2023-55"
+    }
+  ]
+}

@@ -1,0 +1,797 @@
+{
+  "exam": "GATE MA",
+  "year": 2025,
+  "questions": [
+    {
+      "marks": 1,
+      "topic": "connectedness-compactness",
+      "question": "Let $S=\\left\\{w=\\begin{bmatrix}w_1\\\\w_2\\\\w_3\\end{bmatrix}\\in\\mathbb{R}^3:\\begin{bmatrix}1\\\\-3\\\\2\\end{bmatrix}\\begin{bmatrix}w_1&w_2&w_3\\end{bmatrix}\\text{ is diagonalizable and }\\|w\\|=1\\right\\}$, where $\\|w\\|=(w_1^2+w_2^2+w_3^2)^{1/2}$. Then, which one of the following is TRUE?",
+      "options": [
+        "$S$ is compact and connected",
+        "$S$ is neither compact nor connected",
+        "$S$ is compact but not connected",
+        "$S$ is connected but not compact"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-1"
+    },
+    {
+      "marks": 1,
+      "topic": "laplace-transforms",
+      "question": "Given that the Laplace transforms of $J_0(x)$, $J_0'(x)$ and $J_0''(x)$ exist, where $J_0(x)$ is the Bessel function. Let $Y=Y(s)$ be the Laplace transform of the Bessel function $J_0(x)$. Then, which one of the following is TRUE?",
+      "options": [
+        "$\\dfrac{dY}{ds}+\\dfrac{2sY}{s^2+1}=0,\\ s>0$",
+        "$\\dfrac{dY}{ds}-\\dfrac{2sY}{s^2+1}=0,\\ s>0$",
+        "$\\dfrac{dY}{ds}-\\dfrac{sY}{s^2+1}=0,\\ s>0$",
+        "$\\dfrac{dY}{ds}+\\dfrac{sY}{s^2+1}=0,\\ s>0$"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2025-2"
+    },
+    {
+      "marks": 1,
+      "topic": "nonlinear-equations",
+      "question": "To find a real root of the equation $x^3+4x^2-10=0$ in the interval $(1,\\tfrac32)$ by using the fixed-point iteration scheme, consider the following two statements:\nS1: The iteration scheme $x_{k+1}=\\sqrt{\\dfrac{10}{4+x_k}}$, $k=0,1,2,\\ldots$, converges for any initial guess $x_0\\in(1,\\tfrac32)$.\nS2: The iteration scheme $x_{k+1}=\\tfrac12\\sqrt{10-x_k^3}$, $k=0,1,2,\\ldots$, diverges for some initial guess $x_0\\in(1,\\tfrac32)$.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2025-3"
+    },
+    {
+      "marks": 1,
+      "topic": "simplex-method",
+      "question": "For the linear programming problem: Maximize $Z=2x_1+4x_2+4x_3-3x_4$ subject to $\\alpha x_1+x_2+x_3=4$, $x_1+\\beta x_2+x_4=8$, $x_1,x_2,x_3,x_4\\ge0$, consider the following two statements:\nS1: If $\\alpha=2$ and $\\beta=1$, then $(x_1,x_2)^T$ forms an optimal basis.\nS2: If $\\alpha=1$ and $\\beta=4$, then $(x_3,x_2)^T$ forms an optimal basis.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-4"
+    },
+    {
+      "marks": 1,
+      "topic": "connectedness-compactness",
+      "question": "Consider the following subsets of the Euclidean space $\\mathbb{R}^4$: $S=\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4:x_1^2+x_2^2+x_3^2-x_4^2=0\\}$, $T=\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4:x_1^2+x_2^2+x_3^2-x_4^2=1\\}$, and $U=\\{(x_1,x_2,x_3,x_4)\\in\\mathbb{R}^4:x_1^2+x_2^2+x_3^2-x_4^2=-1\\}$. Then, which one of the following is TRUE?",
+      "options": [
+        "$S$ is connected, but $T$ and $U$ are not connected",
+        "$T$ and $U$ are connected, but $S$ is not connected",
+        "$S$ and $U$ are connected, but $T$ is not connected",
+        "$S$ and $T$ are connected, but $U$ is not connected"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2025-5"
+    },
+    {
+      "marks": 1,
+      "topic": "autonomous-systems",
+      "question": "Consider the system of ordinary differential equations $\\dfrac{dX}{dt}=MX$, where $M$ is a $6\\times6$ skew-symmetric matrix with entries in $\\mathbb{R}$. Then, for this system, the origin is a stable critical point for",
+      "options": [
+        "any such matrix $M$",
+        "only such matrices $M$ whose rank is $2$",
+        "only such matrices $M$ whose rank is $4$",
+        "only such matrices $M$ whose rank is $6$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2025-6"
+    },
+    {
+      "marks": 1,
+      "topic": "bounded-operators",
+      "question": "Let $X=\\{f\\in C[0,1]:f(0)=0=f(1)\\}$ with the norm $\\|f\\|_\\infty=\\sup_{0\\le t\\le1}|f(t)|$, where $C[0,1]$ is the space of all real-valued continuous functions on $[0,1]$. Let $Y=C[0,1]$ with the norm $\\|f\\|_2=\\left(\\int_0^1|f(t)|^2dt\\right)^{1/2}$. Let $U_X$ and $U_Y$ be the closed unit balls in $X$ and $Y$ centred at the origin, respectively. Consider $T:X\\to\\mathbb{R}$ and $S:Y\\to\\mathbb{R}$ given by $Tf=\\int_0^1f(t)\\,dt$ and $Sf=\\int_0^1f(t)\\,dt$. Consider the following statements:\nS1: $\\sup_{f\\in U_X}|Tf|$ is attained at a point of $U_X$.\nS2: $\\sup_{f\\in U_Y}|Sf|$ is attained at a point of $U_Y$.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-7"
+    },
+    {
+      "marks": 1,
+      "topic": "multivariable-calculus",
+      "question": "Let $g(x,y)=f(x,y)e^{2x+3y}$ be defined in $\\mathbb{R}^2$, where $f(x,y)$ is a continuously differentiable non-zero homogeneous function of degree $4$. Then, $x\\dfrac{\\partial g}{\\partial x}+y\\dfrac{\\partial g}{\\partial y}=0$ holds for",
+      "options": [
+        "all points $(x,y)$ in $\\mathbb{R}^2$",
+        "all points $(x,y)$ on the line given by $2x+3y+4=0$",
+        "all points $(x,y)$ in the region of $\\mathbb{R}^2$ except on the line given by $2x+3y+4=0$",
+        "all points $(x,y)$ on the line given by $2x+3y=0$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-8"
+    },
+    {
+      "marks": 1,
+      "topic": "second-order-pde",
+      "question": "The partial differential equation $(1+x^2)\\dfrac{\\partial^2u}{\\partial x^2}+2x(1-y^2)\\dfrac{\\partial^2u}{\\partial y\\partial x}+(1-y^2)\\dfrac{\\partial^2u}{\\partial y^2}+x\\dfrac{\\partial u}{\\partial x}+(1-y^2)\\dfrac{\\partial u}{\\partial y}=0$ is",
+      "options": [
+        "elliptic in the region $\\{(x,y)\\in\\mathbb{R}^2:|y|\\le1\\}$",
+        "hyperbolic in the region $\\{(x,y)\\in\\mathbb{R}^2:|y|>1\\}$",
+        "elliptic in the region $\\{(x,y)\\in\\mathbb{R}^2:|y|>1\\}$",
+        "hyperbolic in the region $\\{(x,y)\\in\\mathbb{R}^2:|y|<1\\}$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-9"
+    },
+    {
+      "marks": 1,
+      "topic": "wave-heat-equations",
+      "question": "Let $u(x,t)$ be the solution of the following initial-boundary value problem $\\dfrac{\\partial u}{\\partial t}-\\dfrac{\\partial^2u}{\\partial x^2}=0$, $x\\in(0,\\pi)$, $t>0$, $u(0,t)=u(\\pi,t)=0$, $u(x,0)=\\sin4x\\cos3x$. Then, for each $t>0$, the value of $u\\left(\\dfrac\\pi4,t\\right)$ is",
+      "options": [
+        "$\\dfrac{e^{-49t}}{2\\sqrt2}(e^{48t}-1)$",
+        "$\\dfrac{e^{-49t}}{2\\sqrt2}(1-e^{48t})$",
+        "$\\dfrac{e^{-49t}}{2\\sqrt2}(1+e^{48t})$",
+        "$\\dfrac{e^{-49t}}{4\\sqrt2}(1-e^{48t})$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2025-10"
+    },
+    {
+      "marks": 1,
+      "topic": "differentiation-several-variables",
+      "question": "Consider the function $F:\\mathbb{R}^2\\to\\mathbb{R}^2$ given by $F(x,y)=(x^3-3xy^2-3x,\\ 3x^2y-y^3-3y)$. Then, for the function $F$, the inverse function theorem is",
+      "options": [
+        "applicable at all points of $\\mathbb{R}^2$",
+        "not applicable at exactly one point of $\\mathbb{R}^2$",
+        "not applicable at exactly two points of $\\mathbb{R}^2$",
+        "not applicable at exactly three points of $\\mathbb{R}^2$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-11"
+    },
+    {
+      "marks": 1,
+      "topic": "connectedness-compactness",
+      "question": "Let the functions $f:\\mathbb{R}^2\\to\\mathbb{R}$ and $g:\\mathbb{R}^2\\to\\mathbb{R}$ be given by $f(x_1,x_2)=x_1^2+x_2^2-2x_1x_2$, and $g(x_1,x_2)=2x_1^2+2x_2^2-x_1x_2$. Consider the following statements:\nS1: For every compact subset $K$ of $\\mathbb{R}$, $f^{-1}(K)$ is compact.\nS2: For every compact subset $K$ of $\\mathbb{R}$, $g^{-1}(K)$ is compact.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-12"
+    },
+    {
+      "type": "multi",
+      "marks": 1,
+      "topic": "eigenvalues",
+      "question": "Let $p_A(x)$ denote the characteristic polynomial of a square matrix $A$. Then, for which of the following invertible matrices $M$, the polynomial $p_M(x)-p_{M^{-1}}(x)$ is constant?",
+      "options": [
+        "$M=\\begin{bmatrix}5&7\\\\2&3\\end{bmatrix}$",
+        "$M=\\begin{bmatrix}3&1\\\\4&2\\end{bmatrix}$",
+        "$M=\\begin{bmatrix}1&3\\\\2&-1\\end{bmatrix}$",
+        "$M=\\begin{bmatrix}5&-8\\\\2&-3\\end{bmatrix}$"
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "id": "gate-ma-2025-13"
+    },
+    {
+      "type": "multi",
+      "marks": 1,
+      "topic": "transportation-problems",
+      "question": "Consider the balanced transportation problem with three sources $S_1,S_2,S_3$, and four destinations $D_1,D_2,D_3,D_4$, for minimizing the total transportation cost whose cost matrix is as follows (rows $S_1,S_2,S_3$; columns $D_1,D_2,D_3,D_4$, Supply): $S_1$: $2,6,20,11$, supply $\\alpha+10$; $S_2$: $12,7,4,10$, supply $\\alpha+\\lambda+10$; $S_3$: $8,14,16,11$, supply $5$; Demand: $\\alpha+5,\\ 10,\\ \\lambda+5,\\ \\alpha+\\lambda$, where $\\alpha,\\lambda>0$. If the associated cost to the starting basic feasible solution obtained by using the North-West corner rule is $290$, then which of the following is/are correct?",
+      "options": [
+        "$\\alpha^2+\\lambda^2=100$",
+        "$\\alpha^2+\\alpha\\lambda=150$",
+        "The optimal cost of the transportation problem is $260$",
+        "The optimal cost of the transportation problem is $290$"
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "id": "gate-ma-2025-14"
+    },
+    {
+      "type": "multi",
+      "marks": 1,
+      "topic": "lp-models",
+      "question": "Consider the following regions: $S_1=\\{(x_1,x_2)\\in\\mathbb{R}^2:2x_1+x_2\\le4,\\ x_1+2x_2\\le5,\\ x_1,x_2\\ge0\\}$, $S_2=\\{(x_1,x_2)\\in\\mathbb{R}^2:2x_1-x_2\\le5,\\ x_1+2x_2\\le5,\\ x_1,x_2\\ge0\\}$. Then, which of the following is/are TRUE?",
+      "options": [
+        "The maximum value of $x_1+x_2$ is $3$ on the region $S_2$",
+        "The maximum value of $x_1+x_2$ is $5$ on the region $S_2-S_1$",
+        "The maximum value of $x_1+x_2$ is $3$ on the region $S_1\\cap S_2$",
+        "The maximum value of $x_1+x_2$ is $4$ on the region $S_1\\cup S_2$"
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "id": "gate-ma-2025-15"
+    },
+    {
+      "type": "multi",
+      "marks": 1,
+      "topic": "multivariable-calculus",
+      "question": "Let $f:\\mathbb{R}^2-\\{(0,0)\\}\\to\\mathbb{R}$ be a function defined by $f(x,y)=\\left(\\dfrac{x^2-y^2}{x^2+y^2}\\right)+x\\sin\\left(\\dfrac{1}{x^2+y^2}\\right)$. Consider the following three statements:\nS1: $\\lim_{x\\to0}\\lim_{y\\to0}f(x,y)$ exists.\nS2: $\\lim_{y\\to0}\\lim_{x\\to0}f(x,y)$ exists.\nS3: $\\lim_{(x,y)\\to(0,0)}f(x,y)$ exists.\nThen, which of the following is/are correct?",
+      "options": [
+        "S2 and S3 are TRUE and S1 is FALSE",
+        "S1 and S2 are TRUE and S3 is FALSE",
+        "S1 and S3 are TRUE and S2 is FALSE",
+        "S1, S2 and S3 all are TRUE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-16"
+    },
+    {
+      "marks": 1,
+      "topic": "canonical-forms",
+      "question": "Let $M$ be a $7\\times7$ matrix with entries in $\\mathbb{R}$ and having the characteristic polynomial $c_M(x)=(x-1)^\\alpha(x-2)^\\beta(x-3)^2$, where $\\alpha>\\beta$. Let $\\text{rank}(M-I_7)=\\text{rank}(M-2I_7)=\\text{rank}(M-3I_7)=5$, where $I_7$ is the $7\\times7$ identity matrix. If $m_M(x)$ is the minimal polynomial of $M$, then $m_M(5)$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 96,
+        "max": 96
+      },
+      "id": "gate-ma-2025-17"
+    },
+    {
+      "marks": 1,
+      "topic": "series-solutions",
+      "question": "Let $y=P_n(x)$ be the unique polynomial of degree $n$ satisfying the Legendre differential equation $(1-x^2)y''-2xy'+n(n+1)y=0$ and $y(1)=1$. Then, the value of $P_{11}'(1)$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 66,
+        "max": 66
+      },
+      "id": "gate-ma-2025-18"
+    },
+    {
+      "marks": 1,
+      "topic": "vector-calculus",
+      "question": "Let $\\hat a$ be a unit vector parallel to the tangent at the point $P(1,1,\\sqrt2)$ to the curve of intersection of the surfaces $2x^2+3y^2-z^2=3$ and $x^2+y^2=z^2$. Then, the absolute value of the directional derivative of $f(x,y,z)=x^2+2y^2-2\\sqrt{11}\\,z$ at $P$ in the direction of $\\hat a$ is _____ (in integer)",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2025-19"
+    },
+    {
+      "marks": 1,
+      "topic": "multiple-integrals",
+      "question": "The volume of the region bounded by the cylinders $x^2+y^2=4$ and $x^2+z^2=4$ is _____ (rounded off to TWO decimal places)",
+      "answer": {
+        "min": 42.5,
+        "max": 42.7
+      },
+      "id": "gate-ma-2025-20"
+    },
+    {
+      "marks": 1,
+      "topic": "linear-ode",
+      "question": "Let $W$ be the vector space (over $\\mathbb{R}$) consisting of all bounded real-valued solutions of the differential equation $\\dfrac{d^4y}{dx^4}+2\\dfrac{d^2y}{dx^2}+y=0$. Then, the dimension of $W$ is _____ (in integer)",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2025-21"
+    },
+    {
+      "marks": 1,
+      "topic": "vector-calculus",
+      "question": "Let $\\vec F=(y-z)\\hat i+(z-x)\\hat j+(x-y)\\hat k$ be a vector field, and let $S$ be the surface $x^2+y^2+(z-1)^2=9$, $1\\le z\\le4$. If $\\hat n$ denotes the unit outward normal vector to $S$, then the value of $\\dfrac1\\pi\\left|\\displaystyle\\iint_S(\\vec\\nabla\\times\\vec F)\\cdot\\hat n\\,dS\\right|$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 18,
+        "max": 18
+      },
+      "id": "gate-ma-2025-22"
+    },
+    {
+      "marks": 1,
+      "topic": "power-series-singularities",
+      "question": "Consider $I=\\dfrac{1}{2\\pi i}\\displaystyle\\oint_C\\dfrac{\\sin z}{1-\\cos(z^3)}\\,dz$, where $C=\\{z\\in\\mathbb{C}:z=x+iy,\\ |x|+|y|=1,\\ x,y\\in\\mathbb{R}\\}$ is oriented positively as a simple closed curve. Then, the value of $120I$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2025-23"
+    },
+    {
+      "marks": 1,
+      "topic": "numerical-integration",
+      "question": "Let $\\alpha,\\beta,\\gamma,\\delta\\in\\mathbb{R}$ be such that the quadrature formula $\\displaystyle\\int_{-1}^1f(x)\\,dx=\\alpha f(-1)+\\beta f(1)+\\gamma f'(-1)+\\delta f'(1)$ is exact for all polynomials of degree less than or equal to $3$. Then, $9(\\alpha^2+\\beta^2+\\gamma^2+\\delta^2)$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 20,
+        "max": 20
+      },
+      "id": "gate-ma-2025-24"
+    },
+    {
+      "marks": 1,
+      "topic": "numerical-ode",
+      "question": "Let $y(x)$ be the solution of the initial value problem $\\dfrac{dy}{dx}=\\sin(\\pi(x+y))$, $y(0)=0$. Using Euler's method, with the step-size $h=0.5$, the approximate value of $y(1.5)+2y(1)$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 1,
+        "max": 1
+      },
+      "id": "gate-ma-2025-25"
+    },
+    {
+      "marks": 2,
+      "topic": "numerical-linear-systems",
+      "question": "Consider the linear system $A\\boldsymbol x=\\boldsymbol b$, where $A=[a_{ij}]$, $i,j=1,2,3$, and $a_{ii}\\ne0$ for $i=1,2,3$, is a matrix with entries in $\\mathbb{R}$. For $D=\\begin{bmatrix}a_{11}&0&0\\\\0&a_{22}&0\\\\0&0&a_{33}\\end{bmatrix}$, let $D^{-1}A=\\begin{bmatrix}1&1&-2\\\\3&1&2\\\\1&1&1\\end{bmatrix}$ and $D^{-1}\\boldsymbol b=\\begin{bmatrix}4\\\\4\\\\1\\end{bmatrix}$. Consider the following two statements:\nS1: The approximation of $\\boldsymbol x$ after one iteration of the Jacobi scheme with initial vector $\\boldsymbol x_0=[1\\ 1\\ 1]^T$ is $\\boldsymbol x_1=[5\\ -1\\ -1]^T$.\nS2: There exists an initial vector $\\boldsymbol x_0$ for which Jacobi iterative scheme diverges.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-26"
+    },
+    {
+      "marks": 2,
+      "topic": "linear-ode",
+      "question": "Let $y(x)$ be the solution of the differential equation $x^2y''+7xy'+9y=x^{-3}\\log_ex$, $x>0$, satisfying $y(1)=0$ and $y'(1)=0$. Then, the value of $y(e)$ is equal to",
+      "options": [
+        "$\\dfrac13e^{-3}$",
+        "$\\dfrac16e^{-3}$",
+        "$\\dfrac23e^{-3}$",
+        "$\\dfrac12e^{-3}$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-27"
+    },
+    {
+      "marks": 2,
+      "topic": "linear-ode",
+      "question": "Let $y_1(x)$ and $y_2(x)$ be the two linearly independent solutions of the differential equation $(1+x^2)y''-xy'+(\\cos^2x)y=0$, satisfying the initial conditions $y_1(0)=3$, $y_1'(0)=-1$ and $y_2(0)=-5$, $y_2'(0)=2$. Define $W(x)=\\begin{vmatrix}y_1(x)&y_2(x)\\\\y_1'(x)&y_2'(x)\\end{vmatrix}$. Then, the value of $W\\left(\\tfrac12\\right)$ is",
+      "options": [
+        "$\\dfrac{\\sqrt5}{4}$",
+        "$\\dfrac{\\sqrt5}{2}$",
+        "$\\dfrac{2}{\\sqrt5}$",
+        "$\\dfrac{4}{\\sqrt5}$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-28"
+    },
+    {
+      "marks": 2,
+      "topic": "multivariable-calculus",
+      "question": "Let $C$ be the curve of intersection of the surfaces $z^2=x^2+y^2$ and $4x+z=7$. If $P$ is a point on $C$ at a minimum distance from the $xy$-plane, then the distance of $P$ from the origin is",
+      "options": [
+        "$\\dfrac75$",
+        "$\\dfrac{7\\sqrt2}{5}$",
+        "$\\dfrac{14}{5}$",
+        "$\\dfrac{14\\sqrt2}{5}$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-29"
+    },
+    {
+      "marks": 2,
+      "topic": "wave-heat-equations",
+      "question": "Let $u(x,t)$ be the solution of the initial-value problem $\\dfrac{\\partial^2u}{\\partial t^2}-9\\dfrac{\\partial^2u}{\\partial x^2}=0$, $x\\in\\mathbb{R}$, $t>0$, $u(x,0)=e^x$, $\\dfrac{\\partial u}{\\partial t}(x,0)=\\sin x$. Then, the value of $u\\left(\\dfrac\\pi2,\\dfrac\\pi6\\right)$ is",
+      "options": [
+        "$\\dfrac12\\left(e^\\pi-\\dfrac13\\right)$",
+        "$\\dfrac12\\left(e^\\pi+\\dfrac13\\right)$",
+        "$\\dfrac12\\left(e^\\pi+\\dfrac53\\right)$",
+        "$\\dfrac12\\left(e^\\pi-\\dfrac53\\right)$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-30"
+    },
+    {
+      "marks": 2,
+      "topic": "conformal-mappings",
+      "question": "Let $T$ be the Möbius transformation that maps the points $0,\\tfrac12$ and $1$ conformally onto the points $-3,\\infty$ and $2$, respectively, in the extended complex plane. If $T$ maps the circle centred at $1$ with radius $k$ onto a straight line given by the equation $\\alpha x+\\beta y+\\gamma=0$, then the value of $\\dfrac{2k(\\alpha+\\beta)+\\gamma}{\\alpha+\\beta-2k\\gamma}$ is equal to",
+      "options": [
+        "$\\dfrac17$",
+        "$\\dfrac27$",
+        "$\\dfrac13$",
+        "$\\dfrac23$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2025-31"
+    },
+    {
+      "marks": 2,
+      "topic": "conformal-mappings",
+      "question": "Let $U=\\{z\\in\\mathbb{C}:\\text{Im}(z)>0\\}$ and $D=\\{z\\in\\mathbb{C}:|z|<1\\}$, where $\\text{Im}(z)$ denotes the imaginary part of $z$. Let $S$ be the set of all bijective analytic functions $f:U\\to D$ such that $f(i)=0$. Then, the value of $\\sup_{f\\in S}|f(4i)|$ is",
+      "options": [
+        "$0$",
+        "$\\dfrac14$",
+        "$\\dfrac12$",
+        "$\\dfrac35$"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2025-32"
+    },
+    {
+      "marks": 2,
+      "topic": "analytic-functions",
+      "question": "Let $\\Omega$ be a non-empty open connected subset of $\\mathbb{C}$ and $f:\\Omega\\to\\mathbb{C}$ be a non-constant function. Let the functions $f^2:\\Omega\\to\\mathbb{C}$ and $f^3:\\Omega\\to\\mathbb{C}$ be defined by $f^2(z)=(f(z))^2$ and $f^3(z)=(f(z))^3$, $z\\in\\Omega$. Consider the following two statements:\nS1: If $f$ is continuous in $\\Omega$ and $f^2$ is analytic in $\\Omega$, then $f$ is analytic in $\\Omega$.\nS2: If $f^2$ and $f^3$ are analytic in $\\Omega$, then $f$ is analytic in $\\Omega$.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-33"
+    },
+    {
+      "marks": 2,
+      "topic": "topological-spaces",
+      "question": "In the following, all subsets of Euclidean spaces are considered with the respective subspace topologies. Define an equivalence relation $\\sim$ on the sphere $S=\\{(x_1,x_2,x_3)\\in\\mathbb{R}^3:x_1^2+x_2^2+x_3^2=1\\}$ by $(x_1,x_2,x_3)\\sim(y_1,y_2,y_3)$ if $x_3=y_3$, for $(x_1,x_2,x_3),(y_1,y_2,y_3)\\in S$. Let $[x_1,x_2,x_3]$ denote the equivalence class of $(x_1,x_2,x_3)$, and let $X$ denote the set of all such equivalence classes. Let $\\mathcal L:S\\to X$ be given by $\\mathcal L((x_1,x_2,x_3))=[x_1,x_2,x_3]$. If $X$ is provided with the quotient topology induced by the map $\\mathcal L$, then which one of the following is TRUE?",
+      "options": [
+        "$X$ is homeomorphic to $\\{x\\in\\mathbb{R}:-1\\le x\\le1\\}$",
+        "$X$ is homeomorphic to $\\{(x_1,x_2)\\in\\mathbb{R}^2:x_1^2+x_2^2=1\\}$",
+        "$X$ is homeomorphic to $\\{(x_1,x_2)\\in\\mathbb{R}^2:x_1^2+x_2^2\\le1\\}$",
+        "$X$ is homeomorphic to $\\{(x_1,x_2,x_3)\\in\\mathbb{R}^3:x_1^2+x_2^2=1\\text{ and }-1\\le x_3\\le1\\}$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2025-34"
+    },
+    {
+      "marks": 2,
+      "topic": "hilbert-spaces",
+      "question": "Consider the following two spaces: $X=(C[-1,1],\\|\\cdot\\|_\\infty)$, the space of all real-valued continuous functions defined on $[-1,1]$ equipped with the norm $\\|f\\|_\\infty=\\sup_{t\\in[-1,1]}|f(t)|$. $Y=(C[-1,1],\\|\\cdot\\|_2)$, the space of all real-valued continuous functions defined on $[-1,1]$ equipped with the norm $\\|f\\|_2=\\left(\\int_{-1}^1|f(t)|^2dt\\right)^{1/2}$. Let $W$ be the linear span over $\\mathbb{R}$ of all the Legendre polynomials. Then, which one of the following is correct?",
+      "options": [
+        "$W$ is dense in $X$ but not in $Y$",
+        "$W$ is dense in $Y$ but not in $X$",
+        "$W$ is dense in both $X$ and $Y$",
+        "$W$ is dense neither in $X$ nor in $Y$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-35"
+    },
+    {
+      "marks": 2,
+      "topic": "metric-spaces",
+      "question": "Consider the metric spaces $X=(\\mathbb{R},d_1)$ and $Y=([0,1],d_2)$ with the metrics defined by $d_1(x,y)=|x-y|$, $x,y\\in\\mathbb{R}$ and $d_2(x,y)=|x-y|$, $x,y\\in[0,1]$, respectively. Then, which one of the following is TRUE?",
+      "options": [
+        "$[0,\\tfrac14)$ is open in $X$ but not in $Y$",
+        "$[0,\\tfrac14)$ is open in $Y$ but not in $X$",
+        "$[0,\\tfrac14)$ is open in both $X$ and $Y$",
+        "$[0,\\tfrac14)$ is open neither in $X$ nor in $Y$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2025-36"
+    },
+    {
+      "marks": 2,
+      "topic": "fields",
+      "question": "Let $K$ be an algebraically closed field containing a finite field $F$. Let $L$ be the subfield of $K$ consisting of elements of $K$ that are algebraic over $F$. Consider the following statements:\nS1: $L$ is algebraically closed.\nS2: $L$ is infinite.\nThen, which one of the following is correct?",
+      "options": [
+        "S1 is TRUE and S2 is FALSE",
+        "S2 is TRUE and S1 is FALSE",
+        "both S1 and S2 are TRUE",
+        "neither S1 nor S2 is TRUE"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2025-37"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "linear-transformations",
+      "question": "Let $M_2(\\mathbb{R})$ be the vector space (over $\\mathbb{R}$) of all $2\\times2$ matrices with entries in $\\mathbb{R}$. Consider the linear transformation $T:M_2(\\mathbb{R})\\to M_2(\\mathbb{R})$ defined by $T(X)=AXB$, where $A=\\begin{bmatrix}1&-2\\\\1&4\\end{bmatrix}$ and $B=\\begin{bmatrix}6&5\\\\-2&-1\\end{bmatrix}$. If $P$ is the matrix representation of $T$ with respect to the standard basis of $M_2(\\mathbb{R})$, then which of the following is/are TRUE?",
+      "options": [
+        "$P$ is an invertible matrix",
+        "The trace of $P$ is $25$",
+        "The rank of $(P^2-4I_4)$ is $4$, where $I_4$ is the $4\\times4$ identity matrix",
+        "The nullity of $(P-2I_4)$ is $0$, where $I_4$ is the $4\\times4$ identity matrix"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "id": "gate-ma-2025-38"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "lp-duality",
+      "question": "Consider the linear programming problem (LPP): Maximize $Z=3x_1+5x_2$ subject to $x_1+x_3=4$, $2x_2+x_4=12$, $3x_1+2x_2+x_5=18$, $x_1,x_2,x_3,x_4,x_5\\ge0$. Given that $x_B=(x_3,x_2,x_1)^T$ forms the optimal basis of the LPP with basis matrix $B$ and respective $B^{-1}=\\begin{bmatrix}\\alpha&\\beta&-\\beta\\\\0&\\gamma&0\\\\0&-\\beta&\\beta\\end{bmatrix}$. If $(p,q,r)$ is the optimal solution of the dual of the LPP, then which of the following is/are TRUE?",
+      "options": [
+        "$\\alpha+3\\beta+2\\gamma=3$",
+        "$\\alpha-3\\beta+4\\gamma=1$",
+        "$p+q+r=\\dfrac52$",
+        "$p^2+q^2+r^2=\\dfrac{17}{4}$"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2025-39"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "bounded-operators",
+      "question": "Let $0<\\alpha<1$. Define $C^\\alpha[0,1]=\\left\\{f:[0,1]\\to\\mathbb{R}:\\sup_{\\substack{s\\ne t\\\\s,t\\in[0,1]}}\\dfrac{|f(t)-f(s)|}{|t-s|^\\alpha}<\\infty\\right\\}$. It is given that $C^\\alpha[0,1]$ is a Banach space with respect to the norm $\\|\\cdot\\|_\\alpha$ given by $\\|f\\|_\\alpha=|f(0)|+\\sup_{\\substack{s\\ne t\\\\s,t\\in[0,1]}}\\dfrac{|f(t)-f(s)|}{|t-s|^\\alpha}$. Let $C[0,1]$ be the space of all real-valued continuous functions on $[0,1]$ with the norm $\\|f\\|_\\infty=\\sup_{0\\le t\\le1}|f(t)|$. If $T:C^\\alpha[0,1]\\to C[0,1]$ is the map $Tf=f$, $f\\in C^\\alpha[0,1]$, then which of the following is/are TRUE?",
+      "options": [
+        "$T$ is a compact linear map",
+        "Image of $T$ is closed in $C[0,1]$",
+        "Image of $T$ is dense in $C[0,1]$",
+        "$T$ is not a bounded linear map"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2025-40"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "first-order-pde",
+      "question": "Let $u(x,t)$ be the solution of the initial value problem $\\dfrac{\\partial u}{\\partial t}+3\\dfrac{\\partial u}{\\partial x}=u$, $x\\in\\mathbb{R}$, $t>0$, $u(x,0)=\\cos x$, and let $v(x,t)$ be the solution of the initial value problem $\\dfrac{\\partial v}{\\partial t}+3\\dfrac{\\partial v}{\\partial x}=v^2$, $x\\in\\mathbb{R}$, $t>0$, $v(x,0)=\\cos x$. Then, which of the following is/are TRUE?",
+      "options": [
+        "$|u(x,t)|\\le e^t$ for all $x\\in\\mathbb{R}$ and for all $t>0$",
+        "$v(x,1)$ is not defined for certain values of $x\\in\\mathbb{R}$",
+        "$v(x,1)$ is not defined for any $x\\in\\mathbb{R}$",
+        "$u(2\\pi,\\pi)=-e^\\pi$"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "id": "gate-ma-2025-41"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "wave-heat-equations",
+      "question": "Let $u(x,t)$ be the solution of the initial-boundary value problem $\\dfrac{\\partial u}{\\partial t}=2\\dfrac{\\partial^2u}{\\partial x^2}$, $0<x<1$, $t>0$, $u(0,t)=u(1,t)=0$, $u(x,0)=2x(1-x)$. Then, which of the following is/are TRUE?",
+      "options": [
+        "$0\\le u(x,t)\\le\\dfrac14$ for all $t\\ge0$ and $x\\in[0,1]$",
+        "$u(x,t)=u(1-x,t)$ for all $t\\ge0$ and $x\\in[0,1]$",
+        "$\\int_0^1(u(x,t))^2dx$ is a decreasing function of $t$",
+        "$\\int_0^1(u(x,t))^2dx$ is not a decreasing function of $t$"
+      ],
+      "correct": [
+        1,
+        2
+      ],
+      "id": "gate-ma-2025-42"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "differentiation-several-variables",
+      "question": "Consider the function $f:\\mathbb{R}^2\\to\\mathbb{R}^2$ given by $f(x,y)=(e^{2\\pi x}\\cos2\\pi y,\\ e^{2\\pi x}\\sin2\\pi y)$. Then, which of the following is/are TRUE?",
+      "options": [
+        "If $G$ is open in $\\mathbb{R}^2$, then $f(G)$ is open in $\\mathbb{R}^2$",
+        "If $G$ is closed in $\\mathbb{R}^2$, then $f(G)$ is closed in $\\mathbb{R}^2$",
+        "If $G$ is dense in $\\mathbb{R}^2$, then $f(G)$ is dense in $\\mathbb{R}^2$",
+        "$f$ is surjective"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2025-43"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "hilbert-spaces",
+      "question": "Let $\\{x_k\\}_{k=1}^\\infty$ be an orthonormal set of vectors in a real Hilbert space $X$ with inner product $\\langle\\cdot,\\cdot\\rangle$. Let $n\\in\\mathbb{N}$, and let $Y$ be the linear span of $\\{x_k\\}_{k=1}^n$ over $\\mathbb{R}$. For $x\\in X$, let $S_n(x)=\\sum_{k=1}^n\\langle x,x_k\\rangle x_k$. Then, which of the following is/are TRUE?",
+      "options": [
+        "$S_n(x)$ is the orthogonal projection of $x$ onto $Y$",
+        "$S_n(x)$ is the orthogonal projection of $x$ onto $Y^\\perp$",
+        "$(x-S_n(x))$ is orthogonal to $S_n(x)$ for all $x$ in $X$",
+        "$\\sum_{k=1}^n|\\langle x,x_k\\rangle|^2=\\|x\\|^2$ for all $x$ in $X$"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2025-44"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "sequences-series-functions",
+      "question": "Consider the sequence $\\{f_n\\}$ of continuous functions on $[0,1]$ defined by $f_1(x)=\\dfrac x2$, $f_{n+1}(x)=f_n(x)-\\dfrac12\\left((f_n(x))^2-x\\right)$, $n=1,2,3,\\ldots$. Then, which of the following is/are TRUE?",
+      "options": [
+        "The sequence $\\{f_n\\}$ converges pointwise but not uniformly on $[0,1]$",
+        "The sequence $\\{f_n\\}$ converges uniformly on $[0,1]$",
+        "$\\sqrt x-f_n(x)>\\dfrac{2\\sqrt x}{2+n\\sqrt x}$ for all $x\\in[0,1]$ and $n=1,2,3,\\ldots$",
+        "$0\\le f_n(x)\\le\\sqrt x$ for all $x\\in[0,1]$ and $n=1,2,3,\\ldots$"
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "id": "gate-ma-2025-45"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "sequences-series-functions",
+      "question": "For $x\\in(0,\\pi)$, let $u_n(x)=\\dfrac{\\sin nx}{\\sqrt n}$, $n=1,2,3,\\ldots$. Then, which of the following is/are TRUE?",
+      "options": [
+        "$\\sum_{n=1}^\\infty u_n(x)$ converges uniformly on $(0,\\pi)$",
+        "$\\sum_{n=1}^\\infty u_n'(x)$ converges uniformly on $(0,\\pi)$",
+        "$\\sum_{n=1}^\\infty u_n(x)$ converges pointwise but not uniformly on $(0,\\pi)$",
+        "$\\sum_{n=1}^\\infty u_n(x)$ converges uniformly on every compact subset of $(0,\\pi)$"
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "id": "gate-ma-2025-46"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "connectedness-compactness",
+      "question": "Let $\\mathbb{R}^1$ and $\\mathbb{R}^2$ be provided with the respective Euclidean topologies, and let $S^1=\\{(x_1,x_2)\\in\\mathbb{R}^2:x_1^2+x_2^2=1\\}$ be assigned the subspace topology induced from $\\mathbb{R}^2$. If $f:S^1\\to\\mathbb{R}^1$ is a non-constant continuous function, then which of the following is/are TRUE?",
+      "options": [
+        "$f$ maps closed sets to closed sets",
+        "$f$ is injective",
+        "$f$ is surjective",
+        "There exists $\\lambda\\in\\mathbb{R}$ such that $f(\\cos\\lambda,\\sin\\lambda)=f(-\\cos\\lambda,-\\sin\\lambda)$"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "id": "gate-ma-2025-47"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "separation-countability",
+      "question": "Let $X$ be an uncountable set. Let the topology on $X$ be defined by declaring a subset $U\\subseteq X$ to be open if $X-U$ is either empty or finite or countable, and the empty set to be open. Then, which of the following is/are TRUE?",
+      "options": [
+        "Every compact subset of $X$ is closed",
+        "Every closed subset of $X$ is compact",
+        "$X$ is $T_1$ (singleton subsets are closed) but not $T_2$ (Hausdorff)",
+        "$X$ is $T_2$ (Hausdorff)"
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "id": "gate-ma-2025-48"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "rings",
+      "question": "All rings considered below are assumed to be associative and commutative with $1\\ne0$. Further, all ring homomorphisms map $1$ to $1$. Consider the following statements about such a ring $R$:\nP1: $R$ is isomorphic to the product of two rings $R_1$ and $R_2$.\nP2: $\\exists\\, r_1,r_2\\in R$ such that $r_1^2=r_1\\ne0\\ne r_2=r_2^2$, $r_1r_2=0$ and $r_1+r_2=1$.\nP3: $\\exists$ ideals $I_1,I_2\\subseteq R$ with $R\\ne I_1\\ne(0)\\ne I_2\\ne R$ such that $R=I_1+I_2$ and $I_1\\cap I_2=(0)$.\nP4: $\\exists\\, a,b\\in R$ with $a\\ne0\\ne b$ such that $ab=0$.\nThen, which of the following is/are TRUE?",
+      "options": [
+        "$P1\\Rightarrow P2$",
+        "$P2\\Rightarrow P3$",
+        "$P3\\Rightarrow P4$",
+        "$P4\\Rightarrow P1$"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "id": "gate-ma-2025-49"
+    },
+    {
+      "type": "multi",
+      "marks": 2,
+      "topic": "fields",
+      "question": "Let $E\\subset F$ and $F\\subset K$ be field extensions which are not algebraic. Let $\\alpha\\in K$ be algebraic over $F$ and $\\alpha\\notin F$. Let $L$ be the subfield of $K$ generated over $E$ by the coefficients of the monic polynomial of minimal degree over $F$ which has $\\alpha$ as a zero. Then, which of the following is/are TRUE?",
+      "options": [
+        "$F(\\alpha)\\supset L(\\alpha)$ is a finite extension if and only if $F\\supset L$ is a finite extension",
+        "The dimension of $L(\\alpha)$ over $L$ is greater than the dimension of $F(\\alpha)$ over $F$",
+        "The dimension of $L(\\alpha)$ over $L$ is smaller than the dimension of $F(\\alpha)$ over $F$",
+        "$F(\\alpha)\\supset L(\\alpha)$ is an algebraic extension if and only if $F\\supset L$ is an algebraic extension"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "id": "gate-ma-2025-50"
+    },
+    {
+      "marks": 2,
+      "topic": "inner-product-spaces",
+      "question": "Consider the inner product space of all real-valued continuous functions defined on $[-1,1]$ with the inner product $\\langle f,g\\rangle=\\int_{-1}^1f(x)g(x)\\,dx$. If $p(x)=\\alpha+\\beta x^2-30x^4$, $\\alpha,\\beta\\in\\mathbb{R}$ is orthogonal to all the polynomials having degree less than or equal to $3$, with respect to this inner product, then $\\alpha+5\\beta$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 126,
+        "max": 126
+      },
+      "id": "gate-ma-2025-51"
+    },
+    {
+      "marks": 2,
+      "topic": "canonical-forms",
+      "question": "For $X=(x_1,x_2,x_3)^T\\in\\mathbb{R}^3$, consider the quadratic form: $Q(X)=2x_1^2+2x_2^2+3x_3^2+4x_1x_2+2x_1x_3+2x_2x_3$. Let $M$ be the symmetric matrix associated with the quadratic form $Q(X)$ with respect to the standard basis of $\\mathbb{R}^3$. Let $Y=(y_1,y_2,y_3)^T\\in\\mathbb{R}^3$ be a non-zero vector, and let $a_n=\\dfrac{Y^T(M+I_3)^{n+1}Y}{Y^T(M+I_3)^nY}$, $n=1,2,3,\\ldots$, where $I_3$ is the $3\\times3$ identity matrix. Then, the value of $\\lim_{n\\to\\infty}a_n$ is _____ (in integer)",
+      "answer": {
+        "min": 6,
+        "max": 6
+      },
+      "id": "gate-ma-2025-52"
+    },
+    {
+      "marks": 2,
+      "topic": "power-series-singularities",
+      "question": "Let $\\alpha,\\beta$ be distinct non-zero real numbers, and let $Q(z)$ be a polynomial of degree less than $5$. If the function $f(z)=\\dfrac{\\alpha^6\\sin\\beta z-\\beta^6(e^{2\\alpha z}-Q(z))}{z^6}$ satisfies Morera's theorem in $\\mathbb{C}\\setminus\\{0\\}$, then the value of $\\dfrac{\\alpha}{4\\beta}$ is equal to _____ (in integer)",
+      "answer": {
+        "min": 8,
+        "max": 8
+      },
+      "id": "gate-ma-2025-53"
+    },
+    {
+      "marks": 2,
+      "topic": "groups",
+      "question": "Let $G$ be a group with identity element $e$, and let $g,h\\in G$ be such that the following hold: (i) $g\\ne e$, $g^2=e$, (ii) $h\\ne e$, $h^2\\ne e$, and $ghg^{-1}=h^2$. Then, the least positive integer $n$ for which $h^n=e$ is _____ (in integer)",
+      "answer": {
+        "min": 3,
+        "max": 3
+      },
+      "id": "gate-ma-2025-54"
+    },
+    {
+      "marks": 2,
+      "topic": "metric-spaces",
+      "question": "Let $(\\mathbb{R}^2,d_1)$ and $(\\mathbb{R}^2,d_2)$ be two metric spaces with $d_1((x_1,x_2),(y_1,y_2))=|x_1-y_1|+|x_2-y_2|$ and $d_2((x_1,x_2),(y_1,y_2))=\\dfrac{d_1((x_1,x_2),(y_1,y_2))}{1+d_1((x_1,x_2),(y_1,y_2))}$. If the open ball centred at $(0,0)$ with radius $\\dfrac17$ in $(\\mathbb{R}^2,d_1)$ is equal to the open ball centred at $(0,0)$ with radius $\\dfrac1\\alpha$ in $(\\mathbb{R}^2,d_2)$, then the value of $\\alpha$ is _____ (in integer)",
+      "answer": {
+        "min": 8,
+        "max": 8
+      },
+      "id": "gate-ma-2025-55"
+    }
+  ]
+}

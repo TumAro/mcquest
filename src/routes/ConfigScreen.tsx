@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { selectQuestions } from '../QuestionSelection'
 import TestOptions from './TestOptions'
+import BackLink from '../components/BackLink'
 import type { RevealMode } from '../storage'
 import type { DataIndex, IndexQuestion } from '../data'
 import './config-screen.css'
@@ -15,6 +16,8 @@ interface ConfigScreenProps {
   fixedQuestions?: IndexQuestion[]
   mode?: 'bookmarked'
   lede?: ReactNode
+  /** Where the back link goes. The front page unless an entry point says otherwise. */
+  backTo?: string
   onStart: (config: TestConfig) => void
 }
 
@@ -37,6 +40,7 @@ export default function ConfigScreen({
   fixedQuestions,
   mode,
   lede,
+  backTo = '/',
   onStart,
 }: ConfigScreenProps) {
   const [selectedTopics, setSelectedTopics] = useState<Set<string>>(initialTopics)
@@ -53,6 +57,15 @@ export default function ConfigScreen({
       newSelected.delete(topic)
     } else {
       newSelected.add(topic)
+    }
+    setSelectedTopics(newSelected)
+  }
+
+  const handleSubjectChange = (slugs: string[], select: boolean) => {
+    const newSelected = new Set(selectedTopics)
+    for (const slug of slugs) {
+      if (select) newSelected.add(slug)
+      else newSelected.delete(slug)
     }
     setSelectedTopics(newSelected)
   }
@@ -134,29 +147,51 @@ export default function ConfigScreen({
 
   return (
     <div className="page">
+      <BackLink to={backTo} />
       <h1>{title}</h1>
       {lede}
 
       {showTopics && !fixedQuestions && (
         <div className="field-group">
           <h2>Topics</h2>
-          {Object.entries(topicsMap).map(([categorySlug, category]) => (
-            <div key={categorySlug} className="topics-category">
-              <h3 className="topics-category-label">{category.label}</h3>
-              <div className="topics-list">
-                {Object.entries(category.topics).map(([topicSlug, topicLabel]) => (
-                  <label key={topicSlug} className="option-row">
-                    <input
-                      type="checkbox"
-                      checked={selectedTopics.has(topicSlug)}
-                      onChange={() => handleTopicChange(topicSlug)}
-                    />
-                    <span>{topicLabel}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+          {Object.entries(topicsMap).map(([categorySlug, category]) => {
+            const slugs = Object.keys(category.topics)
+            const chosen = slugs.filter((s) => selectedTopics.has(s)).length
+            return (
+              <details key={categorySlug} className="topics-subject">
+                <summary className="topics-subject-summary">
+                  <input
+                    type="checkbox"
+                    aria-label={`All of ${category.label}`}
+                    checked={chosen === slugs.length}
+                    // Partial selection reads as neither on nor off.
+                    ref={(el) => {
+                      if (el) el.indeterminate = chosen > 0 && chosen < slugs.length
+                    }}
+                    // A checkbox inside a summary would otherwise also toggle the disclosure.
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => handleSubjectChange(slugs, chosen < slugs.length)}
+                  />
+                  <span className="topics-subject-name">{category.label}</span>
+                  <span className="topics-subject-count">
+                    {chosen}/{slugs.length}
+                  </span>
+                </summary>
+                <div className="topics-list">
+                  {Object.entries(category.topics).map(([topicSlug, topicLabel]) => (
+                    <label key={topicSlug} className="option-row">
+                      <input
+                        type="checkbox"
+                        checked={selectedTopics.has(topicSlug)}
+                        onChange={() => handleTopicChange(topicSlug)}
+                      />
+                      <span>{topicLabel}</span>
+                    </label>
+                  ))}
+                </div>
+              </details>
+            )
+          })}
         </div>
       )}
 

@@ -386,6 +386,8 @@ export default function Player() {
   finishRef.current = finishAttempt
 
   const unanswered = questions.filter((q) => !isAnswered(responses[q.id] ?? null)).length
+  const verdict = correctness[currentQuestion.id]
+  const revealed = revealMode === 'immediate' && (verdict === 'correct' || verdict === 'wrong')
 
   if (!visited[currentQuestion.id]) {
     setVisited({ ...visited, [currentQuestion.id]: true })
@@ -405,6 +407,8 @@ export default function Player() {
         </div>
 
         <div className="player-question-body">
+          {/* Practice mode: once an answer is saved the key is shown and the
+              question locks, so the verdict can't be edited away. */}
           <QuestionPane
             key={currentQuestion.id}
             question={currentQuestion}
@@ -412,7 +416,13 @@ export default function Player() {
             assetBase={assetBases[currentQuestion.id]}
             draft={draft}
             onDraft={handleDraft}
+            readOnly={revealed}
           />
+          {revealed && (
+            <p className={`player-verdict player-verdict--${verdict}`} role="status">
+              {verdict === 'correct' ? 'Correct' : 'Wrong'}
+            </p>
+          )}
         </div>
 
         {saveError && (

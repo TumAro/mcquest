@@ -5,6 +5,11 @@ import { selectQuestions } from '../src/QuestionSelection.ts'
 
 const index = JSON.parse(readFileSync('public/data/index.json', 'utf8'))
 
+// Counts come from the live bank, so these tests survive papers being added.
+const pool = index.exams.flatMap((e) => e.years.flatMap((y) => y.questions))
+const oneTopic = pool[0].topic
+const moreThanAvailable = pool.length + 1
+
 test('selectQuestions: random draw from all topics across exams', () => {
   // Get all topic slugs
   const allTopics = Object.values(index.topics).flatMap((cat) => Object.keys(cat.topics))
@@ -20,17 +25,20 @@ test('selectQuestions: short pool warning when requested > available', () => {
   // Get all topic slugs and ask for more than available
   const allTopics = Object.values(index.topics).flatMap((cat) => Object.keys(cat.topics))
 
-  const result = selectQuestions(index, allTopics, 100)
+  const result = selectQuestions(index, allTopics, moreThanAvailable)
 
   // Should have a warning about the pool size
   assert.ok(result.warnings.length > 0, 'Should have warning about pool size')
-  assert.ok(result.warnings[0].includes('Asked for 100'), 'Warning should mention requested count')
+  assert.ok(
+    result.warnings[0].includes(`Asked for ${moreThanAvailable}`),
+    'Warning should mention requested count'
+  )
   assert.ok(result.warnings[0].includes('available'), 'Warning should mention available count')
 })
 
 test('selectQuestions: no warning when pool is sufficient', () => {
   // Get just one topic and ask for fewer questions
-  const result = selectQuestions(index, ['eigen'], 1)
+  const result = selectQuestions(index, [oneTopic], 1)
 
   if (result.questions.length > 0) {
     assert.ok(result.warnings.length === 0, 'Should have no warning when pool is sufficient')
@@ -58,7 +66,7 @@ test('selectQuestions: empty topic list returns empty result', () => {
 })
 
 test('selectQuestions: invalid count returns empty result with warning', () => {
-  const result = selectQuestions(index, ['eigen'], 0)
+  const result = selectQuestions(index, [oneTopic], 0)
 
   assert.equal(result.questions.length, 0, 'Should return 0 questions')
   assert.ok(result.warnings.length > 0, 'Should have warning about count')

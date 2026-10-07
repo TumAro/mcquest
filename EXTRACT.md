@@ -70,41 +70,107 @@ never a subject slug:
 
 ```json
 {
-  "_note": "PLACEHOLDER — replace with the real subject/topic slug list",
-  "linear-algebra": {
-    "label": "Linear Algebra",
-    "topics": {
-      "eigen": "Eigenvalues & Eigenvectors",
-      "rank": "Rank & Nullity",
-      "linear-transform": "Linear Transformations"
-    }
-  },
+  "_note": "Subjects and topics from the GATE 2027 MA syllabus. Two levels only: subject slug -> topics. Topic slugs are unique across all subjects.",
   "calculus": {
     "label": "Calculus",
     "topics": {
-      "limit": "Limits",
-      "series": "Sequences & Series",
-      "multivariable": "Multivariable Calculus"
+      "multivariable-calculus": "Functions of Several Variables",
+      "multiple-integrals": "Multiple Integrals",
+      "vector-calculus": "Vector Calculus"
+    }
+  },
+  "linear-algebra": {
+    "label": "Linear Algebra",
+    "topics": {
+      "vector-spaces": "Vector Spaces & Systems of Linear Equations",
+      "linear-transformations": "Linear Transformations, Rank & Nullity",
+      "eigenvalues": "Eigenvalues, Eigenvectors & Diagonalization",
+      "inner-product-spaces": "Inner Product Spaces & Matrix Classes",
+      "canonical-forms": "Canonical Forms & Quadratic Forms"
     }
   },
   "real-analysis": {
     "label": "Real Analysis",
     "topics": {
-      "metric-space": "Metric Spaces",
-      "continuity": "Continuity"
+      "metric-spaces": "Metric Spaces",
+      "continuity": "Continuity & Uniform Continuity",
+      "sequences-series-functions": "Sequences & Series of Functions",
+      "differentiation-several-variables": "Differentiation of Functions of Several Variables",
+      "measure-integration": "Lebesgue Measure & Integration"
     }
   },
-  "probability": {
-    "label": "Probability",
+  "complex-analysis": {
+    "label": "Complex Analysis",
     "topics": {
-      "distributions": "Distributions"
+      "analytic-functions": "Analytic & Harmonic Functions",
+      "complex-integration": "Complex Integration",
+      "power-series-singularities": "Power Series, Singularities & Residues",
+      "conformal-mappings": "Conformal & Mobius Mappings"
+    }
+  },
+  "ode": {
+    "label": "Ordinary Differential Equations",
+    "topics": {
+      "first-order-ode": "First Order Equations & Existence Theorems",
+      "linear-ode": "Higher Order Linear Equations",
+      "laplace-transforms": "Laplace Transforms",
+      "series-solutions": "Series Solutions & Special Functions",
+      "sturm-liouville": "Sturm-Liouville Problems",
+      "autonomous-systems": "Systems & Stability"
     }
   },
   "algebra": {
     "label": "Algebra",
     "topics": {
       "groups": "Groups",
-      "rings": "Rings"
+      "rings": "Rings & Ideals",
+      "fields": "Fields & Field Extensions"
+    }
+  },
+  "functional-analysis": {
+    "label": "Functional Analysis",
+    "topics": {
+      "normed-spaces": "Normed Linear Spaces & Banach Spaces",
+      "bounded-operators": "Bounded & Compact Linear Operators",
+      "dual-spaces": "Dual Spaces & Big Theorems",
+      "hilbert-spaces": "Hilbert Spaces"
+    }
+  },
+  "numerical-analysis": {
+    "label": "Numerical Analysis",
+    "topics": {
+      "numerical-linear-systems": "Systems of Linear Equations",
+      "nonlinear-equations": "Nonlinear Equations",
+      "interpolation": "Interpolation",
+      "numerical-integration": "Numerical Differentiation & Integration",
+      "numerical-ode": "Numerical Solution of ODEs"
+    }
+  },
+  "pde": {
+    "label": "Partial Differential Equations",
+    "topics": {
+      "first-order-pde": "First Order Equations & Characteristics",
+      "second-order-pde": "Second Order Equations & Canonical Forms",
+      "wave-heat-equations": "Wave & Heat Equations",
+      "transform-methods": "Laplace & Fourier Transform Methods"
+    }
+  },
+  "topology": {
+    "label": "Topology",
+    "topics": {
+      "topological-spaces": "Topological Spaces & Bases",
+      "connectedness-compactness": "Connectedness & Compactness",
+      "separation-countability": "Countability & Separation Axioms"
+    }
+  },
+  "linear-programming": {
+    "label": "Linear Programming",
+    "topics": {
+      "lp-models": "LP Models, Convex Sets & Graphical Method",
+      "simplex-method": "Simplex Method",
+      "lp-duality": "Duality Theory",
+      "transportation-problems": "Transportation Problems",
+      "assignment-problems": "Assignment Problems"
     }
   }
 }
@@ -124,7 +190,7 @@ index and an explicit `"type": "multi"`, and a numeric (NAT) question with a bar
   "questions": [
     {
       "marks": 1,
-      "topic": "eigen",
+      "topic": "eigenvalues",
       "question": "Let $A$ be a $2\\times 2$ matrix with eigenvalues $3$ and $5$. The determinant of $A$ is",
       "options": ["$8$", "$15$", "$2$", "$-15$"],
       "correct": [1],
@@ -132,7 +198,7 @@ index and an explicit `"type": "multi"`, and a numeric (NAT) question with a bar
     },
     {
       "marks": 2,
-      "topic": "rank",
+      "topic": "linear-transformations",
       "question": "Let $A$ be a $4\\times 4$ real matrix with $\\text{rank}(A) = 3$. Which of the following statements are TRUE?",
       "options": [
         "$\\text{nullity}(A) = 1$",
@@ -159,7 +225,7 @@ index and an explicit `"type": "multi"`, and a numeric (NAT) question with a bar
     },
     {
       "marks": 1,
-      "topic": "limit",
+      "topic": "continuity",
       "question": "The value of $\\displaystyle\\lim_{x \\to 0} \\dfrac{1 - \\cos x}{x^2}$ is _____.",
       "answer": 0.5,
       "note": "Using $1 - \\cos x \\approx \\dfrac{x^2}{2}$ near $0$, the limit is $\\dfrac{1}{2} = 0.5$."

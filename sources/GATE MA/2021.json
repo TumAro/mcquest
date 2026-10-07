@@ -1,0 +1,696 @@
+{
+  "exam": "GATE MA",
+  "year": 2021,
+  "questions": [
+    {
+      "marks": 1,
+      "topic": "linear-transformations",
+      "question": "Let $A$ be a $3\\times4$ matrix and $B$ be a $4\\times3$ matrix with real entries such that $AB$ is non-singular. Consider the following statements:\nP: Nullity of $A$ is $0$.\nQ: $BA$ is a non-singular matrix.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2021-1"
+    },
+    {
+      "marks": 1,
+      "topic": "analytic-functions",
+      "question": "Let $f(z)=u(x,y)+iv(x,y)$ for $z=x+iy\\in\\mathbb{C}$, where $x$ and $y$ are real numbers, be a non-constant analytic function on the complex plane $\\mathbb{C}$. Let $u_x,v_x$ and $u_y,v_y$ denote the first order partial derivatives of $u(x,y)=\\text{Re}(f(z))$ and $v(x,y)=\\text{Im}(f(z))$ with respect to real variables $x$ and $y$, respectively. Consider the following two functions defined on $\\mathbb{C}$: $g_1(z)=u_x(x,y)-iu_y(x,y)$ for $z=x+iy\\in\\mathbb{C}$, $g_2(z)=v_x(x,y)+iv_y(x,y)$ for $z=x+iy\\in\\mathbb{C}$. Then",
+      "options": [
+        "both $g_1(z)$ and $g_2(z)$ are analytic in $\\mathbb{C}$",
+        "$g_1(z)$ is analytic in $\\mathbb{C}$ and $g_2(z)$ is NOT analytic in $\\mathbb{C}$",
+        "$g_1(z)$ is NOT analytic in $\\mathbb{C}$ and $g_2(z)$ is analytic in $\\mathbb{C}$",
+        "neither $g_1(z)$ nor $g_2(z)$ is analytic in $\\mathbb{C}$"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-2"
+    },
+    {
+      "marks": 1,
+      "topic": "conformal-mappings",
+      "question": "Let $T(z)=\\dfrac{az+b}{cz+d}$, $ad-bc\\ne0$, be the Möbius transformation which maps the points $z_1=0$, $z_2=-i$, $z_3=\\infty$ in the $z$-plane onto the points $w_1=10$, $w_2=5-5i$, $w_3=5+5i$ in the $w$-plane, respectively. Then the image of the set $S=\\{z\\in\\mathbb{C}:\\text{Re}(z)<0\\}$ under the map $w=T(z)$ is",
+      "options": [
+        "$\\{w\\in\\mathbb{C}:|w|<5\\}$",
+        "$\\{w\\in\\mathbb{C}:|w|>5\\}$",
+        "$\\{w\\in\\mathbb{C}:|w-5|<5\\}$",
+        "$\\{w\\in\\mathbb{C}:|w-5|>5\\}$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-3"
+    },
+    {
+      "marks": 1,
+      "topic": "vector-spaces",
+      "question": "Let $R$ be the row reduced echelon form of a $4\\times4$ real matrix $A$ and let the third column of $R$ be $\\begin{bmatrix}0\\\\1\\\\0\\\\0\\end{bmatrix}$. Consider the following statements:\nP: If $\\begin{bmatrix}\\alpha\\\\\\beta\\\\\\gamma\\\\0\\end{bmatrix}$ is a solution of $Ax=0$, then $\\gamma=0$.\nQ: For all $b\\in\\mathbb{R}^4$, $\\text{rank}[A|b]=\\text{rank}[R|b]$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2021-4"
+    },
+    {
+      "marks": 1,
+      "topic": "sturm-liouville",
+      "question": "The eigenvalues of the boundary value problem $\\dfrac{d^2y}{dx^2}+\\lambda y=0$, $x\\in(0,\\pi)$, $\\lambda>0$, $y(0)=0$, $y(\\pi)-\\dfrac{dy}{dx}(\\pi)=0$, are given by",
+      "options": [
+        "$\\lambda=(n\\pi)^2$, $n=1,2,3,\\ldots$",
+        "$\\lambda=n^2$, $n=1,2,3,\\ldots$",
+        "$\\lambda=k_n^2$, where $k_n$, $n=1,2,3,\\ldots$ are the roots of $k-\\tan(k\\pi)=0$",
+        "$\\lambda=k_n^2$, where $k_n$, $n=1,2,3,\\ldots$ are the roots of $k+\\tan(k\\pi)=0$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-5"
+    },
+    {
+      "marks": 1,
+      "topic": "first-order-pde",
+      "question": "The family of surfaces given by $u=xy+f(x^2-y^2)$, where $f:\\mathbb{R}\\to\\mathbb{R}$ is a differentiable function, satisfies",
+      "options": [
+        "$y\\dfrac{\\partial u}{\\partial x}+x\\dfrac{\\partial u}{\\partial y}=x^2+y^2$",
+        "$x\\dfrac{\\partial u}{\\partial x}+y\\dfrac{\\partial u}{\\partial y}=x^2+y^2$",
+        "$y\\dfrac{\\partial u}{\\partial x}+x\\dfrac{\\partial u}{\\partial y}=x^2-y^2$",
+        "$x\\dfrac{\\partial u}{\\partial x}+y\\dfrac{\\partial u}{\\partial y}=x^2-y^2$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-6"
+    },
+    {
+      "marks": 1,
+      "topic": "wave-heat-equations",
+      "question": "The function $u(x,t)$ satisfies the initial value problem $\\dfrac{\\partial^2u}{\\partial t^2}=\\dfrac{\\partial^2u}{\\partial x^2}$, $x\\in\\mathbb{R}$, $t>0$, $u(x,0)=0$, $\\dfrac{\\partial u}{\\partial t}(x,0)=4xe^{-x^2}$. Then $u(5,5)$ is",
+      "options": [
+        "$1-\\dfrac1{e^{100}}$",
+        "$1-e^{100}$",
+        "$1-\\dfrac1{e^{10}}$",
+        "$1-e^{10}$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-7"
+    },
+    {
+      "marks": 1,
+      "topic": "nonlinear-equations",
+      "question": "Consider the fixed-point iteration $x_{n+1}=\\varphi(x_n)$, $n\\ge0$, with $\\varphi(x)=3+(x-3)^3$, $x\\in(2.5,3.5)$, and the initial approximation $x_0=3.25$. Then, the order of convergence of the fixed-point iteration method is",
+      "options": [
+        "$1$",
+        "$2$",
+        "$3$",
+        "$4$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-8"
+    },
+    {
+      "marks": 1,
+      "topic": "hilbert-spaces",
+      "question": "Let $\\{e_n:n=1,2,3,\\ldots\\}$ be an orthonormal basis of a complex Hilbert space $H$. Consider the following statements:\nP: There exists a bounded linear functional $f:H\\to\\mathbb{C}$ such that $f(e_n)=\\dfrac1n$ for $n=1,2,3,\\ldots$.\nQ: There exists a bounded linear functional $g:H\\to\\mathbb{C}$ such that $g(e_n)=\\dfrac1{\\sqrt n}$ for $n=1,2,3,\\ldots$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-9"
+    },
+    {
+      "marks": 1,
+      "topic": "continuity",
+      "question": "Let $f:\\left(\\dfrac{-\\pi}2,\\dfrac\\pi2\\right)\\to\\mathbb{R}$ be given by $f(x)=\\dfrac\\pi2+x-\\tan^{-1}x$. Consider the following statements:\nP: $|f(x)-f(y)|<|x-y|$ for all $x,y\\in\\left(\\dfrac{-\\pi}2,\\dfrac\\pi2\\right)$.\nQ: $f$ has a fixed point.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2021-10"
+    },
+    {
+      "marks": 1,
+      "topic": "metric-spaces",
+      "question": "Consider the following statements:\nP: $d_1(x,y)=\\left|\\log\\left(\\dfrac xy\\right)\\right|$ is a metric on $(0,1)$.\nQ: $d_2(x,y)=|x|+|y|$ if $x\\ne y$, and $0$ if $x=y$, is a metric on $(0,1)$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-11"
+    },
+    {
+      "marks": 1,
+      "topic": "vector-calculus",
+      "question": "Let $f:\\mathbb{R}^3\\to\\mathbb{R}$ be a twice continuously differentiable scalar field such that $\\text{div}(\\nabla f)=6$. Let $S$ be the surface $x^2+y^2+z^2=1$ and $\\hat n$ be unit outward normal. Then the value of $\\displaystyle\\iint_S(\\nabla f\\cdot\\hat n)\\,dS$ is",
+      "options": [
+        "$2\\pi$",
+        "$4\\pi$",
+        "$6\\pi$",
+        "$8\\pi$"
+      ],
+      "correct": [
+        3
+      ],
+      "id": "gate-ma-2021-12"
+    },
+    {
+      "marks": 1,
+      "topic": "separation-countability",
+      "question": "Consider the following statements:\nP: Every compact metrizable topological space is separable.\nQ: Every Hausdorff topology on a finite set is metrizable.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-13"
+    },
+    {
+      "marks": 1,
+      "topic": "topological-spaces",
+      "question": "Consider the following topologies on the set $\\mathbb{R}$ of all real numbers: $T_1=\\{U\\subset\\mathbb{R}:0\\notin U\\text{ or }U=\\mathbb{R}\\}$, $T_2=\\{U\\subset\\mathbb{R}:0\\in U\\text{ or }U=\\emptyset\\}$, $T_3=T_1\\cap T_2$. Then the closure of the set $\\{1\\}$ in $(\\mathbb{R},T_3)$ is",
+      "options": [
+        "$\\{1\\}$",
+        "$\\{0,1\\}$",
+        "$\\mathbb{R}$",
+        "$\\mathbb{R}\\setminus\\{0\\}$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-14"
+    },
+    {
+      "marks": 1,
+      "topic": "differentiation-several-variables",
+      "question": "Let $f:\\mathbb{R}^2\\to\\mathbb{R}$ be differentiable. Let $D_uf(0,0)$ and $D_vf(0,0)$ be the directional derivatives of $f$ at $(0,0)$ in the directions of the unit vectors $u=\\left(\\dfrac1{\\sqrt5},\\dfrac2{\\sqrt5}\\right)$ and $v=\\left(\\dfrac1{\\sqrt2},\\dfrac{-1}{\\sqrt2}\\right)$, respectively. If $D_uf(0,0)=\\sqrt5$ and $D_vf(0,0)=\\sqrt2$, then $\\dfrac{\\partial f}{\\partial x}(0,0)+\\dfrac{\\partial f}{\\partial y}(0,0)=$ _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2021-15"
+    },
+    {
+      "marks": 1,
+      "topic": "vector-calculus",
+      "question": "Let $\\Gamma$ denote the boundary of the square region $R$ with vertices $(0,0)$, $(2,0)$, $(2,2)$ and $(0,2)$ oriented in the counter-clockwise direction. Then $\\displaystyle\\oint_\\Gamma(1-y^2)\\,dx+x\\,dy=$ _____.",
+      "answer": {
+        "min": 12,
+        "max": 12
+      },
+      "id": "gate-ma-2021-16"
+    },
+    {
+      "marks": 1,
+      "topic": "groups",
+      "question": "The number of $5$-Sylow subgroups in the symmetric group $S_5$ of degree $5$ is _____.",
+      "answer": {
+        "min": 6,
+        "max": 6
+      },
+      "id": "gate-ma-2021-17"
+    },
+    {
+      "marks": 1,
+      "topic": "rings",
+      "question": "Let $I$ be the ideal generated by $x^2+x+1$ in the polynomial ring $R=\\mathbb{Z}_3[x]$, where $\\mathbb{Z}_3$ denotes the ring of integers modulo $3$. Then the number of units in the quotient ring $R/I$ is _____.",
+      "answer": {
+        "min": 6,
+        "max": 6
+      },
+      "id": "gate-ma-2021-18"
+    },
+    {
+      "marks": 1,
+      "topic": "linear-transformations",
+      "question": "Let $T:\\mathbb{R}^3\\to\\mathbb{R}^3$ be a linear transformation such that $T\\begin{pmatrix}\\begin{bmatrix}1\\\\1\\\\1\\end{bmatrix}\\end{pmatrix}=\\begin{bmatrix}1\\\\-1\\\\1\\end{bmatrix}$, $T^2\\begin{pmatrix}\\begin{bmatrix}1\\\\1\\\\1\\end{bmatrix}\\end{pmatrix}=\\begin{bmatrix}1\\\\1\\\\1\\end{bmatrix}$, and $T^2\\begin{pmatrix}\\begin{bmatrix}1\\\\1\\\\2\\end{bmatrix}\\end{pmatrix}=\\begin{bmatrix}1\\\\1\\\\1\\end{bmatrix}$. Then the rank of $T$ is _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2021-19"
+    },
+    {
+      "marks": 1,
+      "topic": "linear-ode",
+      "question": "Let $y(x)$ be the solution of the following initial value problem $x^2\\dfrac{d^2y}{dx^2}-4x\\dfrac{dy}{dx}+6y=0$, $x>0$, $y(2)=0$, $\\dfrac{dy}{dx}(2)=4$. Then $y(4)=$ _____.",
+      "answer": {
+        "min": 32,
+        "max": 32
+      },
+      "id": "gate-ma-2021-20"
+    },
+    {
+      "marks": 1,
+      "topic": "nonlinear-equations",
+      "question": "Let $f(x)=x^4+2x^3-11x^2-12x+36$ for $x\\in\\mathbb{R}$. The order of convergence of the Newton-Raphson method $x_{n+1}=x_n-\\dfrac{f(x_n)}{f'(x_n)}$, $n\\ge0$, with $x_0=2.1$, for finding the root $\\alpha=2$ of the equation $f(x)=0$ is _____.",
+      "answer": {
+        "min": 1,
+        "max": 1
+      },
+      "id": "gate-ma-2021-21"
+    },
+    {
+      "marks": 1,
+      "topic": "interpolation",
+      "question": "If the polynomial $p(x)=\\alpha+\\beta(x+2)+\\gamma(x+2)(x+1)+\\delta(x+2)(x+1)x$ interpolates the data $x:\\ -2,-1,0,1,2$; $f(x):\\ 2,-1,8,5,-34$, then $\\alpha+\\beta+\\gamma+\\delta=$ _____.",
+      "answer": {
+        "min": 1,
+        "max": 1
+      },
+      "id": "gate-ma-2021-22"
+    },
+    {
+      "marks": 1,
+      "topic": "lp-duality",
+      "question": "Consider the Linear Programming Problem $P$: Maximize $2x_1+3x_2$ subject to $2x_1+x_2\\le6$, $-x_1+x_2\\le1$, $x_1+x_2\\le3$, $x_1\\ge0$ and $x_2\\ge0$. Then the optimal value of the dual of $P$ is equal to _____.",
+      "answer": {
+        "min": 8,
+        "max": 8
+      },
+      "id": "gate-ma-2021-23"
+    },
+    {
+      "marks": 1,
+      "topic": "simplex-method",
+      "question": "Consider the Linear Programming Problem $P$: Minimize $2x_1-5x_2$ subject to $2x_1+3x_2+s_1=12$, $-x_1+x_2+s_2=1$, $-x_1+2x_2+s_3=3$, $x_1\\ge0$, $x_2\\ge0$, $s_1\\ge0$, $s_2\\ge0$, and $s_3\\ge0$. If $\\begin{bmatrix}x_1\\\\2\\\\s_1\\\\s_2\\\\s_3\\end{bmatrix}$ is a basic feasible solution of $P$, then $x_1+s_1+s_2+s_3=$ _____.",
+      "answer": {
+        "min": 5,
+        "max": 5
+      },
+      "id": "gate-ma-2021-24"
+    },
+    {
+      "marks": 1,
+      "topic": "hilbert-spaces",
+      "question": "Let $H$ be a complex Hilbert space. Let $u,v\\in H$ be such that $\\langle u,v\\rangle=2$. Then $\\dfrac1{2\\pi}\\displaystyle\\int_0^{2\\pi}\\|u+e^{it}v\\|^2e^{it}\\,dt=$ _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2021-25"
+    },
+    {
+      "marks": 2,
+      "topic": "rings",
+      "question": "Let $\\mathbb{Z}$ denote the ring of integers. Consider the subring $R=\\{a+b\\sqrt{-17}:a,b\\in\\mathbb{Z}\\}$ of the field $\\mathbb{C}$ of complex numbers. Consider the following statements:\nP: $2+\\sqrt{-17}$ is an irreducible element.\nQ: $2+\\sqrt{-17}$ is a prime element.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-26"
+    },
+    {
+      "marks": 2,
+      "topic": "second-order-pde",
+      "question": "Consider the second-order partial differential equation (PDE) $\\dfrac{\\partial^2u}{\\partial x^2}+4\\dfrac{\\partial^2u}{\\partial x\\partial y}+(x^2+4y^2)\\dfrac{\\partial^2u}{\\partial y^2}=\\sin(x+y)$. Consider the following statements:\nP: The PDE is parabolic on the ellipse $\\dfrac{x^2}4+y^2=1$.\nQ: The PDE is hyperbolic inside the ellipse $\\dfrac{x^2}4+y^2=1$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-27"
+    },
+    {
+      "marks": 2,
+      "topic": "first-order-pde",
+      "question": "If $u(x,y)$ is the solution of the Cauchy problem $x\\dfrac{\\partial u}{\\partial x}+\\dfrac{\\partial u}{\\partial y}=1$, $u(x,0)=-x^2$, $x>0$, then $u(2,1)$ is equal to",
+      "options": [
+        "$1-2e^{-2}$",
+        "$1+4e^{-2}$",
+        "$1-4e^{-2}$",
+        "$1+2e^{-2}$"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-28"
+    },
+    {
+      "marks": 2,
+      "topic": "laplace-transforms",
+      "question": "Let $y(t)$ be the solution of the initial value problem $\\dfrac{d^2y}{dt^2}+a\\dfrac{dy}{dt}+by=f(t)$, $a>0$, $b>0$, $a\\ne b$, $a^2-4b=0$, $y(0)=0$, $\\dfrac{dy}{dt}(0)=0$, obtained by the method of Laplace transform. Then",
+      "options": [
+        "$y(t)=\\displaystyle\\int_0^t\\tau e^{\\frac{-a\\tau}2}f(t-\\tau)\\,d\\tau$",
+        "$y(t)=\\displaystyle\\int_0^te^{\\frac{-a\\tau}2}f(t-\\tau)\\,d\\tau$",
+        "$y(t)=\\displaystyle\\int_0^t\\tau e^{\\frac{-b\\tau}2}f(t-\\tau)\\,d\\tau$",
+        "$y(t)=\\displaystyle\\int_0^te^{\\frac{-b\\tau}2}f(t-\\tau)\\,d\\tau$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-29"
+    },
+    {
+      "marks": 2,
+      "topic": "autonomous-systems",
+      "question": "The critical point of the differential equation $\\dfrac{d^2y}{dt^2}+2\\alpha\\dfrac{dy}{dt}+\\beta^2y=0$, $\\alpha>\\beta>0$, is a",
+      "options": [
+        "node and is asymptotically stable",
+        "spiral point and is asymptotically stable",
+        "node and is unstable",
+        "saddle point and is unstable"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-30"
+    },
+    {
+      "marks": 2,
+      "topic": "numerical-ode",
+      "question": "The initial value problem $\\dfrac{dy}{dt}=f(t,y)$, $t>0$, $y(0)=1$, where $f(t,y)=-10y$, is solved by the following Euler method $y_{n+1}=y_n+hf(t_n,y_n)$, $n\\ge0$, with step-size $h$. Then $y_n\\to0$ as $n\\to\\infty$, provided",
+      "options": [
+        "$0<h<0.2$",
+        "$0.3<h<0.4$",
+        "$0.4<h<0.5$",
+        "$0.5<h<0.55$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-31"
+    },
+    {
+      "marks": 2,
+      "topic": "lp-models",
+      "question": "Consider the Linear Programming Problem $P$: Maximize $c_1x_1+c_2x_2$ subject to $a_{11}x_1+a_{12}x_2\\le b_1$, $a_{21}x_1+a_{22}x_2\\le b_2$, $a_{31}x_1+a_{32}x_2\\le b_3$, $x_1\\ge0$ and $x_2\\ge0$, where $a_{ij}$, $b_i$ and $c_j$ are real numbers ($i=1,2,3$; $j=1,2$). Let $\\begin{bmatrix}p\\\\q\\end{bmatrix}$ be a feasible solution of $P$ such that $pc_1+qc_2=6$ and let all feasible solutions $\\begin{bmatrix}x_1\\\\x_2\\end{bmatrix}$ of $P$ satisfy $-5\\le c_1x_1+c_2x_2\\le12$. Then, which one of the following statements is NOT true?",
+      "options": [
+        "$P$ has an optimal solution",
+        "The feasible region of $P$ is a bounded set",
+        "If $\\begin{bmatrix}y_1\\\\y_2\\\\y_3\\end{bmatrix}$ is a feasible solution of the dual of $P$, then $b_1y_1+b_2y_2+b_3y_3\\ge6$",
+        "The dual of $P$ has at least one feasible solution"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-32"
+    },
+    {
+      "marks": 2,
+      "topic": "hilbert-spaces",
+      "question": "Let $L^2[-1,1]$ be the Hilbert space of real valued square integrable functions on $[-1,1]$ equipped with the norm $\\|f\\|=\\left(\\int_{-1}^1|f(x)|^2dx\\right)^{1/2}$. Consider the subspace $M=\\{f\\in L^2[-1,1]:\\int_{-1}^1f(x)\\,dx=0\\}$. For $f(x)=x^2$, define $d=\\inf\\{\\|f-g\\|:g\\in M\\}$. Then",
+      "options": [
+        "$d=\\dfrac{\\sqrt2}3$",
+        "$d=\\dfrac23$",
+        "$d=\\dfrac3{\\sqrt2}$",
+        "$d=\\dfrac32$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-33"
+    },
+    {
+      "marks": 2,
+      "topic": "bounded-operators",
+      "question": "Let $C[0,1]$ be the Banach space of real valued continuous functions on $[0,1]$ equipped with the supremum norm. Define $T:C[0,1]\\to C[0,1]$ by $(Tf)(x)=\\displaystyle\\int_0^xtf(t)\\,dt$. Let $R(T)$ denote the range space of $T$. Consider the following statements:\nP: $T$ is a bounded linear operator.\nQ: $T^{-1}:R(T)\\to C[0,1]$ exists and is bounded.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-34"
+    },
+    {
+      "marks": 2,
+      "topic": "bounded-operators",
+      "question": "Let $\\ell^1=\\{x=(x(1),x(2),\\ldots,x(n),\\ldots)\\mid\\sum_{n=1}^\\infty|x(n)|<\\infty\\}$ be the sequence space equipped with the norm $\\|x\\|=\\sum_{n=1}^\\infty|x(n)|$. Consider the subspace $X=\\left\\{x\\in\\ell^1:\\sum_{n=1}^\\infty n|x(n)|<\\infty\\right\\}$, and the linear transformation $T:X\\to\\ell^1$ given by $(Tx)(n)=nx(n)$ for $n=1,2,3,\\ldots$. Then",
+      "options": [
+        "$T$ is closed but NOT bounded",
+        "$T$ is bounded",
+        "$T$ is neither closed nor bounded",
+        "$T^{-1}$ exists and is an open map"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-35"
+    },
+    {
+      "marks": 2,
+      "topic": "sequences-series-functions",
+      "question": "Let $f_n:[0,10]\\to\\mathbb{R}$ be given by $f_n(x)=nx^3e^{-nx}$ for $n=1,2,3,\\ldots$. Consider the following statements:\nP: $(f_n)$ is equicontinuous on $[0,10]$.\nQ: $\\sum_{n=1}^\\infty f_n$ does NOT converge uniformly on $[0,10]$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        1
+      ],
+      "id": "gate-ma-2021-36"
+    },
+    {
+      "marks": 2,
+      "topic": "differentiation-several-variables",
+      "question": "Let $f:\\mathbb{R}^2\\to\\mathbb{R}$ be given by $f(x,y)=\\sqrt{x^2+y^2}\\,\\sin(y^2/x)$ if $x\\ne0$, and $0$ if $x=0$. Consider the following statements:\nP: $f$ is continuous at $(0,0)$ but $f$ is NOT differentiable at $(0,0)$.\nQ: The directional derivative $D_uf(0,0)$ of $f$ at $(0,0)$ exists in the direction of every unit vector $u\\in\\mathbb{R}^2$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-37"
+    },
+    {
+      "marks": 2,
+      "topic": "multiple-integrals",
+      "question": "Let $V$ be the solid region in $\\mathbb{R}^3$ bounded by the paraboloid $y=(x^2+z^2)$ and the plane $y=4$. Then the value of $\\displaystyle\\iiint_V15\\sqrt{x^2+z^2}\\,dV$ is",
+      "options": [
+        "$128\\pi$",
+        "$64\\pi$",
+        "$28\\pi$",
+        "$256\\pi$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-38"
+    },
+    {
+      "marks": 2,
+      "topic": "multivariable-calculus",
+      "question": "Let $f:\\mathbb{R}^2\\to\\mathbb{R}$ be given by $f(x,y)=4xy-2x^2-y^4$. Then $f$ has",
+      "options": [
+        "a point of local maximum and a saddle point",
+        "a point of local minimum and a saddle point",
+        "a point of local maximum and a point of local minimum",
+        "two saddle points"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-39"
+    },
+    {
+      "marks": 2,
+      "topic": "differentiation-several-variables",
+      "question": "The equation $xy-z\\log y+e^{xz}=1$ can be solved in a neighborhood of the point $(0,1,1)$ as $y=f(x,z)$ for some continuously differentiable function $f$. Then",
+      "options": [
+        "$\\nabla f(0,1)=(2,0)$",
+        "$\\nabla f(0,1)=(0,2)$",
+        "$\\nabla f(0,1)=(0,1)$",
+        "$\\nabla f(0,1)=(1,0)$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-40"
+    },
+    {
+      "marks": 2,
+      "topic": "topological-spaces",
+      "question": "Consider the following topologies on the set $\\mathbb{R}$ of all real numbers. $T_1$ is the upper limit topology having all sets $(a,b]$ as basis. $T_2=\\{U\\subset\\mathbb{R}:\\mathbb{R}\\setminus U\\text{ is finite}\\}\\cup\\{\\emptyset\\}$. $T_3$ is the standard topology having all sets $(a,b)$ as basis. Then",
+      "options": [
+        "$T_2\\subset T_3\\subset T_1$",
+        "$T_1\\subset T_2\\subset T_3$",
+        "$T_3\\subset T_2\\subset T_1$",
+        "$T_2\\subset T_1\\subset T_3$"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-41"
+    },
+    {
+      "marks": 2,
+      "topic": "connectedness-compactness",
+      "question": "Let $\\mathbb{R}$ denote the set of all real numbers. Consider the following topological spaces. $X_1=(\\mathbb{R},T_1)$, where $T_1$ is the upper limit topology having all sets $(a,b]$ as basis. $X_2=(\\mathbb{R},T_2)$, where $T_2=\\{U\\subset\\mathbb{R}:\\mathbb{R}\\setminus U\\text{ is finite}\\}\\cup\\{\\emptyset\\}$. Then",
+      "options": [
+        "both $X_1$ and $X_2$ are connected",
+        "$X_1$ is connected and $X_2$ is NOT connected",
+        "$X_1$ is NOT connected and $X_2$ is connected",
+        "neither $X_1$ nor $X_2$ is connected"
+      ],
+      "correct": [
+        2
+      ],
+      "id": "gate-ma-2021-42"
+    },
+    {
+      "marks": 2,
+      "topic": "inner-product-spaces",
+      "question": "Let $\\langle\\cdot,\\cdot\\rangle:\\mathbb{R}^n\\times\\mathbb{R}^n\\to\\mathbb{R}$ be an inner product on the vector space $\\mathbb{R}^n$ over $\\mathbb{R}$. Consider the following statements:\nP: $|\\langle u,v\\rangle|\\le\\dfrac12(\\langle u,u\\rangle+\\langle v,v\\rangle)$ for all $u,v\\in\\mathbb{R}^n$.\nQ: If $\\langle u,v\\rangle=\\langle2u,-v\\rangle$ for all $v\\in\\mathbb{R}^n$, then $u=0$.\nThen",
+      "options": [
+        "both P and Q are TRUE",
+        "P is TRUE and Q is FALSE",
+        "P is FALSE and Q is TRUE",
+        "both P and Q are FALSE"
+      ],
+      "correct": [
+        0
+      ],
+      "id": "gate-ma-2021-43"
+    },
+    {
+      "marks": 2,
+      "topic": "groups",
+      "question": "Let $G$ be a group of order $5^4$ with center having $5^2$ elements. Then the number of conjugacy classes in $G$ is _____.",
+      "answer": {
+        "min": 145,
+        "max": 145
+      },
+      "id": "gate-ma-2021-44"
+    },
+    {
+      "marks": 2,
+      "topic": "fields",
+      "question": "Let $F$ be a finite field and $F^\\times$ be the group of all nonzero elements of $F$ under multiplication. If $F^\\times$ has a subgroup of order $17$, then the smallest possible order of the field $F$ is _____.",
+      "answer": {
+        "min": 103,
+        "max": 103
+      },
+      "id": "gate-ma-2021-45"
+    },
+    {
+      "marks": 2,
+      "topic": "complex-integration",
+      "question": "Let $R=\\{z=x+iy\\in\\mathbb{C}:0<x<1\\text{ and }-11\\pi<y<11\\pi\\}$ and $\\Gamma$ be the positively oriented boundary of $R$. Then the value of the integral $\\dfrac1{2\\pi i}\\displaystyle\\oint_\\Gamma\\dfrac{e^z\\,dz}{e^z-2}$ is _____.",
+      "answer": {
+        "min": 11,
+        "max": 11
+      },
+      "id": "gate-ma-2021-46"
+    },
+    {
+      "marks": 2,
+      "topic": "power-series-singularities",
+      "question": "Let $D=\\{z\\in\\mathbb{C}:|z|<2\\pi\\}$ and $f:D\\to\\mathbb{C}$ be the function defined by $f(z)=\\dfrac{3z^2}{1-\\cos z}$ if $z\\ne0$, and $6$ if $z=0$. If $f(z)=\\sum_{n=0}^\\infty a_nz^n$ for $z\\in D$, then $6a_2=$ _____.",
+      "answer": {
+        "min": 3,
+        "max": 3
+      },
+      "id": "gate-ma-2021-47"
+    },
+    {
+      "marks": 2,
+      "topic": "power-series-singularities",
+      "question": "The number of zeroes (counting multiplicity) of $P(z)=3z^5+2iz^2+7iz+1$ in the annular region $\\{z\\in\\mathbb{C}:1<|z|<7\\}$ is _____.",
+      "answer": {
+        "min": 4,
+        "max": 4
+      },
+      "id": "gate-ma-2021-48"
+    },
+    {
+      "marks": 2,
+      "topic": "series-solutions",
+      "question": "If $y=\\sum_{k=0}^\\infty a_kx^k$, $(a_0\\ne0)$ is the power series solution of the differential equation $\\dfrac{d^2y}{dx^2}-24x^2y=0$, then $\\dfrac{a_4}{a_0}=$ _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2021-49"
+    },
+    {
+      "marks": 2,
+      "topic": "eigenvalues",
+      "question": "Let $V=\\{p:p(x)=a_0+a_1x+a_2x^2,\\ a_0,a_1,a_2\\in\\mathbb{R}\\}$ be the vector space of all polynomials of degree at most $2$ over the real field $\\mathbb{R}$. Let $T:V\\to V$ be the linear operator given by $T(p)=(p(0)-p(1))+(p(0)+p(1))x+p(0)x^2$. Then the sum of the eigenvalues of $T$ is _____.",
+      "answer": {
+        "min": 1,
+        "max": 1
+      },
+      "id": "gate-ma-2021-50"
+    },
+    {
+      "marks": 2,
+      "topic": "numerical-integration",
+      "question": "The quadrature formula $\\displaystyle\\int_0^2xf(x)\\,dx\\approx\\alpha f(0)+\\beta f(1)+\\gamma f(2)$ is exact for all polynomials of degree $\\le2$. Then $2\\beta-\\gamma=$ _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2021-51"
+    },
+    {
+      "marks": 2,
+      "topic": "measure-integration",
+      "question": "For each $x\\in(0,1]$, consider the decimal representation $x=\\cdot d_1d_2d_3\\cdots d_n\\cdots$. Define $f:[0,1]\\to\\mathbb{R}$ by $f(x)=0$ if $x$ is rational and $f(x)=18n$ if $x$ is irrational, where $n$ is the number of zeroes immediately after the decimal point up to the first nonzero digit in the decimal representation of $x$. Then the Lebesgue integral $\\displaystyle\\int_0^1f(x)\\,dx=$ _____.",
+      "answer": {
+        "min": 2,
+        "max": 2
+      },
+      "id": "gate-ma-2021-52"
+    },
+    {
+      "marks": 2,
+      "topic": "lp-duality",
+      "question": "Let $\\bar x=\\begin{bmatrix}11/3\\\\2/3\\\\0\\end{bmatrix}$ be an optimal solution of the following Linear Programming Problem $P$: Maximize $4x_1+x_2-3x_3$ subject to $2x_1+4x_2+ax_3\\le10$, $x_1-x_2+bx_3\\le3$, $2x_1+3x_2+5x_3\\le11$, $x_1\\ge0$, $x_2\\ge0$ and $x_3\\ge0$, where $a,b$ are real numbers. If $\\bar y=\\begin{bmatrix}p\\\\q\\\\r\\end{bmatrix}$ is an optimal solution of the dual of $P$, then $p+q+r=$ _____ (round off to two decimal places).",
+      "answer": {
+        "min": 3.14,
+        "max": 3.18
+      },
+      "id": "gate-ma-2021-53"
+    }
+  ]
+}

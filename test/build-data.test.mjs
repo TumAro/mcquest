@@ -28,7 +28,7 @@ function buildTwoExamBank() {
     {
       id: 'zeta-2024-1',
       marks: 1,
-      topic: 'limit', // real slug
+      topic: 'multivariable-calculus', // real slug
       question: 'Q',
       answer: { min: 0.99, max: 1.01 }, // numeric
       note: 'n',
@@ -38,7 +38,7 @@ function buildTwoExamBank() {
     {
       id: 'alpha-2024-1',
       marks: 1,
-      topic: 'eigen', // real slug
+      topic: 'eigenvalues', // real slug
       question: 'Q',
       options: ['a', 'b'],
       correct: [0], // single
@@ -106,9 +106,9 @@ test('the inferred type on each entry matches inferType', () => {
 
 test('an invented topic slug buckets as unsorted rather than vanishing or leaking through', () => {
   const alphaQuestions = index.exams[0].years[0].questions;
-  assert.equal(alphaQuestions[0].topic, 'eigen');
+  assert.equal(alphaQuestions[0].topic, 'eigenvalues');
   assert.equal(alphaQuestions[1].topic, 'unsorted');
-  assert.equal(index.exams[1].years[0].questions[0].topic, 'limit');
+  assert.equal(index.exams[1].years[0].questions[0].topic, 'multivariable-calculus');
 });
 
 test('the topics map gains an unsorted subject when at least one question is unsorted', () => {
@@ -122,7 +122,7 @@ test('a bank whose slugs all resolve leaves no unsorted subject in the map', () 
     {
       id: 'clean-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],
@@ -181,7 +181,7 @@ test('asset files from an exam are copied to the output tree', () => {
     {
       id: 'asset-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       image: 'fig-1.svg',
       options: ['a', 'b'],
@@ -207,7 +207,7 @@ test('nested directories inside assets are copied', () => {
     {
       id: 'nested-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],
@@ -229,7 +229,7 @@ test('an exam with no assets directory builds without error', () => {
     {
       id: 'noasset-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],
@@ -252,7 +252,7 @@ test('an exam with assets but no directory for a paper year builds without error
     {
       id: 'wrongyear-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],
@@ -278,7 +278,7 @@ test('files for different years are kept separate', () => {
     {
       id: 'multi-2023-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],
@@ -290,7 +290,7 @@ test('files for different years are kept separate', () => {
     {
       id: 'multi-2024-1',
       marks: 1,
-      topic: 'eigen',
+      topic: 'eigenvalues',
       question: 'Q',
       options: ['a', 'b'],
       correct: [0],

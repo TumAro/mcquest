@@ -3,6 +3,7 @@ import { loadIndex, useJson } from '../data'
 import { loadSubmittedAttempts } from '../storage'
 import { statsFromHistory, MIN_ATTEMPTS } from '../stats'
 import { formatAccuracy } from '../results'
+import BackLink from '../components/BackLink'
 import './results.css'
 
 export default function Stats() {
@@ -28,6 +29,7 @@ export default function Stats() {
 
   return (
     <div className="page">
+      <BackLink />
       <h1>Weak topics</h1>
       {ranked.length === 0 && insufficient.length === 0 ? (
         <div className="empty-state" data-testid="stats-empty">

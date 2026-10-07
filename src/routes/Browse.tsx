@@ -5,6 +5,7 @@ import { deserializeSettings, loadSettings, saveSettings, type Settings as Setti
 import { randomStart } from '../start'
 import { applyTheme } from '../theme'
 import Settings from '../components/Settings'
+import BackLink from '../components/BackLink'
 
 export function BrowseExams() {
   const navigate = useNavigate()
@@ -153,6 +154,7 @@ export function BrowseYears() {
 
   return (
     <div className="page">
+      <BackLink label="All exams" />
       <h1>{exam.label}</h1>
       <ul className="year-list">
         {exam.years.map((year) => (

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { loadIndex, loadPaper, useJson } from '../data'
 import TestOptions from './TestOptions'
+import BackLink from '../components/BackLink'
 import type { RevealMode } from '../storage'
 import type { StartConfig } from '../start'
 import './config-screen.css'
@@ -60,6 +61,7 @@ export default function YearConfig() {
 
   return (
     <div className="page">
+      <BackLink to={`/exam/${slug}`} label={`${exam.label} years`} />
       <h1>
         {exam.label} — {year}
       </h1>

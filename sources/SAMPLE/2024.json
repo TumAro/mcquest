@@ -4,7 +4,7 @@
   "questions": [
     {
       "marks": 1,
-      "topic": "eigen",
+      "topic": "eigenvalues",
       "question": "Let $A = \\begin{pmatrix} 2 & 1 \\\\ 0 & 2 \\end{pmatrix}$. The eigenvalues of $A$ are",
       "options": [
         "$2, 2$",
@@ -21,7 +21,7 @@
     },
     {
       "marks": 2,
-      "topic": "limit",
+      "topic": "continuity",
       "question": "The value of $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sin(3x)}{x}$ is",
       "options": [
         "$0$",
@@ -38,7 +38,7 @@
     },
     {
       "marks": 2,
-      "topic": "rank",
+      "topic": "linear-transformations",
       "question": "Let $A = \\begin{pmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 1 & 1 & 1 \\end{pmatrix}$. Which of the following statements are TRUE?",
       "options": [
         "$\\text{rank}(A) = 2$",
@@ -75,7 +75,7 @@
     },
     {
       "marks": 1,
-      "topic": "series",
+      "topic": "sequences-series-functions",
       "question": "The sum of the infinite geometric series $\\displaystyle\\sum_{n=1}^{\\infty} \\dfrac{1}{2^n}$ equals _____ (round to two decimal places).",
       "answer": {
         "min": 0.99,
@@ -86,7 +86,7 @@
     },
     {
       "marks": 2,
-      "topic": "multivariable",
+      "topic": "multivariable-calculus",
       "question": "Minimize $f(x,y) = x^2 + y^2$ subject to the constraint $x + y = 4$. The minimum value of $f$ is _____.",
       "answer": {
         "min": 7.99,

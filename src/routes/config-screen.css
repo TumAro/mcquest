@@ -28,3 +28,32 @@
 .alert-text {
   margin: 0;
 }
+
+/* One collapsed row per subject, so the topic list is scannable */
+.topics-subject {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+
+.topics-subject-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.topics-subject-name {
+  font-weight: 600;
+}
+
+.topics-subject-count {
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.topics-list {
+  margin-top: var(--space-2);
+  padding-left: var(--space-5);
+}
